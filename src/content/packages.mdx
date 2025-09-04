@@ -1,0 +1,68 @@
+# Package Basics
+
+To many in the immersive experience space, package managers are a new concept. This section will cover the basics of what a package manager is, and how it can help you.
+
+## What is a Package?
+
+A package is a bundle of code that accomplishes a specific task. Packages can be as small as a single function, or as large as an entire framework.
+
+A great real world analogy of a package manager is a ingredients in a dish.
+
+For all of our examples, we'll be using a Cheeseburger.
+
+To make a Cheeseburger, you need at least 3 ingredients, bread, patty, and cheese. In a package context, each ingredient is a package. So if you wanted to make a cheeseburger,
+you'd need to install `@forest/bread`, `@user1/patty` and `@user1/cheese`, then assemble. Notice how the packages we're using are from different users.
+Part of what makes packages so powerful is how easy it is to utilize open source code from other developers who created these packages previously.
+
+Because of the package ecosystem, **you're able to spend more time building your cheeseburger and less time worrying about how to grow lettuce.**
+
+```lua
+local CheeseburgerMarker = {}
+
+local Bread = require("@forest/bread")
+local Patty = require("@user1/patty")
+local Cheese = require("@user1/cheese")
+
+
+function CheeseburgerMarker:MakeCheeseburger()
+    local contents = {
+        bread = Bread.new(),
+        patty = Patty.new(),
+        cheese = Cheese.new()
+    }
+
+    -- Do something with our ingredients
+
+    return contents
+end
+
+return CheeseburgerMarker
+
+```
+
+### Package "Dependencies"
+
+Now that we have our cheeseburger maker, we can upload that as a package for others to use as well.
+However, our cheeseburger package relies on the 3 other packages to work. These are called "dependencies".
+When someone installs your package, the package manager will automatically install those dependencies for them.
+
+For example, its possible our bread dependency relies on a package called `@forest/flour` to make the bread.
+When someone installs our cheeseburger package, the package manager will automatically install `@forest/bread` and `@forest/flour` as its dependent for them.
+
+Its possible to have a project that has hundreds of dependencies with many sub-dependencies, and the package manager will handle all of that for you, so you as the developer only need to interface with the packages you installed.
+
+### Versioning
+
+Versioning is one of the most important aspects of package management, and allows for you to maintain backwards compatibility while still being able to push new features and bug fixes.
+Versioning enables projects to operate with specific versions of packages, so that if a package author pushes a breaking change, your project won't suddenly break because of it.
+
+Packages are versioned using a system called "Semantic Versioning", or SemVer for short.
+
+A SemVer version is made up of 3 numbers, in the format of `MAJOR.MINOR.PATCH`.
+- **MAJOR** version when you make incompatible API changes
+- **MINOR** version when you add functionality in a backwards compatible manner
+- **PATCH** version when you make backwards compatible bug fixes
+
+Read the full SemVer guidelines here.
+
+For example, if we had a package called `@user1/patty` that was at version `1.2.3`, and we wanted to add a new feature that added bacon to the patty in a backwards compatible way, we'd bump the version to `1.3.0`.
