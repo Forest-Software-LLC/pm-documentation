@@ -12,7 +12,7 @@ const banner = <Banner storageKey="some-key">Forest Releases September, 2025!</B
 const navbar = (
   <Navbar
     logo={<b>Forest PM</b>}
-    logoLink="https://forestpm.dev"
+    logoLink="https://forest.dev"
     
     
     // ... Your additional navbar options
