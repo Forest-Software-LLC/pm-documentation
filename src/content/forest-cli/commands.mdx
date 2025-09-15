@@ -1,0 +1,54 @@
+# Forest CLI Commands
+
+The Forest CLI provides a variety of commands to help you manage your Forest projects.
+
+## Commands
+
+
+### `forest init`
+
+Initializes a new Forest package in the current directory. This command creates a `forest.json` file that contains metadata about your package, such as its name, version, and description.
+
+```bash
+forest init
+
+> Platform : <select your platform>
+
+Created forest.json
+```
+
+### `forest install <package-name>`
+Installs a package from the Forest Package Manager. This command downloads the package and its dependencies and adds them to your project's `packages` directory.
+
+Alias: `forest i <package-name>`
+
+### `forest uninstall <package-name>`
+
+Uninstalls a package from your project. This command removes the package and its dependencies from your project's `packages` directory.
+
+Alias: `forest remove <package-name>`
+
+### `forest publish`
+
+Publishes your package to the Forest Package Manager. This command uploads your package and its metadata to the Forest PM registry, making it available for others to install and use.
+
+### `forest login`
+Logs in to your Forest PM account. This command prompts you for your username and password and stores your authentication token locally.
+
+The Forest CLI has built-in support for two-factor authentication (2FA). If your account has 2FA enabled, you'll be prompted to enter your 2FA code after entering your username and password.
+
+```bash
+forest login
+
+> Username: your-username
+> Password: ********
+> 2FA Code: 123456
+Logged in as your-username
+```
+
+### `forest logout`
+Logs out of your Forest PM account. This command removes your authentication token from your local machine.
+
+### `forest whoami`
+
+Displays the currently logged-in user. This command shows your username for the Forest PM account.
