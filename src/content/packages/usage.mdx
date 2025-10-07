@@ -24,8 +24,7 @@ forest i @user1/sauce
 forest i @user1/meatballs
 ```
 
-Now that we have our ingredients installed, developers can use these packages in their code.
-
+Now that we have our ingredients installed, we can import them into our project and start building.
 ```lua
 local Pasta = require("pasta")
 local Sauce = require("sauce")
@@ -34,13 +33,13 @@ local Meatballs = require("meatballs")
 -- Do something with our now imported ingredients
 ```
 
-Its that easy! The package manager handles downloading the packages, as well as any dependencies they may have, so you can focus on building your project.
-
+Using packages this way means every part of your project stays modular. You can update, replace, or share each “ingredient” without breaking the rest of your code.
 ## Package Dependencies
 
-When you install a package, the package manager will also install any dependencies that package has. For example, if `@forest/pasta` relies on a package called `@forest/flour`, the package manager will automatically install `@forest/flour` when you install `@forest/pasta`.
-
-When this happens, its likely your project's file tree will look something like this:
+When you install a package, Forest automatically installs any dependencies it requires.
+For example, if `@forest/pasta` depends on `@forest/flour`, Forest installs both packages when you run: `forest i @forest/pasta
+`
+After installation, your project’s file tree will look like this:
 
 <FileTree>
   <FileTree.Folder name="my-project" defaultOpen>
@@ -68,16 +67,17 @@ When this happens, its likely your project's file tree will look something like 
   </FileTree.Folder>
 </FileTree>
 
-Notice how the top-most `packages` folder contains the 3 packages we installed, and the `pasta` package contains a `packages` folder with its dependency, `flour`.
+In the example file tree, the root `packages` folder contains the three packages we installed. Inside the `pasta` package, there’s another `packages` folder with its dependency, `flour`.
 
-Because we didn't install flour directly, it doesn't appear in the top-most packages folder, meaning its not a package we can directly use in our project.
+Since we didn’t install flour directly, it doesn’t appear in the root packages folder. That means it isn’t available for you to require() in your project.
 
-This structure allows packages to have their own dependencies without causing conflicts with other packages or the main project. In the event we wanted to access flour directly, we could install it ourselves using `forest i @forest/flour`, which would add it to the top-most packages folder.
+This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. If you do want to use flour directly, you can install it yourself with:
+`forest i @forest/flour`
 
-## Common Questions
+## Commonly Asked Questions
 > What happens if two packages depend on the same package?
 
-Forest package manager uses a technique called "dependency deduplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
+Forest uses a technique called "dependency deduplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
 
 > What if two packages depend on different versions of the same package?
 
@@ -87,7 +87,7 @@ This allows each package to use the version it was designed to work with, preven
 
 > What happens if I install 2 packages with the same name?
 
-If you attempt to install two packages with the same name but from different authors or sources, the package manager will treat them as separate entities based on their full package identifiers (which typically include the author's namespace).
+If you attempt to install two packages with the same name but from different authors or sources, Forest will treat them as separate entities based on their full package identifiers (which typically include the author's namespace).
 
 This means you can have `@user1/package` and `@user2/package` installed simultaneously without conflict, as they are considered distinct packages.
 

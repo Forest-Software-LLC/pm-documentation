@@ -5,7 +5,7 @@ import { Steps } from 'nextra/components'
 
 # Creating & Updating a Package
 
-This section will cover how to create and upload your own packages to the Forest Package Manager.
+This section will cover how to create and upload your own packages to Forest.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Before you can create and upload packages, you'll need to have the following:
 
 ## Creating a Package
 
-Lets say we want to create a package that provides a simple "Hello World" function.
+Let's say we want to create a package that provides a simple "Hello World" function.
 
 <Steps>
 ### Create a new directory for your package
@@ -48,7 +48,7 @@ forest init
 
 After selecting the appropriate options, this will create a `forest.json` file in our package directory.
 
-This file contains metadata about our package, such as its name, version, and description. You should never need to manually edit this file, as the Forest CLI will handle it for you.
+This file contains metadata about our package, such as its name, version, and description. In most cases, you won't need to manually edit this file.
 
 ### Publish to Forest Package Manager
 
@@ -56,7 +56,7 @@ This file contains metadata about our package, such as its name, version, and de
 forest publish
 ```
 
-This command will upload our package to the Forest Package Manager, making it available for others to install and use.
+This command will upload our package to Forest, making it available for others to install and use.
 If this is your first time publishing a package, you'll be prompted to log in to your Forest PM account.
 
 The CLI will ask you a few questions about your package, such as its visibility (public or private), name, description, version and License type.
@@ -73,12 +73,12 @@ forest i @forest/utils
 
 Then, when we publish our package, the Forest CLI will automatically detect the dependency and include it in the `forest.json` file.
 
-When someone installs your package, the package manager will automatically install any dependencies it has. 
+When someone installs your package, Forest will automatically install any dependencies it has. 
 
 <Callout type="warning">
   Packages with dependencies will always have their `/package` folder at the same level as the `init` file.
   For example, if your `init` file is located at `my-package/src/init.lua`, your dependencies will be installed to `my-package/src/packages/`.
-  This is to ensure that your package can always find its dependencies, regardless of where the `init` file is located.
+  This ensures your package can always find its dependencies, regardless of project structure
 
   For Rojo users, `default.project.json` will be ignored.
 </Callout>
