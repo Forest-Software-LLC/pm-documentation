@@ -12,11 +12,11 @@ Before you can create and upload packages, you'll need to have the [Forest CLI](
 
 ## Installing Packages
 
-For this example, we'll be making spaghetti. To make spaghetti, we need 3 ingredients: pasta, sauce, and meatballs.
+For this metaphorical example, we'll be cooking (coding) spaghetti. To make spaghetti, we need to grab (install) 3 ingredients (packages): pasta, sauce, and meatballs.
 
-Lets say we found 3 packages that provide these ingredients: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`.
+Lets say you found 3 packages that provide these ingredients: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`.
 
-We'll cover the install commands in detail later, but for now, we'll use the following commands to install these packages:
+We'll cover the install commands in detail later, but for now, use the following to install the packages:
 
 ```bash
 forest i @forest/pasta
@@ -24,13 +24,13 @@ forest i @user1/sauce
 forest i @user1/meatballs
 ```
 
-Now that we have our ingredients installed, we can import them into our project and start building.
+Now that we have our ingredients installed, we can import them into our project and start cooking.
 ```lua
 local Pasta = require("pasta")
 local Sauce = require("sauce")
 local Meatballs = require("meatballs")
 
--- Do something with our now imported ingredients
+-- Do something with our now-imported ingredients
 ```
 
 Using packages this way means every part of your project stays modular. You can update, replace, or share each “ingredient” without breaking the rest of your code.
@@ -74,10 +74,12 @@ Since we didn’t install flour directly, it doesn’t appear in the root packag
 This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. If you do want to use flour directly, you can install it yourself with:
 `forest i @forest/flour`
 
+> **TODO:** Alex suggests that FAQs becomes its own following subsections
+
 ## Commonly Asked Questions
 > What happens if two packages depend on the same package?
 
-Forest uses a technique called "dependency deduplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
+Forest uses a technique called "dependency de-duplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
 
 > What if two packages depend on different versions of the same package?
 
