@@ -1,5 +1,8 @@
 module.exports = {
     "index" : "Introduction",
+    "packages" : "Packages",
+    "forest-cli" : "Forest CLI",
+    "legal" : "Legal"
 }
 
 /*
