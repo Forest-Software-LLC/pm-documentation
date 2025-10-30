@@ -1,3 +1,3 @@
 module.exports = {
-    "commonly-asked-questions" : "Commonly asked Questions"
+    "commonly-asked-questions" : "Commonly Asked Questions"
 }
