@@ -1,0 +1,23 @@
+## Commonly Asked Questions
+> What happens if two packages depend on the same package?
+
+Forest PM uses a technique called "dependency de-duplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
+
+> What if two packages depend on different versions of the same package?
+
+In cases where two packages depend on different versions of the same package, Forest PM will install both versions in separate folders within the `packages` directory. 
+
+This allows each package to use the version it was designed to work with, preventing compatibility issues. However, this can lead to increased disk space usage, so it's generally recommended to use packages that depend on compatible versions of shared dependencies whenever possible.
+
+> What happens if I install 2 packages with the same name?
+
+If you attempt to install two packages with the same name but from different authors or sources, Forest PM will treat them as separate entities based on their full package identifiers (which typically include the author's namespace).
+
+This means you can have `@user1/package` and `@user2/package` installed simultaneously without conflict, as they are considered distinct packages.
+
+Importing those packages will require using their full names to avoid ambiguity:
+
+```lua
+local Package1 = require("user1_package")
+local Package2 = require("user2_package")
+```
