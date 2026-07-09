@@ -1,30 +1,83 @@
-import { Steps } from 'nextra/components'
+import { Steps, Tabs, Callout } from 'nextra/components'
 
 # Installing the Forest CLI
 
-The Forest CLI is your entry point into the Forest PM ecosystem. It’s a lightweight tool that lets creators and teams manage packages and projects directly from the terminal.
-## Installation Steps
+The Forest CLI is your entry point into the Forest PM ecosystem. It's a lightweight tool that lets creators and teams manage packages and projects directly from the terminal.
 
-<Steps>
-### Download the installer
+## Quick install
 
-For your operating system, visit the [Forest CLI installation page](https://forest.dev/download) and download the installer.
+Run the command for your operating system in a terminal:
 
-Forest PM is not distributed via package managers or tool chain managers at this time.
+<Tabs items={['Windows', 'macOS / Linux']}>
+  <Tabs.Tab>
+    ```powershell
+    irm https://releases.forest.dev/install.ps1 | iex
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    curl -fsSL https://releases.forest.dev/install.sh | sh
+    ```
+  </Tabs.Tab>
+</Tabs>
 
-### Run the Installer
+The installer detects your platform, downloads the latest `forest` binary, **verifies its SHA-256 checksum** against the published release manifest, and adds it to your `PATH`. No admin rights are required — everything installs per-user:
 
-Follow the prompts in the installer to complete the installation. Forest CLI supports Windows, macOS, and Linux, unifying your Forest PM workflow across all operating systems.
+| OS | Install location |
+|---|---|
+| Windows | `%LOCALAPPDATA%\forest-cli\bin` |
+| macOS / Linux | `~/.local/bin` |
 
-### Verify Installation
+Prefer to inspect before running? Both scripts are plain text — open the URLs in your browser first.
 
-Open any terminal and run the following command to verify that the Forest CLI is installed correctly:
+## Verify the installation
+
+Open a **new** terminal (so the `PATH` change takes effect) and run:
 
 ```bash
 forest --version
 ```
 
-If installed correctly, you should see the version number of the Forest CLI printed in the terminal.
+If installed correctly, you'll see the Forest CLI version number.
 
+## Options
 
-</Steps>
+<Tabs items={['Windows', 'macOS / Linux']}>
+  <Tabs.Tab>
+    Download the script first to pass options:
+
+    ```powershell
+    # Pin a specific version
+    .\install.ps1 -Version v0.1.0
+
+    # Uninstall
+    .\install.ps1 -Uninstall
+    ```
+
+    Environment overrides: `FOREST_INSTALL_DIR` (install location), `FOREST_INSTALL_BASE` (download mirror).
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    # Pin a specific version
+    curl -fsSL https://releases.forest.dev/install.sh | FOREST_VERSION=v0.1.0 sh
+
+    # Custom install directory
+    curl -fsSL https://releases.forest.dev/install.sh | FOREST_INSTALL_DIR=~/bin sh
+
+    # Uninstall (download first, then run with the flag)
+    sh install.sh --uninstall
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Supported platforms
+
+| Platform | Architecture |
+|---|---|
+| Windows | x64 (ARM64 runs the x64 build under emulation) |
+| macOS | Apple Silicon & Intel |
+| Linux | x64 |
+
+<Callout type="info">
+  Forest PM is not distributed via package managers or toolchain managers at this time.
+</Callout>

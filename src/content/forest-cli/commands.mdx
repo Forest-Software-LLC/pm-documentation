@@ -18,37 +18,35 @@ Created forest.json
 ```
 
 ### `forest install <package-name>`
-Installs a package from Forest PM. Downloads the package and its dependencies into your project’s packages directory.
+Installs a package from Forest PM. Downloads the package and its dependencies into your project's packages directory.
 
-Alias: `forest i <package-name>`
+Options: `-v/--version` to install a specific version, `-a/--alias` to install under an alias. Run without a package name to install everything in your `forest.json`.
 
-### `forest uninstall <package-name>`
+Aliases: `forest i`, `forest grow`
 
-Uninstalls a package from your project. Removes the package and its dependencies from your project’s `packages` directory.
+### `forest remove <package-name>`
 
-Alias: `forest remove <package-name>`
+Removes a package from your project and updates your `forest.json`.
+
+Alias: `forest chop <package-name>`
 
 ### `forest publish`
 
 Publishes your package to Forest PM. Uploads the package and its metadata to the Forest PM registry, making it available for others to install.
 
 ### `forest login`
-Logs in to your Forest PM account. Prompts for username and password, then stores your authentication token locally.
+Logs in to your Forest PM account. Two ways to authenticate:
 
-The Forest CLI supports two-factor authentication (2FA). If enabled, you’ll be prompted for a 2FA code after entering your credentials.
+- **Browser (recommended)** — opens forest.dev in your browser; approve the request there and the CLI picks up your session automatically.
+- **Username/Password** — prompts in the terminal. All Forest accounts use two-factor authentication, so you'll be asked for a code from your authenticator app (or a backup code) after your credentials.
 
 ```bash
 forest login
 
+? How would you like to log in? Username/Password
 > Username: your-username
 > Password: ********
-> 2FA Code: 123456
-Logged in as your-username
+ℹ️ Two-factor authentication required
+> Authenticator code (or backup code): 123456
+🌳 Logged in as your-username
 ```
-
-### `forest logout`
-Logs out of your Forest PM account and removes the local authentication token.
-
-### `forest whoami`
-
-Displays the currently logged-in user for the active Forest PM account.
