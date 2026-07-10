@@ -17,6 +17,12 @@ forest init
 Created forest.json
 ```
 
+Pass `-p`/`--platform` to skip the interactive picker (handy for scripts and CI):
+
+```bash
+forest init --platform roblox   # or: --platform uefn
+```
+
 ### `forest install <package-name>`
 Installs a package from Forest PM. Downloads the package and its dependencies into your project's packages directory.
 
@@ -50,3 +56,19 @@ forest login
 > Authenticator code (or backup code): 123456
 🌳 Logged in as your-username
 ```
+
+### `forest update`
+
+Updates the Forest CLI to the latest release. It downloads the correct binary for your platform, verifies its SHA-256 checksum against the published release manifest, and replaces the running executable in place — no reinstall needed.
+
+Pass `--check` to only report whether an update is available without installing it.
+
+Alias: `forest upgrade`
+
+```bash
+forest update
+
+🌳 Updated forest v0.0.4 -> v0.0.5 🌲
+```
+
+Forest also shows a one-line notice when a newer version is available. That check runs at most once a day and is skipped in CI and non-interactive shells (or set `FOREST_NO_UPDATE_CHECK=1` to disable it entirely).
