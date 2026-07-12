@@ -2,6 +2,11 @@ module.exports = {
     "intro" : "Package Introduction",
     "usage" : "Using Packages",
     "create" : "Creating Packages",
+    "anatomy" : "Package Anatomy",
+    "manifest" : "forest.json Reference",
+    "dependencies" : "Dependencies & Versioning",
+    "private-packages" : "Private Packages",
+    "server-client" : "Recipe: Server & Client APIs",
 }
 
 /*

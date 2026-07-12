@@ -30,7 +30,9 @@ Let's say we want to create a package that provides a simple "Hello World" funct
 
 ### Create an `init.lua` file that contains our code
 
-<Callout type="info">Your `init` file can be located anywhere within the first 2 levels of your package directory. Such as `my-package/init.lua` or `my-package/src/init.lua`</Callout>
+The `init` file is your package's **root module** — its single entry point. Whatever this module returns is your package's entire public API; there is no way to expose multiple top-level modules. See [Package Anatomy](/packages/anatomy) for the full rules, and [Recipe: Server & Client APIs](/packages/server-client) if your library needs more than one surface.
+
+<Callout type="info">Your `init` file can be located anywhere within the first 2 levels of your package directory. Such as `my-package/init.lua` or `my-package/src/init.lua`. You can also point the `root` field of `forest.json` at any module file — it doesn't have to be named `init`.</Callout>
 
 ```lua
 local function Speak()
@@ -48,7 +50,7 @@ forest init
 
 After selecting the appropriate options, this will create a `forest.json` file in our package directory.
 
-This file contains metadata about our package, such as its name, version, and description. In most cases, you won't need to manually edit this file.
+This file contains metadata about our package, such as its name, version, and description. In most cases, you won't need to manually edit this file — see the complete [`forest.json` field reference](/packages/manifest) for every field, its type, and an example manifest.
 
 ### Publish to Forest Package Manager
 
@@ -59,7 +61,7 @@ forest publish
 This command will upload our package to Forest PM, making it available for others to install and use.
 If this is your first time publishing a package, you'll be prompted to log in to your Forest PM account.
 
-The CLI will ask you a few questions about your package, such as its visibility (public or private), name, description, version and License type.
+The CLI will ask you a few questions about your package, such as its visibility (public or [private](/packages/private-packages)), name, description, version and License type. Visibility is permanent — every later version inherits what you choose here.
 </ Steps>
 
 ### Uploading a package with Dependencies
@@ -71,7 +73,7 @@ For example, if our package relies on a package called `@forest/utils`, we can i
 forest i @forest/utils
 ```
 
-Then, when we publish our package, the Forest CLI will automatically detect the dependency and include it in the `forest.json` file.
+Installing writes the dependency into your `forest.json` (as a `^` version range), and `forest publish` uploads that dependency list as-is — the CLI does **not** scan your source for `require` calls, so a dependency exists exactly when it's listed in `forest.json`. See [Dependencies & Versioning](/packages/dependencies) for range syntax and resolution rules.
 
 When someone installs your package, Forest PM will automatically install any of its dependencies. 
 
@@ -89,4 +91,4 @@ To update your package, simply make changes to your code, then run the `forest p
 
 The CLI will automatically increment the version number based on the changes you made (major, minor, or patch), and upload the new version to Forest PM.
 
-For more information about how Forest PM handles versioning, see the [SemVer](https://semver.org/) guidelines.
+For more information about how Forest PM handles versioning — including the range syntax consumers use to depend on your package — see [Dependencies & Versioning](/packages/dependencies) and the [SemVer](https://semver.org/) guidelines.

@@ -2,6 +2,7 @@ module.exports = {
     "index" : "Introduction",
     "packages" : "Packages",
     "forest-cli" : "Forest CLI",
+    "studios" : "Studios",
     "legal" : "Legal",
     "faq" : "FAQ"
 }

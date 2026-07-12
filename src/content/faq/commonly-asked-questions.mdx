@@ -15,9 +15,24 @@ If you attempt to install two packages with the same name but from different aut
 
 This means you can have `@user1/package` and `@user2/package` installed simultaneously without conflict, as they are considered distinct packages.
 
-Importing those packages will require using their full names to avoid ambiguity:
+Since both would default to the same folder name, install the second one under an alias:
+
+```bash
+forest i @user1/package
+forest i @user2/package -a package2
+```
+
+Then require each by its folder name:
 
 ```lua
-local Package1 = require("user1_package")
-local Package2 = require("user2_package")
+local Package1 = require(Packages.package)
+local Package2 = require(Packages.package2)
 ```
+
+> Are private packages hidden from my game's players?
+
+No — and that's a common misunderstanding worth being precise about. Private controls **who can download the package from the registry** (other developers can't see or install it). It does not control runtime visibility: if the consuming game mounts its packages tree under ReplicatedStorage, the private package's code replicates to clients like anything else there. To keep server-only packages off clients, mount them in a server-only location using the [two-manifest pattern](/packages/usage#server-only-packages-the-two-manifest-pattern). See [Private Packages](/packages/private-packages).
+
+> Are circular dependencies allowed?
+
+They aren't rejected at publish or install time, and installation handles them without issue — but because you can only depend on already-published versions, a cycle can only be formed retroactively across versions, and it's almost always a sign that two packages should be one. See [Dependencies & Versioning](/packages/dependencies#circular-dependencies).

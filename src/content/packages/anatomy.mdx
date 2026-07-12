@@ -1,0 +1,89 @@
+import { FileTree } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# Package Anatomy
+
+This page describes what a Forest package *is*: its entry point, its file layout, and what actually ends up in the published archive.
+
+## The entry point rule
+
+**Every package has exactly one entry point: its root module. Whatever that module returns is the package's entire public API.**
+
+There is no way to expose multiple top-level modules from one package. If your library has several surfaces (a server API and a client API, utilities plus a main class, etc.), the root module must return all of them — typically as a table:
+
+```lua
+-- init.luau
+return {
+    Server = require(script.Server),
+    Client = require(script.Client),
+}
+```
+
+or by branching on context at require time:
+
+```lua
+-- init.luau
+local RunService = game:GetService("RunService")
+
+if RunService:IsServer() then
+    return require(script.Server)
+else
+    return require(script.Client)
+end
+```
+
+See [Recipe: Server & Client APIs](/packages/server-client) for a full walkthrough of this pattern.
+
+## The root module
+
+When you run `forest publish`, the CLI resolves your package's root module in this order:
+
+1. The `root` field in `forest.json`, if set (a relative path like `src/init.luau`).
+2. An `init.luau` or `init.lua` at the top level of your package directory.
+3. An `init.luau` or `init.lua` one directory deep (e.g. `src/init.luau`).
+4. If none is found, the CLI prompts you for the path and records it as `root` in `forest.json`.
+
+<Callout type="info">
+The root file does **not** have to be named `init`. You can declare any module file as the root (e.g. `root: "src/MyLibrary.luau"`). On install, Forest renames it to `init.luau`/`init.lua` so the installed package folder is always directly requirable in Roblox.
+</Callout>
+
+## What gets published
+
+The published archive is re-rooted at the **directory containing the root module**. Everything in that directory — the root file, its sibling modules, and nested folders — becomes the installed package. Your top-level `LICENSE` file is included alongside it.
+
+<FileTree>
+  <FileTree.Folder name="my-package (your repo)" defaultOpen>
+    <FileTree.File name="forest.json" />
+    <FileTree.File name="README.md" />
+    <FileTree.File name="LICENSE" />
+    <FileTree.Folder name="src" defaultOpen>
+      <FileTree.File name="init.luau" />
+      <FileTree.File name="Helper.luau" />
+      <FileTree.Folder name="Internal" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+installs for a consumer as:
+
+<FileTree>
+  <FileTree.Folder name="packages/my-package" defaultOpen>
+    <FileTree.File name="init.luau" />
+    <FileTree.File name="Helper.luau" />
+    <FileTree.Folder name="Internal" />
+    <FileTree.File name="LICENSE" />
+  </FileTree.Folder>
+</FileTree>
+
+Rules applied when the archive is built:
+
+- Files matched by `.gitignore` and `.forestignore` are excluded (`.forestignore` patterns win).
+- Dotfiles and dot-directories (`.git`, `.DS_Store`, ...) are always excluded.
+- A `README.md` is **required for public packages** (shown on the package page).
+- A `LICENSE` file is required; the CLI detects its SPDX type and records it in `forest.json`. See [Creating Packages](/packages/create).
+- Packages are capped at **10 MB**.
+- Rojo project files (`default.project.json`) are not used by Forest — the `root` field, not a Rojo tree, defines the package.
+
+## Sibling modules are reachable, not private
+
+Everything inside the package folder ships to consumers. Modules that aren't re-exported by the root are *conventionally* internal — but they still exist as instances in the consumer's datamodel and their source is visible wherever the packages tree is mounted (see [Using Packages](/packages/usage#where-packages-live)). Don't put secrets in a package, and don't rely on "not exported" as a security boundary.
