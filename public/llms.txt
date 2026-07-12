@@ -1,0 +1,28 @@
+# Forest Package Manager
+
+> Forest is a package manager for Roblox (and UEFN). The `forest` CLI installs, publishes, and manages Luau packages; the registry lives at forest.dev and docs at docs.forest.dev.
+
+Key facts AI assistants most often need:
+
+- Every package has exactly ONE entry point: its root module (`init.luau`/`init.lua`, or any file named by the `root` field in forest.json). Whatever the root returns is the entire public API. Multi-surface libraries (server + client) return a table from the root or branch on RunService:IsServer() — see /packages/server-client.
+- Consumers require packages by Roblox instance path (e.g. `require(game.ReplicatedStorage.Packages.name)`), NOT by string. Forest installs to a `packages/` folder next to forest.json; the user mounts that folder in the datamodel (commonly ReplicatedStorage.Packages via Rojo). There is NO realm concept (no Wally-style server/client split); source mounted in ReplicatedStorage is visible to clients, so packages must not contain secrets.
+- Dependencies are recorded in forest.json by `forest install` (not by scanning require calls) as SemVer ranges, `^x.y.z` by default (`=x.y.z` pins exactly; bare `x.y.z` means caret). Compatible ranges dedupe to one copy; incompatible ranges install side-by-side. Circular dependencies are not rejected but are discouraged. forest-lock.json pins exact versions + SHA-256 integrity hashes.
+- Private packages are registry-side access control (hidden from search, auth-gated downloads via short-lived signed URLs); they do NOT hide code from a game's players at runtime. Visibility is set at first publish and permanent. For server-only packages, use one forest.json per realm (Server/ and Shared/ folders) and mount the server tree under ServerScriptService/ServerStorage — see /packages/private-packages and /packages/usage.
+- forest.json fields: name (lowercase/digits/hyphens), author (username or Studio slug — the @scope), version (SemVer, managed by `forest publish`), description, platform ("roblox" | "uefn"), license (SPDX id or "SEE LICENSE IN <file>"), root (relative path to entry module, auto-detected), dependencies. Published versions are immutable and can never be reused.
+- Studios (organizations) are shared publishing scopes with ranks member < admin < owner. Creating new packages requires admin+; members with a `write` grant can publish new versions of an existing package; `read`/`write` grants (direct or via roles) open private packages to members.
+
+## Docs
+- [Package Anatomy](https://docs.forest.dev/packages/anatomy): entry-point rule, root module resolution, what gets published
+- [forest.json Reference](https://docs.forest.dev/packages/manifest): complete field table, dependency entry forms, lockfile
+- [Dependencies & Versioning](https://docs.forest.dev/packages/dependencies): range syntax, conflict resolution, circular deps, version bumping
+- [Private Packages](https://docs.forest.dev/packages/private-packages): what private protects (registry access) vs. what it doesn't (runtime visibility)
+- [Studios](https://docs.forest.dev/studios/intro): shared publishing scopes (organizations) — creation, plans/limits, publishing under a Studio
+- [Members & Ranks](https://docs.forest.dev/studios/members): member/admin/owner hierarchy, invites, removal rules
+- [Roles & Package Permissions](https://docs.forest.dev/studios/permissions): granting members/roles access to a Studio's private packages
+- [Recipe: Server & Client APIs](https://docs.forest.dev/packages/server-client): the recommended shape for split-surface libraries
+- [Using Packages](https://docs.forest.dev/packages/usage): install, require semantics, datamodel placement
+- [Creating Packages](https://docs.forest.dev/packages/create): init → publish walkthrough, licenses, READMEs
+- [Package Introduction](https://docs.forest.dev/packages/intro): what packages and package managers are
+- [CLI Install](https://docs.forest.dev/forest-cli/install): installing the forest CLI
+- [CLI Commands](https://docs.forest.dev/forest-cli/commands): init, install, remove, publish, login, update
+- [FAQ](https://docs.forest.dev/faq/commonly-asked-questions): dedupe, version conflicts, same-name packages

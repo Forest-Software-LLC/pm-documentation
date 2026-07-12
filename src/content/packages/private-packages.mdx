@@ -1,0 +1,46 @@
+import { Callout } from 'nextra/components'
+
+# Private Packages
+
+Forest packages are **public** or **private**. This page explains what private actually protects, who can access a private package, and what "private" does *not* mean.
+
+## What "private" protects
+
+Private packages are **access control at the registry**. A private package:
+
+- Never appears in search or on public package pages — other developers can't browse it, install it, or see that it exists.
+- Is stored behind an authenticated gate: downloads require a logged-in Forest account with access, and the CDN only serves private tarballs through short-lived signed URLs that expire in minutes. Signed URLs are never written to your lockfile — only the package's integrity hash is, and the CLI requests a fresh URL (and re-verifies the hash) on every install.
+
+This is the right tool when the audience you're excluding is **other developers**: a studio's internal framework shared across its games, pre-release libraries, commissioned work you don't want redistributed.
+
+## What "private" does NOT protect
+
+<Callout type="warning">
+Private controls **who can download your package from the registry** — it says nothing about **who can see the code at runtime**. Once a game installs your private package and mounts its packages tree under ReplicatedStorage, that package's code replicates to every player of that game like any other client-visible instance, and exploiters can dump it (as decompiled output, but the logic is intact).
+</Callout>
+
+In other words: private keeps your code away from *other developers*, not away from *your own game's players*. If a private package contains genuinely sensitive server logic, the consuming game should keep it out of replicated locations — see [Server-only packages](/packages/usage#server-only-packages-the-two-manifest-pattern) for the recommended project structure.
+
+## Who can access a private package
+
+For a package owned by **you** (published under your username): only you.
+
+For a package owned by a **Studio** (organization), access is granted to:
+
+- Studio **owners** and **admins** — always.
+- Any member or role that has been granted access to that specific package — see [Roles & Package Permissions](/studios/permissions) for how grants work.
+
+Access applies to the whole package — every version, including the ability to fetch its info and tarball during `forest install`. A private package in your dependency tree means everyone who runs `forest install` on that project needs an account with access.
+
+## Choosing visibility
+
+Visibility is chosen **when the package is first published** (`forest publish` asks "What visibility should this package have?"). Every later version inherits it — the CLI reads the current visibility from the registry and reuses it, and visibility cannot currently be changed after creation. If you need to take a private package public (or vice versa), publish it under a new name.
+
+Differences in the publish flow:
+
+| | Public | Private |
+|---|---|---|
+| `README.md` | Required | Recommended, not required |
+| `LICENSE` file / SPDX identifier | Required | Required |
+| Visible in search / package pages | Yes | Only to accounts with access |
+| Tarball delivery | Content-addressed public CDN | Short-lived signed URLs, auth required |
