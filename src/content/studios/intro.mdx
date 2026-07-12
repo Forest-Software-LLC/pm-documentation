@@ -1,0 +1,44 @@
+import { Callout } from 'nextra/components'
+
+# Studios
+
+A **Studio** (organization) is a shared account that owns packages collectively — the right structure for a team, a game studio, or any group that publishes and maintains packages together. Studios live at `forest.dev/o/<studio-name>` and act as a publishing scope: packages are published as `@studio-name/package` instead of under any one person's username.
+
+## Why publish under a Studio?
+
+- **Ownership survives people.** Packages belong to the Studio, not to whoever happened to publish them. Members can come and go without orphaning anything.
+- **Team access control.** [Ranks](/studios/members), [roles, and per-package permissions](/studios/permissions) control who can see private packages and who can manage the Studio.
+- **Private package sharing.** A [private package](/packages/private-packages) owned by a Studio is installable by exactly the members you grant access to — the main way teams share internal code.
+
+## Creating a Studio
+
+Create one at [forest.dev](https://forest.dev) (Create → Studio). You become its **owner**. The name you enter becomes the display name, and a kebab-case slug is derived from it — that slug is the Studio's `@scope` for packages and its URL, and it must be unique across all Forest users and Studios.
+
+## Publishing under a Studio
+
+When you run `forest publish`, the CLI asks who the author is and lists yourself plus every Studio where you're an **admin or owner**. Picking a Studio sets `author` in `forest.json` to the Studio's slug, and the package is created as `@studio/name`, owned by the Studio.
+
+Publishing a **new** package under a Studio requires the **admin or owner rank**. Members can publish new versions of an **existing** package if they hold a `write` [permission grant](/studios/permissions) on it.
+
+## The Studio page
+
+The Studio page (`forest.dev/o/<studio-name>`) shows the Studio's profile (description, website, contact email), its members, and its packages:
+
+- **Everyone** sees public packages and active members.
+- **Members** additionally see the private packages they hold a [permission grant](/studios/permissions) for.
+- **Admins and owners** see all private packages, pending invites, and the settings pages (details, members, roles, billing).
+
+## Verified Studios
+
+Studios can carry a **verified** badge, shown on the Studio page and next to the Studio's packages, indicating Forest has confirmed the Studio's authenticity.
+
+## Plans and limits
+
+- **Free Studios** are limited to **3 members** (including the owner) and share one "new package every 12 hours" cooldown across all their publishers (publishing new *versions* of existing packages is never rate-limited).
+- **Pro Studios** are billed per seat and lift both limits.
+
+<Callout type="warning">
+A Studio that ends up over the free member limit (for example, after a subscription lapses) is **frozen**: publishing is paused until you upgrade or remove members down to the limit. Nothing is deleted — existing packages stay installable.
+</Callout>
+
+Billing (subscription status, seats, and the Stripe billing portal) is managed by admins and owners from the Studio's settings page.

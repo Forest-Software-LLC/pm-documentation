@@ -1,0 +1,39 @@
+import { Callout } from 'nextra/components'
+
+# Members & Ranks
+
+Every Studio member has exactly one **rank**. Ranks form a strict hierarchy and control Studio-wide abilities; for per-package access control, see [Roles & Package Permissions](/studios/permissions).
+
+## The three ranks
+
+| Ability | Member | Admin | Owner |
+|---|---|---|---|
+| See public packages & active members | ✓ | ✓ | ✓ |
+| Access private packages | via [grants](/studios/permissions) | ✓ (all) | ✓ (all) |
+| Publish new versions of existing packages | via `write` [grants](/studios/permissions) | ✓ | ✓ |
+| Create new packages under the Studio | — | ✓ | ✓ |
+| Invite members | — | ✓ | ✓ |
+| See pending invites & member permissions | — | ✓ | ✓ |
+| Manage roles & package permissions | — | ✓ | ✓ |
+| Edit Studio details / manage billing | — | ✓ | ✓ |
+| Remove members | — | ✓ (members only) | ✓ (admins & members) |
+| Change member ranks | — | — | ✓ |
+
+Two structural rules to know:
+
+- **You can only remove someone you outrank.** Admins can remove members but not other admins; owners can remove anyone below owner. Managing someone's roles/permissions requires equal or higher rank.
+- **Only owners change ranks, and never their own.** Promoting to admin, demoting, or adding another owner is owner-only. A Studio can have multiple owners.
+
+## Invites
+
+Admins and owners invite by Forest username (multiple at once). Each invitee:
+
+1. Gets an invite email with a link to the Studio page, and the invite is also visible when they visit `forest.dev/o/<studio-name>` while logged in — it works even if the email never arrives.
+2. Joins as a **member** (rank can be raised by an owner afterwards) when they accept. Until then the invite is pending and only visible to admins/owners.
+3. Can decline, and members can leave a Studio at any time.
+
+Free Studios can't have more than 3 members — invites beyond the limit are rejected until the Studio [upgrades](/studios/intro#plans-and-limits).
+
+<Callout type="info">
+**A Studio always has at least one owner.** The last remaining owner cannot leave or remove themselves — promote another owner first.
+</Callout>
