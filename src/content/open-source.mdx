@@ -1,0 +1,25 @@
+# Open Source
+
+Every piece of the pipeline that touches package bytes is open source. From `forest publish` on your machine to `forest install` on someone else's, the code doing the validating, hashing, storing, and serving is public — anyone can read it, build it, and test it.
+
+## The pipeline
+
+| Repository | Role |
+|---|---|
+| [forest-cli](https://github.com/Forest-Software-LLC/forest-cli) | The `forest` command-line tool. Packs and publishes packages, resolves dependencies, and **verifies the SHA-256 integrity of every downloaded tarball on your machine** against the value pinned in `forest-lock.json`. |
+| [forest-trust-gateway](https://github.com/Forest-Software-LLC/forest-trust-gateway) | The service at `packages.forest.dev` that handles publish and download. Archive safety checks, content hashing, and the publish/access authorization rules all run here, in public code. |
+| [forest-cdn-worker](https://github.com/Forest-Software-LLC/forest-cdn-worker) | The Cloudflare Worker in front of the package CDN. Serves public tarballs directly and verifies short-lived HMAC-signed URLs for private ones. |
+
+## What this gets you
+
+- **Content-addressed integrity, enforced client-side.** A package tarball's SHA-256 is its storage key, its download URL, and the `integrity` value in your lockfile. The CLI recomputes the hash of every tarball it downloads and refuses to install on a mismatch — so swapped bytes fail on *your* machine, regardless of what happens server-side.
+- **What's deployed is what's in the repo.** The gateway deploys exclusively from its public repository's `main` branch through GitHub Actions, with public build logs and signed [build-provenance attestations](https://github.com/Forest-Software-LLC/forest-trust-gateway/blob/main/SECURITY.md) binding each deployed container image to a specific commit.
+- **The rules are testable offline.** Clone the gateway and run `npm ci && npm test` — the full suite (archive safety, hashing, publish/access policy, URL signing) runs against a mocked backend with no accounts or credentials.
+
+## What isn't open source
+
+The registry backend — accounts, studios, billing, search — remains closed. By design it never has custody of package contents: file bytes go from your machine to the gateway to storage, and the backend only answers narrow factual questions (documented in the gateway's [`internalApiClient.ts`](https://github.com/Forest-Software-LLC/forest-trust-gateway/blob/main/src/internalApiClient.ts)).
+
+For the precise security claims and step-by-step instructions to verify each one yourself, see the gateway's [SECURITY.md](https://github.com/Forest-Software-LLC/forest-trust-gateway/blob/main/SECURITY.md).
+
+Issues and pull requests are welcome on all three repositories.
