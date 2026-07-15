@@ -1,5 +1,5 @@
 # Privacy Policy
-**Effective Date:** 9/30/2025
+**Effective Date:** 7/14/2026
 
 Forest Software, LLC ("Forest Software", "we", "our", or "us") values your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our developer tools, including the Forest Software CLI and any future components such as the Forest Software Studio Plugin (collectively, the “Services”).
 
@@ -9,10 +9,10 @@ By using the Services, you agree to the terms of this Privacy Policy.
 We may collect the following categories of information:
 
 - **Account Information**: email, username, hashed password.
-- **Authentication Data**: OAuth tokens or API keys (encrypted at rest).
-- **Usage Data**: anonymized analytics, package metadata (names, descriptions, README files), and logs of CLI/Service activity.
+- **Authentication Data**: session tokens (refresh tokens are stored only as hashes) and identifiers for third-party accounts you link (e.g., your Discord user ID). OAuth access tokens from linked accounts are used only during the linking flow and are not retained.
+- **Usage Data**: aggregate usage metrics, package metadata (names, descriptions, README files), and logs of CLI/Service activity.
 - **Organization Data**: private audit logs tied to your organization’s account.
-- **Payment Information**: billing details processed securely by third-party payment providers (e.g., Stripe, PayPal). We do not store full credit card numbers.
+- **Payment Information**: billing details processed securely by third-party payment providers (e.g., Stripe). We do not store full credit card numbers.
 - **Content Data**: code, packages, or assets you upload to share.
 
 ## How We Use Information
@@ -21,7 +21,7 @@ We use collected information to:
 - Provide, operate, and improve the Services.
 - Authenticate users and secure accounts.
 - Process payments for subscriptions and purchases.
-- Improve discovery and recommendations (e.g., AI analysis of public package metadata).
+- Improve discovery and recommendations (e.g., AI analysis of public package content such as READMEs and license text; private package content is never sent to AI providers).
 - Maintain organizational audit logs.
 - Detect, prevent, and respond to abuse or legal obligations (e.g., DMCA requests).
 
@@ -30,7 +30,7 @@ We do not sell personal information.
 
 We may share limited data with:
 
-- **Vendors/Service Providers**: such as hosting (e.g., AWS), payment processors (e.g., Stripe), analytics providers, and AI providers (e.g., OpenAI for metadata processing of public packages).
+- **Vendors/Service Providers**: such as hosting and infrastructure (e.g., Cloudflare, MongoDB Atlas), payment processors (e.g., Stripe), email delivery (e.g., Postmark), and AI providers (e.g., OpenAI, which processes public package content only — never private package content).
 - **Legal/Compliance**: if required by law, court order, or to respond to copyright infringement notices.
 - **Business Transfers**: if Forest Software is involved in a merger, acquisition, or sale of assets.
 
@@ -38,8 +38,9 @@ We may share limited data with:
 We implement reasonable technical and organizational measures to protect information, including:
 
 - Encryption in transit (TLS).
-- Encryption at rest for sensitive data such as OAuth tokens.
+- Encryption at rest for sensitive data such as two-factor authentication secrets.
 - Industry-standard password hashing for account credentials.
+- Session refresh tokens are stored only as hashes; OAuth access tokens from linked accounts are not retained.
 
 No system is perfectly secure, and we cannot guarantee absolute protection.
 
