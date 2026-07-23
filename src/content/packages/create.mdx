@@ -78,9 +78,8 @@ Installing writes the dependency into your `forest.json` (as a `^` version range
 When someone installs your package, Forest PM will automatically install any of its dependencies. 
 
 <Callout type="warning">
-  Packages with dependencies will always have their `/package` folder at the same level as the `init` file.
-  For example, if your `init` file is located at `my-package/src/init.lua`, your dependencies will be installed to `my-package/src/packages/`.
-  This ensures your package can always find its dependencies, regardless of project structure
+  When a consumer installs your package, its dependencies are placed in a `Packages` folder **inside your installed package, at the same level as its `init` file** — so your package always finds its dependencies with the same relative requires, regardless of the consumer's project structure.
+  (In your own project while developing, `forest i` installs into the `Packages/` folder next to your `forest.json`, like any project.)
 
   For Rojo users, `default.project.json` will be ignored.
 </Callout>

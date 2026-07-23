@@ -1,0 +1,34 @@
+import { Callout } from 'nextra/components'
+
+# Mirrored Packages
+
+Some packages on Forest carry a **Mirrored** badge. These are packages imported from [Wally](https://wally.run), the community package manager Forest succeeds — brought over so the ecosystem's existing open-source libraries are installable from day one.
+
+## What "Mirrored" means
+
+- **The source is unmodified.** A mirrored version contains the exact files its author published to Wally.
+- **Only open-source packages are mirrored.** A version is imported only when it declares — or ships in its archive — a recognized open-source license, and it gets the same [license safety rating](/packages/create) as any other package. Each version's license notes state exactly where its license came from.
+- **The scope is reserved, not owned.** Mirrored packages have no Forest account behind them yet — the author's scope name is held in reserve so nobody else can register it. That's why the byline isn't a profile link.
+- **The mirror stays current.** New Wally releases of a mirrored package appear on Forest automatically, and packages removed upstream are removed here too.
+
+## Using a mirrored package
+
+Install it like any other package:
+
+```bash
+forest i evaera/promise
+```
+
+Dependencies, version ranges, the lockfile, and integrity checks all behave exactly as they do for native Forest packages.
+
+<Callout type="info">
+  Mirrored packages that have dependencies include a few small generated `.lua` link files alongside the original source. Wally arranged installed packages differently on disk, so these links let the package's internal requires resolve inside Forest's `Packages` layout. They're part of the published archive and covered by the same integrity hash as everything else.
+</Callout>
+
+## Server-realm packages from Wally
+
+Wally had a "realm" concept (separate server and shared dependency lists); Forest deliberately does not — there is one `Packages` tree and *you* decide where it mounts. If a mirrored package was server-realm on Wally (anti-cheat, server frameworks), install it from a server-side manifest using the [two-manifest pattern](/packages/usage#server-only-packages-the-two-manifest-pattern) so it never replicates to clients.
+
+## Claiming your scope
+
+If you published these packages on Wally, the scope is being held for you. A claim flow — verifying you through the same GitHub identity that owned the Wally scope — is planned; once claimed, the packages become yours to manage like any other Forest packages. Until then, reach out through [forest.dev](https://forest.dev) if you need something changed or taken down.

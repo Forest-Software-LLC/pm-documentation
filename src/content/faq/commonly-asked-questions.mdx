@@ -5,7 +5,7 @@ Forest PM uses a technique called "dependency de-duplication" to ensure that if 
 
 > What if two packages depend on different versions of the same package?
 
-In cases where two packages depend on different versions of the same package, Forest PM will install both versions in separate folders within the `packages` directory. 
+In cases where two packages depend on different versions of the same package, Forest PM will install both versions in separate folders within the `Packages` directory. 
 
 This allows each package to use the version it was designed to work with, preventing compatibility issues. However, this can lead to increased disk space usage, so it's generally recommended to use packages that depend on compatible versions of shared dependencies whenever possible.
 
@@ -36,3 +36,7 @@ No — and that's a common misunderstanding worth being precise about. Private c
 > Are circular dependencies allowed?
 
 They aren't rejected at publish or install time, and installation handles them without issue — but because you can only depend on already-published versions, a cycle can only be formed retroactively across versions, and it's almost always a sign that two packages should be one. See [Dependencies & Versioning](/packages/dependencies#circular-dependencies).
+
+> What does the "Mirrored" badge on a package mean?
+
+The package was imported from [Wally](https://wally.run), the community package manager Forest succeeds. The source is unmodified, only open-source-licensed versions are imported, and the author's scope is reserved for them to claim. Install and depend on it like any other package. See [Mirrored Packages](/packages/mirrored-packages).
