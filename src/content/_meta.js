@@ -5,6 +5,5 @@ module.exports = {
     "forest-cli" : "Forest CLI",
     "studios" : "Studios",
     "open-source" : "Open Source",
-    "legal" : "Legal",
     "faq" : "FAQ"
 }

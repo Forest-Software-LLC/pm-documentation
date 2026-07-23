@@ -21,8 +21,9 @@ src/content/
   studios/       intro, members, permissions
   open-source.mdx
   faq/           commonly-asked-questions
-  legal/         terms, privacy-policy, dmca
 ```
+
+Legal docs (terms, privacy, DMCA) live on the main site (forest-frontend, `/legal/*`); old `/legal/*` URLs here 308-redirect there via `redirects()` in [next.config.mjs](next.config.mjs).
 
 ## Commands
 ```bash
