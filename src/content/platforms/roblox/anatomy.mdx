@@ -3,13 +3,13 @@ import { Callout } from 'nextra/components'
 
 # Package Anatomy
 
-This page describes what a Forest package *is*: its entry point, its file layout, and what actually ends up in the published archive.
+This page describes what a Roblox Forest package *is*: its entry point, its file layout, and what actually ends up in the published archive.
 
 ## The entry point rule
 
 **Every package has exactly one entry point: its root module. Whatever that module returns is the package's entire public API.**
 
-There is no way to expose multiple top-level modules from one package. If your library has several surfaces (a server API and a client API, utilities plus a main class, etc.), the root module must return all of them — typically as a table:
+There is no way to expose multiple top-level modules from one package. If your library has several surfaces (a server API and a client API, utilities plus a main class, and so on), the root module must return all of them, typically as a table:
 
 ```lua
 -- init.luau
@@ -32,7 +32,7 @@ else
 end
 ```
 
-See [Recipe: Server & Client APIs](/packages/server-client) for a full walkthrough of this pattern.
+See [Recipe: Server & Client APIs](/platforms/roblox/server-client) for a full walkthrough of this pattern.
 
 ## The root module
 
@@ -49,7 +49,7 @@ The root file does **not** have to be named `init`. You can declare any module f
 
 ## What gets published
 
-The published archive is re-rooted at the **directory containing the root module**. Everything in that directory — the root file, its sibling modules, and nested folders — becomes the installed package. Your top-level `LICENSE` file is included alongside it.
+The published archive is re-rooted at the **directory containing the root module**. Everything in that directory (the root file, its sibling modules, and nested folders) becomes the installed package. Your top-level `LICENSE` file is included alongside it.
 
 <FileTree>
   <FileTree.Folder name="my-package (your repo)" defaultOpen>
@@ -78,12 +78,12 @@ installs for a consumer as:
 Rules applied when the archive is built:
 
 - Files matched by `.gitignore` and `.forestignore` are excluded (`.forestignore` patterns win).
-- Dotfiles and dot-directories (`.git`, `.DS_Store`, ...) are always excluded.
+- Dotfiles and dot-directories (`.git`, `.DS_Store`, and so on) are always excluded.
 - A `README.md` is **required for public packages** (shown on the package page).
-- A `LICENSE` file is required; the CLI detects its SPDX type and records it in `forest.json`. See [Creating Packages](/packages/create).
+- A `LICENSE` file is required; the CLI detects its SPDX type and records it in `forest.json`. See [Publishing a Package](/concepts/publishing).
 - Packages are capped at **10 MB**.
-- Rojo project files (`default.project.json`) are not used by Forest — the `root` field, not a Rojo tree, defines the package.
+- Rojo project files (`default.project.json`) are not used by Forest. The `root` field, not a Rojo tree, defines the package.
 
 ## Sibling modules are reachable, not private
 
-Everything inside the package folder ships to consumers. Modules that aren't re-exported by the root are *conventionally* internal — but they still exist as instances in the consumer's datamodel and their source is visible wherever the packages tree is mounted (see [Using Packages](/packages/usage#where-packages-live)). Don't put secrets in a package, and don't rely on "not exported" as a security boundary.
+Everything inside the package folder ships to consumers. Modules that aren't re-exported by the root are *conventionally* internal, but they still exist as instances in the consumer's datamodel and their source is visible wherever the packages tree is mounted (see [Where packages live](/platforms/roblox/installing#where-packages-live)). Don't put secrets in a package, and don't rely on "not exported" as a security boundary.

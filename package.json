@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next --turbopack -p 3003",
     "build": "next build",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start"
   },
   "repository": {
@@ -24,5 +25,8 @@
     "nextra-theme-docs": "^4.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
   }
 }

@@ -2,17 +2,17 @@ import { Callout } from 'nextra/components'
 
 # Roles & Package Permissions
 
-Ranks answer "who runs the Studio"; **package permissions** answer "who can use which private package." They exist so the `member` rank can be granted access to exactly the internal packages they need — nothing more.
+Ranks answer "who runs the Studio"; **package permissions** answer "who can use which private package." They exist so the `member` rank can be granted access to exactly the internal packages they need, nothing more.
 
 ## When you need this
 
-Only for **[private packages](/packages/private-packages) owned by the Studio**. Public packages are accessible to everyone by definition, and admins/owners always have access to all of the Studio's packages. Permissions exist to selectively open private packages to members.
+Only for **[private packages](/concepts/private-packages) owned by the Studio**. Public packages are accessible to everyone by definition, and admins/owners always have access to all of the Studio's packages. Permissions exist to selectively open private packages to members.
 
 ## Two ways to grant access
 
 **Directly to a member.** In the Studio's member settings, each member can be granted per-package permissions (`read` or `write`) on any of the Studio's packages.
 
-**Through a role.** A role is a named group — e.g. `engine-team`, `contractors` — with a description, a member list, and its own set of per-package permissions. Every member of the role gets the role's package access. Roles are the scalable option: grant the *role* access to the ten packages the engine team uses, then adding a new hire to one role replaces ten individual grants.
+**Through a role.** A role is a named group (for example `engine-team` or `contractors`) with a description, a member list, and its own set of per-package permissions. Every member of the role gets the role's package access. Roles are the scalable option: grant the *role* access to the ten packages the engine team uses, then adding a new hire to one role replaces ten individual grants.
 
 A member's effective access is the **union** of their direct grants and the grants of every role they're in. Members can hold any number of roles. Roles and permissions are managed by admins and owners from the Studio's settings.
 
@@ -21,7 +21,7 @@ A member's effective access is the **union** of their direct grants and the gran
 Holding a permission (direct or via a role) on a private package lets the member:
 
 - See it listed on the Studio page, and fetch its info and versions.
-- Install it with `forest i studio/package` (the registry issues them the short-lived signed download URLs — see [Private Packages](/packages/private-packages)).
+- Install it with `forest i studio/package` (the registry issues them the short-lived signed download URLs; see [Private Packages](/concepts/private-packages)).
 - Have it resolve as a transitive dependency of other packages they install.
 
 **`read` vs `write`:**
@@ -29,13 +29,13 @@ Holding a permission (direct or via a role) on a private package lets the member
 | | `read` | `write` |
 |---|---|---|
 | See & install the package | ✓ | ✓ |
-| Publish new versions of it | — | ✓ |
+| Publish new versions of it | ✗ | ✓ |
 
 <Callout type="info">
-`write` applies to **existing** packages only — creating a brand-new package under the Studio always requires the admin or owner rank, since a grant can't exist for a package that doesn't yet. Note that `write` on a *private* package also implies read-style install access.
+`write` applies to **existing** packages only. Creating a brand-new package under the Studio always requires the admin or owner rank, since a grant can't exist for a package that doesn't yet. Note that `write` on a *private* package also implies read-style install access.
 </Callout>
 
-## What revocation does — and doesn't do
+## What revocation does, and doesn't do
 
 Removing a grant (or removing someone from the Studio) immediately stops the registry from serving them the package: they can no longer fetch its info or download new copies, and `forest install` on a lockfile containing it will fail for them.
 

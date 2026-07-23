@@ -3,11 +3,11 @@ import { Callout } from 'nextra/components'
 
 # Recipe: Publishing a Library with Server and Client APIs
 
-One of the most common shapes for a Roblox library is "a server half and a client half that talk to each other" — networking wrappers, replication systems, data frameworks. This page shows the recommended way to ship that as a Forest package.
+One of the most common shapes for a Roblox library is "a server half and a client half that talk to each other": networking wrappers, replication systems, data frameworks. This page shows the recommended way to ship that as a Forest package.
 
 ## One package, one root
 
-Recall [the entry point rule](/packages/anatomy#the-entry-point-rule): a package has exactly one root module, and whatever it returns is the whole public API. Forest also has **no realm concept** — there are no separate server-only/client-only install targets ([details](/packages/usage#where-packages-live)). Both facts point at the same design:
+Recall [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule): a package has exactly one root module, and whatever it returns is the whole public API. Forest also has **no realm concept**, so there are no separate server-only/client-only install targets ([details](/platforms/roblox/installing#where-packages-live)). Both facts point at the same design:
 
 **Ship one package whose root exposes both surfaces, with shared code as an internal sibling.**
 
@@ -25,7 +25,7 @@ Recall [the entry point rule](/packages/anatomy#the-entry-point-rule): a package
   </FileTree.Folder>
 </FileTree>
 
-### Option A — explicit surfaces (recommended)
+### Option A: explicit surfaces (recommended)
 
 The root returns both halves; consumers pick the one that applies:
 
@@ -46,7 +46,7 @@ local MyLibrary = require(Packages.mylibrary).Server
 With this shape, requiring the root loads **both** modules' source on both sides. Keep `Server.luau` free of side effects at require time (connect signals in an `:Init()`/`:Start()` method, not at the top level), or use Option B.
 </Callout>
 
-### Option B — branch on context
+### Option B: branch on context
 
 The root decides which surface to return based on where it's running:
 
@@ -65,18 +65,18 @@ Consumers just `require(Packages.mylibrary)` and get the right API for their sid
 
 ### Shared code
 
-`Shared.luau` is not re-exported — `Server` and `Client` require it internally via `script.Parent.Shared`. Because packages are self-contained folders with **relative** requires, this works no matter where the consumer mounts the packages tree. Never reach outside your own package folder (e.g. a hardcoded `ReplicatedStorage.SharedModules` path) — that couples your library to one specific project layout and breaks everywhere else.
+`Shared.luau` is not re-exported. `Server` and `Client` require it internally via `script.Parent.Shared`. Because packages are self-contained folders with **relative** requires, this works no matter where the consumer mounts the packages tree. Never reach outside your own package folder (e.g. a hardcoded `ReplicatedStorage.SharedModules` path); that couples your library to one specific project layout and breaks everywhere else.
 
 ## Why not two packages (`mylibrary-server` + `mylibrary-client`)?
 
 You can, but you inherit three problems for zero benefit:
 
-1. **Lockstep versioning is manual.** Dependencies are [ranges by default](/packages/dependencies#version-ranges), so nothing forces a consumer's server half and client half to be the same version unless both you and they pin with `=`.
+1. **Lockstep versioning is manual.** Dependencies are [ranges by default](/concepts/dependencies#version-ranges), so nothing forces a consumer's server half and client half to be the same version unless both you and they pin with `=`.
 2. **Shared code needs a third package** (`mylibrary-shared`), and now a bugfix in shared code is a three-package release train.
-3. **It buys no isolation on its own.** Splitting the package doesn't keep server code off clients unless the *consumer* also installs the halves into separate realm-mounted trees (the [two-manifest pattern](/packages/usage#server-only-packages-the-two-manifest-pattern)) — and a consumer who does that can just as easily mount a single-package library server-side.
+3. **It buys no isolation on its own.** Splitting the package doesn't keep server code off clients unless the *consumer* also installs the halves into separate realm-mounted trees (the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern)), and a consumer who does that can just as easily mount a single-package library server-side.
 
 The single-package shape gives you atomic versioning, private shared internals, and one install command for your users.
 
 <Callout type="info">
-Remember: wherever the consumer mounts `Packages/` (commonly ReplicatedStorage), the **source of the whole package replicates there** — including your `Server` module's source, in most setups. Server-side secrets don't belong in package code.
+Remember: wherever the consumer mounts `Packages/` (commonly ReplicatedStorage), the **source of the whole package replicates there**, including your `Server` module's source in most setups. Server-side secrets don't belong in package code.
 </Callout>

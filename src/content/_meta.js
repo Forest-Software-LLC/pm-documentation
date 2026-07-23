@@ -1,19 +1,10 @@
 module.exports = {
     "index" : "Introduction",
-    "packages" : "Packages",
+    "concepts" : "Concepts",
+    "platforms" : "Platforms",
     "forest-cli" : "Forest CLI",
     "studios" : "Studios",
     "open-source" : "Open Source",
     "legal" : "Legal",
     "faq" : "FAQ"
 }
-
-/*
-- Introduction (What is a package manager , why use one)
-- Using a package (Finding, installing, updating, removing)
-- Creating a package (creation, publishing, updating)
-
-/ Forest CLI (installation, usage, commands)
-/ Organizations (creating, managing, billing)
-
-*/

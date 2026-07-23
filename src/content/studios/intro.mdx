@@ -2,17 +2,17 @@ import { Callout } from 'nextra/components'
 
 # Studios
 
-A **Studio** (organization) is a shared account that owns packages collectively — the right structure for a team, a game studio, or any group that publishes and maintains packages together. Studios live at `forest.dev/o/<studio-name>` and act as a publishing scope: packages are published as `@studio-name/package` instead of under any one person's username.
+A **Studio** (organization) is a shared account that owns packages collectively, the right structure for a team, a game studio, or any group that publishes and maintains packages together. Studios live at `forest.dev/o/<studio-name>` and act as a publishing scope: packages are published as `@studio-name/package` instead of under any one person's username.
 
 ## Why publish under a Studio?
 
 - **Ownership survives people.** Packages belong to the Studio, not to whoever happened to publish them. Members can come and go without orphaning anything.
 - **Team access control.** [Ranks](/studios/members), [roles, and per-package permissions](/studios/permissions) control who can see private packages and who can manage the Studio.
-- **Private package sharing.** A [private package](/packages/private-packages) owned by a Studio is installable by exactly the members you grant access to — the main way teams share internal code.
+- **Private package sharing.** A [private package](/concepts/private-packages) owned by a Studio is installable by exactly the members you grant access to, the main way teams share internal code.
 
 ## Creating a Studio
 
-Create one at [forest.dev](https://forest.dev) (Create → Studio). You become its **owner**. The name you enter becomes the display name, and a kebab-case slug is derived from it — that slug is the Studio's `@scope` for packages and its URL, and it must be unique across all Forest users and Studios.
+Create one at [forest.dev](https://forest.dev) (Create → Studio). You become its **owner**. The name you enter becomes the display name, and a kebab-case slug is derived from it. That slug is the Studio's `@scope` for packages and its URL, and it must be unique across all Forest users and Studios.
 
 ## Publishing under a Studio
 
@@ -38,7 +38,7 @@ Studios can carry a **verified** badge, shown on the Studio page and next to the
 - **Pro Studios** are billed per seat and lift both limits.
 
 <Callout type="warning">
-A Studio that ends up over the free member limit (for example, after a subscription lapses) is **frozen**: publishing is paused until you upgrade or remove members down to the limit. Nothing is deleted — existing packages stay installable.
+A Studio that ends up over the free member limit (for example, after a subscription lapses) is **frozen**: publishing is paused until you upgrade or remove members down to the limit. Nothing is deleted; existing packages stay installable.
 </Callout>
 
 Billing (subscription status, seats, and the Stripe billing portal) is managed by admins and owners from the Studio's settings page.

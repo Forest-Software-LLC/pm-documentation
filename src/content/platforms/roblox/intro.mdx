@@ -1,0 +1,24 @@
+import { Cards } from 'nextra/components'
+
+# Roblox
+
+Roblox is Forest's original platform. Roblox packages are Luau modules: each installed package is a folder with a root module you require by its instance path.
+
+If you're new to packages, start with [Concepts](/concepts/intro) for the platform-neutral ideas (what a package is, publishing, versioning, private access). This section covers the Roblox-specific mechanics layered on top.
+
+## What's specific to Roblox
+
+- **Layout.** Packages install into a `Packages/` folder next to your `forest.json`, which *you* mount somewhere in the datamodel (commonly `ReplicatedStorage.Packages` via Rojo).
+- **Importing.** You `require()` a package by its instance path. All requires inside the installed tree are relative, so the tree works wherever you mount it.
+- **One entry point.** A package exposes a single root module whose return value is its entire public API.
+- **No realm concept.** There is one packages tree. Splitting server and client code is a project-structure choice (the two-manifest pattern), not a registry feature.
+- **Aliases.** Two packages with the same name from different scopes can coexist by installing one under an alias.
+
+## Pages
+
+<Cards num={2}>
+    <Cards.Card title="Installing & Requiring" href="/platforms/roblox/installing" arrow />
+    <Cards.Card title="Package Anatomy" href="/platforms/roblox/anatomy" arrow />
+    <Cards.Card title="Recipe: Server & Client APIs" href="/platforms/roblox/server-client" arrow />
+    <Cards.Card title="Mirrored Packages" href="/platforms/roblox/mirrored" arrow />
+</Cards>
