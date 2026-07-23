@@ -6,6 +6,7 @@ module.exports = {
     "manifest" : "forest.json Reference",
     "dependencies" : "Dependencies & Versioning",
     "private-packages" : "Private Packages",
+    "mirrored-packages" : "Mirrored Packages",
     "server-client" : "Recipe: Server & Client APIs",
 }
 

@@ -24,11 +24,11 @@ forest i @user1/sauce
 forest i @user1/meatballs
 ```
 
-This downloads each package into your project's `packages/` folder (next to `forest.json`) and records it in your manifest.
+This downloads each package into your project's `Packages/` folder (next to `forest.json`) and records it in your manifest.
 
 ## Requiring Packages
 
-Each installed package is a folder with an `init` module at its top, so in Roblox it *is* a ModuleScript — you require it by its **instance path**, from wherever the `packages` folder lives in your datamodel:
+Each installed package is a folder with an `init` module at its top, so in Roblox it *is* a ModuleScript — you require it by its **instance path**, from wherever the `Packages` folder lives in your datamodel:
 
 ```lua
 local Packages = game:GetService("ReplicatedStorage").Packages
@@ -48,7 +48,7 @@ Using packages this way means every part of your project stays modular. You can 
 
 ## Where packages live
 
-**On the filesystem**, Forest installs everything into one `packages/` folder next to your `forest.json`. Forest does not touch your place file or decide datamodel locations.
+**On the filesystem**, Forest installs everything into one `Packages/` folder next to your `forest.json`. Forest does not touch your place file or decide datamodel locations.
 
 **In the Roblox datamodel**, *you* choose where that folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file — `ReplicatedStorage.Packages` is the common choice:
 
@@ -58,13 +58,13 @@ Using packages this way means every part of your project stays modular. You can 
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
-      "Packages": { "$path": "packages" }
+      "Packages": { "$path": "Packages" }
     }
   }
 }
 ```
 
-All requires *inside* the installed tree are relative (`script.Parent`-style), so the `packages` folder works wherever you mount it — ReplicatedStorage, ServerScriptService, or anywhere else.
+All requires *inside* the installed tree are relative (`script.Parent`-style), so the `Packages` folder works wherever you mount it — ReplicatedStorage, ServerScriptService, or anywhere else.
 
 <Callout type="warning">
 Forest has **no realm concept** meaning there are no separate server/client dependency lists or install targets. There is one packages tree, and its location is your choice. This means if you mount it under ReplicatedStorage, **every package's source is visible to clients**, including packages you only use on the server. Don't put secrets (API keys, webhook URLs, anti-cheat logic you want hidden) in package code. This, however, is by design. Every published public package's code is meant to be visible to all consumers, so the exposure of source code is expected and intentional.
@@ -74,19 +74,19 @@ Forest has **no realm concept** meaning there are no separate server/client depe
 
 Sometimes the single tree isn't what you want: a [private package](/packages/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
 
-Since every `forest.json` gets its own fully self-contained `packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init` in two folders and install each package where it belongs:
+Since every `forest.json` gets its own fully self-contained `Packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init` in two folders and install each package where it belongs:
 
 <FileTree>
   <FileTree.Folder name="my-game" defaultOpen>
     <FileTree.Folder name="Server" defaultOpen>
       <FileTree.File name="forest.json" />
       <FileTree.File name="forest-lock.json" />
-      <FileTree.Folder name="packages" />
+      <FileTree.Folder name="Packages" />
     </FileTree.Folder>
     <FileTree.Folder name="Shared" defaultOpen>
       <FileTree.File name="forest.json" />
       <FileTree.File name="forest-lock.json" />
-      <FileTree.Folder name="packages" />
+      <FileTree.Folder name="Packages" />
     </FileTree.Folder>
   </FileTree.Folder>
 </FileTree>
@@ -99,10 +99,10 @@ Then mount each tree on its own side of the datamodel:
   "tree": {
     "$className": "DataModel",
     "ServerScriptService": {
-      "Packages": { "$path": "Server/packages" }
+      "Packages": { "$path": "Server/Packages" }
     },
     "ReplicatedStorage": {
-      "Packages": { "$path": "Shared/packages" }
+      "Packages": { "$path": "Shared/Packages" }
     }
   }
 }
@@ -126,11 +126,11 @@ After installation, your project’s file tree will look like this:
 <FileTree>
   <FileTree.Folder name="my-project" defaultOpen>
     <FileTree.File name="script.lua" />
-    <FileTree.Folder name="packages" defaultOpen>
+    <FileTree.Folder name="Packages" defaultOpen>
         <FileTree.Folder name="pasta" defaultOpen>
             <FileTree.File name="init.lua" />
             <FileTree.File name="LICENSE" />
-            <FileTree.Folder name="packages" defaultOpen>
+            <FileTree.Folder name="Packages" defaultOpen>
                 <FileTree.Folder name="flour" defaultOpen>
                     <FileTree.File name="init.lua" />
                     <FileTree.File name="LICENSE" />
@@ -149,9 +149,9 @@ After installation, your project’s file tree will look like this:
   </FileTree.Folder>
 </FileTree>
 
-In the example file tree, the root `packages` folder contains the three packages we installed. Inside the `pasta` package, there’s another `packages` folder with its dependency, `flour`.
+In the example file tree, the root `Packages` folder contains the three packages we installed. Inside the `pasta` package, there’s another `Packages` folder with its dependency, `flour`.
 
-Since we didn’t install flour directly, it doesn’t appear in the root packages folder. That means it isn’t available for you to require() in your project.
+Since we didn’t install flour directly, it doesn’t appear in the root `Packages` folder. That means it isn’t available for you to require() in your project.
 
 This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. If you do want to use flour directly, you can install it yourself with: <br />
 `forest i @forest/flour`

@@ -38,7 +38,7 @@ When the same package appears more than once in the dependency graph:
 - **Compatible ranges are deduplicated.** If every requirement on `@forest/signal` can be satisfied by one version, exactly one copy is installed and shared.
 - **Incompatible ranges install side by side.** If package A needs `^1.0.0` and package B needs `^2.0.0`, both versions are installed, each nested where its dependent can reach it. Nothing fails — but you pay in duplicate code, and instances of "the same" class from the two copies won't be shared, so prefer depending on compatible ranges when you can.
 
-On disk, shared and direct dependencies live flat in `packages/`, while version-conflicted or transitive-only packages nest inside their dependent's own `packages/` folder. Forest generates small pointer modules (`return require(script.Parent…)`) so every package finds its dependencies at a predictable relative location. All links are **relative instance paths**, which is why the whole `packages/` tree can be mounted anywhere in the datamodel — see [Using Packages](/packages/usage#where-packages-live).
+On disk, shared and direct dependencies live flat in `Packages/`, while version-conflicted or transitive-only packages nest inside their dependent's own `Packages/` folder. Forest generates small pointer modules (`return require(script.Parent…)`) so every package finds its dependencies at a predictable relative location. All links are **relative instance paths**, which is why the whole `Packages/` tree can be mounted anywhere in the datamodel — see [Using Packages](/packages/usage#where-packages-live).
 
 ## Circular dependencies
 
