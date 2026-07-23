@@ -1,0 +1,72 @@
+import { FileTree } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# Authoring & Publishing UEFN Packages
+
+Verse only compiles inside a UEFN project, so you author a Forest package **in place**, inside the same `ForestPackages` mount consumers install into. This makes your development environment bit-identical to every consumer's install.
+
+## Scaffolding a package
+
+Run `forest init` inside a `Content/ForestPackages/<Scope>/<Name>/` folder and Forest scaffolds a package there: a `forest.json`, a `README.md`, and a starter `.verse` file.
+
+<Callout type="info">
+`forest init` infers what to create from where you run it. Inside `ForestPackages/<Scope>/<Name>` it scaffolds a **package**; at `Content/` it initializes the **project** manifest. There is no flag to remember.
+</Callout>
+
+Scaffolding a package is **login-gated**: Forest asks you to sign in and pick a scope you can publish under (your username or a Studio you're an admin or owner of). The scope you pick becomes the folder your package lives in, so the folder always matches a scope you can actually publish to.
+
+<Callout type="warning">
+The folder name becomes the package's Verse module identifier, so it must be a valid, non-reserved Verse identifier as typed. Forest never auto-renames it; if the name isn't valid, rename the folder and try again.
+</Callout>
+
+## The package is the folder
+
+A UEFN package has no single entry module and no `root` field. The folder *is* the package: every `.verse` file in it shares the folder's module namespace, and subfolders are nested modules. To expose a nested module to consumers, ship your own `<public>` marker for that subfolder inside the package. Forest only generates the scope-level and name-level markers.
+
+<FileTree>
+  <FileTree.Folder name="navmesh (your package)" defaultOpen>
+    <FileTree.File name="forest.json" />
+    <FileTree.File name="README.md" />
+    <FileTree.File name="LICENSE" />
+    <FileTree.File name="NavMesh.verse" />
+    <FileTree.Folder name="Internal">
+      <FileTree.File name="Solver.verse" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+## Depending on other packages
+
+Install dependencies from inside your package as usual:
+
+```bash
+forest i another-studio/pathing
+```
+
+Running install from inside an authored package declares the dependency in **that package's** `forest.json`, but resolves and installs it at the **project** level (one lockfile, one shared mount). The single-version rule spans the whole project, so all authored packages and the project agree on one version of each dependency.
+
+<Callout type="info">
+Authoring in place is a default, not a requirement. A standalone package compiles anywhere in `Content/` because its imports are ancestor-resolved and its own internal references don't name a location. In-place authoring is *required* only when your locally-authored packages depend on **each other**, since one's `using { ForestPackages.MyScope.Other }` needs the other package sitting at the mount.
+</Callout>
+
+## Publishing
+
+Run `forest publish` from **inside the package folder** (`ForestPackages/<Scope>/<Name>`):
+
+```bash
+forest publish
+```
+
+Publishing packs the package folder verbatim. A few rules are specific to UEFN:
+
+- **Publish from a package, not the project.** Running `forest publish` at `Content/` or the project root is refused, since that would upload the entire project. Scaffold or move into a package folder first.
+- **The scope folder must match the author.** You publish under the scope whose mapped folder your package lives in. If the folder is `cool_studio/` you publish as `cool-studio`, not some other scope.
+- **Verse code only.** The registry rejects binary UE assets (`.uasset`, `.umap`) and Epic-generated digest files (`.digest.verse`). Forest warns about these before uploading; add them to `.forestignore` or remove them.
+- **`compatibilityVersion` is attached automatically.** Forest reads it from your `.uefnproject` and records it with the published version, so consumers know which UEFN release the package was built against. There's no field for it in `forest.json`.
+- The generated markers are siblings of your package folder, not inside it, so they're naturally excluded. The install receipt is excluded too.
+
+For the shared publish flow (versioning, visibility, dependencies), see [Publishing a Package](/concepts/publishing).
+
+<Callout type="info">
+One naming convention worth adopting: prefer distinctive exported member names. Two packages that export the same name with the same signature create call-site friction for consumers who import both, so `NavMeshQuery` is a better public name than `Query`. See [Scopes & Collisions](/platforms/uefn/collisions).
+</Callout>

@@ -1,0 +1,75 @@
+import { Callout } from 'nextra/components'
+
+# `forest.json` Reference
+
+`forest.json` is the package manifest. `forest init` creates it, and `forest install`, `forest remove`, and `forest publish` keep it up to date. In most workflows you never edit it by hand, but every field is plain JSON and safe to edit.
+
+## Example
+
+```json
+{
+  "name": "datastream",
+  "author": "stratiz",
+  "description": "Typed networking for Roblox",
+  "version": "1.4.2",
+  "platform": "roblox",
+  "license": "MIT",
+  "root": "src/init.luau",
+  "dependencies": {
+    "@forest/signal": "^2.0.1",
+    "@user1/promise": {
+      "version": "^3.1.0",
+      "alias": "promise3"
+    }
+  }
+}
+```
+
+## Fields
+
+| Field | Type | Required | Set by | Description |
+|---|---|---|---|---|
+| `name` | string | Yes (to publish) | `forest publish` prompt | Package name. Lowercase letters, digits, and hyphens only. Combined with `author` it forms the full identifier `@author/name`. |
+| `author` | string | Yes (to publish) | `forest publish` prompt | The scope the package is published under: your username, or an organization you're an admin/owner of. |
+| `version` | string | Yes (to publish) | `forest publish` | [SemVer](https://semver.org) `MAJOR.MINOR.PATCH` (prerelease/build suffixes allowed, e.g. `1.2.0-rc.1`). Managed by the publish flow. See [Versioning your own package](/concepts/dependencies#versioning-your-own-package). First publish defaults to `0.1.0`. |
+| `description` | string | No | `forest publish` prompt | Short description shown in search and on the package page. |
+| `platform` | string | Yes | `forest init` | Target platform: `"roblox"` or `"uefn"`. Install and publish both require it, and it decides how a package is laid out and imported. |
+| `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. |
+| `root` | string | Roblox only, auto-detected | `forest publish` | Relative path to the package's entry-point module (e.g. `src/init.luau`). See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Not used on UEFN, where the whole package folder is published. |
+| `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. |
+
+Unknown fields are ignored by the registry.
+
+<Callout type="info">
+UEFN packages use the same manifest with two differences: there is no `root` field (a UEFN package is a folder of Verse modules, not a single entry module), and the project's `compatibilityVersion` is read from your `.uefnproject` and attached at publish time rather than stored in `forest.json`. See [Authoring & Publishing](/platforms/uefn/authoring).
+</Callout>
+
+## Dependency entries
+
+Each key in `dependencies` is a full package identifier (`@scope/name`). The value takes one of two forms:
+
+**A version range string**, the common case. `forest i @forest/signal` writes a caret range of the version it installed:
+
+```json
+"@forest/signal": "^2.0.1"
+```
+
+**An object with `version` and `alias`**, written when you install with `-a`/`--alias` on Roblox. The alias controls the folder name the package is installed under (and therefore the name you require it by). Aliases may not start with `_` or `.`:
+
+```json
+"@user1/promise": { "version": "^3.1.0", "alias": "promise3" }
+```
+
+Without an alias, the folder name defaults to the package name without its scope (`@forest/signal` becomes `packages/signal`). Aliases are how two packages with the same name from different scopes coexist in one project.
+
+<Callout type="warning">
+Aliases are a Roblox feature. UEFN does not support them: Verse imports are already scope-namespaced, so name clashes are disambiguated with qualified access instead. See [Scopes & Collisions](/platforms/uefn/collisions).
+</Callout>
+
+For range syntax and how ranges resolve, see [Dependencies & Versioning](/concepts/dependencies).
+
+## `forest-lock.json`
+
+Alongside the manifest, the CLI maintains `forest-lock.json`: the exact resolved version **and SHA-256 integrity hash** of every package in your dependency tree (direct and transitive). Tarballs are content-addressed by that hash, so the lockfile both pins and verifies every install.
+
+<Callout type="info">Commit `forest-lock.json` to source control. With a lockfile, `forest install` reproduces the identical tree on every machine; without one, ranges are re-resolved and may pick newer versions.</Callout>

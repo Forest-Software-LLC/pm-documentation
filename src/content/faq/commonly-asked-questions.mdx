@@ -31,12 +31,12 @@ local Package2 = require(Packages.package2)
 
 > Are private packages hidden from my game's players?
 
-No — and that's a common misunderstanding worth being precise about. Private controls **who can download the package from the registry** (other developers can't see or install it). It does not control runtime visibility: if the consuming game mounts its packages tree under ReplicatedStorage, the private package's code replicates to clients like anything else there. To keep server-only packages off clients, mount them in a server-only location using the [two-manifest pattern](/packages/usage#server-only-packages-the-two-manifest-pattern). See [Private Packages](/packages/private-packages).
+No, and that's a common misunderstanding worth being precise about. Private controls **who can download the package from the registry** (other developers can't see or install it). It does not control runtime visibility: on Roblox, for example, if the consuming game mounts its packages tree under ReplicatedStorage, the private package's code replicates to clients like anything else there. To keep server-only packages off clients, mount them in a server-only location using the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern). See [Private Packages](/concepts/private-packages).
 
 > Are circular dependencies allowed?
 
-They aren't rejected at publish or install time, and installation handles them without issue — but because you can only depend on already-published versions, a cycle can only be formed retroactively across versions, and it's almost always a sign that two packages should be one. See [Dependencies & Versioning](/packages/dependencies#circular-dependencies).
+They aren't rejected at publish or install time, and installation handles them without issue, but because you can only depend on already-published versions, a cycle can only be formed retroactively across versions, and it's almost always a sign that two packages should be one. See [Dependencies & Versioning](/concepts/dependencies#circular-dependencies).
 
 > What does the "Mirrored" badge on a package mean?
 
-The package was imported from [Wally](https://wally.run), the community package manager Forest succeeds. The source is unmodified, only open-source-licensed versions are imported, and the author's scope is reserved for them to claim. Install and depend on it like any other package. See [Mirrored Packages](/packages/mirrored-packages).
+The package was imported from [Wally](https://wally.run), the community package manager Forest succeeds. The source is unmodified, only open-source-licensed versions are imported, and the author's scope is reserved for them to claim. Install and depend on it like any other package. See [Mirrored Packages](/platforms/roblox/mirrored).

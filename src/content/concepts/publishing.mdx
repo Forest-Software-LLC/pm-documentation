@@ -1,0 +1,71 @@
+import { Callout } from 'nextra/components'
+import { Steps } from 'nextra/components'
+
+# Publishing a Package
+
+This page covers the shared flow for creating and updating your own packages: `forest init`, `forest publish`, versioning, and dependencies. These steps are the same on every platform. How you actually lay out and write the code inside a package differs by platform, so each step links to the matching platform guide.
+
+## Prerequisites
+
+Before you can create and upload packages, you'll need the following:
+- A [Forest account](https://forest.dev)
+- The [Forest CLI installed](/forest-cli/install)
+
+## The flow
+
+<Steps>
+### Create a directory for your package
+
+A package is just a folder of code with a `forest.json` manifest at its root. Start with an empty directory named after your package.
+
+### Write your code
+
+Every package exposes a public API through an entry point. What that entry point looks like depends on the platform you target:
+
+- **Roblox**: one root module whose return value is the entire public API. See [Package Anatomy](/platforms/roblox/anatomy).
+- **UEFN**: a folder of Verse modules that consumers import with `using`. See [Authoring & Publishing](/platforms/uefn/authoring).
+
+### Initialize with the Forest CLI
+
+```bash
+forest init
+```
+
+`forest init` asks which platform the package targets and writes a `forest.json` with the basics (name, version, platform, empty dependencies). Pass `-p`/`--platform` to skip the prompt in scripts and CI:
+
+```bash
+forest init --platform roblox   # or: --platform uefn
+```
+
+You rarely edit `forest.json` by hand. See the complete [field reference](/concepts/manifest) for every field, its type, and an example manifest.
+
+### Publish to Forest
+
+```bash
+forest publish
+```
+
+This uploads your package to the registry, making it available for others to install. If it's your first time publishing, you'll be prompted to log in.
+
+The CLI asks a few questions: visibility (public or [private](/concepts/private-packages)), name, description, version, and license. Visibility is permanent. Every later version inherits what you choose here.
+</Steps>
+
+## Publishing a package with dependencies
+
+If your package relies on other packages, install those dependencies locally before publishing. For example, if your package relies on `@forest/utils`:
+
+```bash
+forest i @forest/utils
+```
+
+Installing writes the dependency into your `forest.json` (as a `^` version range), and `forest publish` uploads that dependency list as-is. The CLI does **not** scan your source for imports, so a dependency exists exactly when it's listed in `forest.json`. See [Dependencies & Versioning](/concepts/dependencies) for range syntax and resolution rules.
+
+When someone installs your package, Forest automatically installs its dependencies alongside it. The exact on-disk arrangement is platform-specific ([Roblox](/platforms/roblox/installing), [UEFN](/platforms/uefn/installing)), but in every case a package finds its own dependencies without any configuration from the consumer.
+
+## Updating a package
+
+To publish an update, change your code and run `forest publish` again.
+
+The CLI asks what kind of change you made (bugfix, new feature, or breaking change) and increments the patch, minor, or major version accordingly, then uploads the new version.
+
+For how Forest handles version numbers, including the range syntax consumers use to depend on your package, see [Dependencies & Versioning](/concepts/dependencies) and the [SemVer](https://semver.org/) guidelines.

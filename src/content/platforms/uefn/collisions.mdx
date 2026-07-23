@@ -1,0 +1,50 @@
+import { Callout } from 'nextra/components'
+
+# Scopes & Collisions
+
+Verse resolves shared code differently from Luau, and one property affects everyone who shares code on the platform: Verse pools function overloads down the module tree and refuses ambiguity rather than silently shadowing. This page explains when that bites and how to resolve it. It's a Verse language property, not a Forest behavior; Forest's job is to warn you clearly before the compiler does.
+
+## When definitions collide
+
+A collision happens when two definitions share the **same name and the same argument signature** across an ancestor and a descendant scope.
+
+- **Different signature is fine.** Same name with a different argument signature is a legal overload, not a collision.
+- **Ancestor and descendant collide.** Because everything under `ForestPackages` is a descendant of your project root, a root-level definition and a package's export with the same name and signature collide, and Verse reports an error at *both* definition sites.
+- **Siblings never collide.** Two different packages exporting the same name and signature is never a problem on its own. The clash only appears in a consumer file that imports both and calls the name bare.
+- **Access level doesn't matter.** Even `internal` definitions participate; hiding a definition doesn't take it out of the overload pool.
+
+## Keep your code out of the root
+
+The practical consequence: project **root** `.verse` files are the hazard, because root is an ancestor of every installed package.
+
+<Callout type="warning">
+Keep function definitions out of root-level `.verse` files. Put your code in a sibling folder such as `Src/`; reserve root files for imports and device/class definitions. `forest install` warns when it finds a function defined in a root-level file, for exactly this reason.
+</Callout>
+
+Definitions in a sibling folder (`Src/`) don't collide with packages, because siblings never collide. Only the root is special.
+
+## No aliases: qualify instead
+
+UEFN doesn't support install-time aliases the way Roblox does; Verse imports are already scope-namespaced, so there's nothing to rename. When two imported packages export the same name with the same signature, the only ambiguity is at the **call site**, and you fix it by qualifying the call rather than importing more:
+
+```verse
+using { ForestPackages.cool_studio.navmesh }
+using { ForestPackages.other_studio.pathing }
+
+# both export Query(...) with the same signature; qualify the one you mean:
+(ForestPackages.cool_studio.navmesh:)Query(Region)
+```
+
+Qualified access is a disambiguator over names you've already imported, not a second import mechanism. The module still has to be `using`-imported in that file first.
+
+## Remediation order
+
+If the compiler reports an ambiguity, try these in order:
+
+1. **Qualify the ambiguous call** with `(ForestPackages.scope.name:)Fn(...)`.
+2. **Split** the clashing local definition and the conflicting `using` into separate files (`using` is file-scoped, so a definition in a different file doesn't collide with the import).
+3. **Rename** your local definition.
+
+## A convention for package authors
+
+Because same-name, same-signature exports across two packages create call-site friction for anyone who imports both, prefer **distinctive exported member names**. `NavMeshQuery` is a better public name than `Query`. This costs nothing to adopt and spares your consumers qualification work. See [Authoring & Publishing](/platforms/uefn/authoring).

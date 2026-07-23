@@ -2,19 +2,19 @@ import { FileTree } from 'nextra/components'
 import { Callout } from 'nextra/components'
 
 
-# Using a package in your workflow
+# Installing & Requiring Packages on Roblox
 
-This section will cover how to use packages in your project's workflow.
+This page covers how Roblox packages are installed, required, and mounted in your project. For the platform-neutral rules (version ranges, the lockfile, private access), see [Concepts](/concepts/intro).
 
 ### Prerequisites
 
-Before you can create and upload packages, you'll need to have the [Forest CLI](/forest-cli/install) installed.
+Before you can install packages, you'll need the [Forest CLI](/forest-cli/install) installed.
 
-## Installing Packages
+## Installing packages
 
 For this metaphorical example, we'll be cooking (coding) spaghetti. To make spaghetti, we need to grab (install) 3 ingredients (packages): pasta, sauce, and meatballs.
 
-Lets say you found 3 packages that provide these ingredients: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`.
+Say you found 3 packages that provide these ingredients: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`.
 
 We'll cover the install commands in detail later, but for now, use the following to install the packages:
 
@@ -26,9 +26,9 @@ forest i @user1/meatballs
 
 This downloads each package into your project's `Packages/` folder (next to `forest.json`) and records it in your manifest.
 
-## Requiring Packages
+## Requiring packages
 
-Each installed package is a folder with an `init` module at its top, so in Roblox it *is* a ModuleScript — you require it by its **instance path**, from wherever the `Packages` folder lives in your datamodel:
+Each installed package is a folder with an `init` module at its top, so in Roblox it *is* a ModuleScript. You require it by its **instance path**, from wherever the `Packages` folder lives in your datamodel:
 
 ```lua
 local Packages = game:GetService("ReplicatedStorage").Packages
@@ -40,17 +40,17 @@ local Meatballs = require(Packages.meatballs)
 -- Do something with our now-imported ingredients
 ```
 
-The folder name you require is the package's name without its scope (`@forest/pasta` → `pasta`), or the alias you chose at install time (`forest i @user2/pasta -a pasta2` → `pasta2`).
+The folder name you require is the package's name without its scope (`@forest/pasta` becomes `pasta`), or the alias you chose at install time (`forest i @user2/pasta -a pasta2` becomes `pasta2`).
 
-Whatever a package's root module returns is its entire public API — see [Package Anatomy](/packages/anatomy).
+Whatever a package's root module returns is its entire public API. See [Package Anatomy](/platforms/roblox/anatomy).
 
-Using packages this way means every part of your project stays modular. You can update, replace, or share each “ingredient”, allowing you to update or replace packages with ease.
+Using packages this way keeps every part of your project modular. You can update, replace, or share each "ingredient" with ease.
 
 ## Where packages live
 
 **On the filesystem**, Forest installs everything into one `Packages/` folder next to your `forest.json`. Forest does not touch your place file or decide datamodel locations.
 
-**In the Roblox datamodel**, *you* choose where that folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file — `ReplicatedStorage.Packages` is the common choice:
+**In the Roblox datamodel**, *you* choose where that folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file. `ReplicatedStorage.Packages` is the common choice:
 
 ```json
 {
@@ -64,15 +64,15 @@ Using packages this way means every part of your project stays modular. You can 
 }
 ```
 
-All requires *inside* the installed tree are relative (`script.Parent`-style), so the `Packages` folder works wherever you mount it — ReplicatedStorage, ServerScriptService, or anywhere else.
+All requires *inside* the installed tree are relative (`script.Parent`-style), so the `Packages` folder works wherever you mount it: ReplicatedStorage, ServerScriptService, or anywhere else.
 
 <Callout type="warning">
-Forest has **no realm concept** meaning there are no separate server/client dependency lists or install targets. There is one packages tree, and its location is your choice. This means if you mount it under ReplicatedStorage, **every package's source is visible to clients**, including packages you only use on the server. Don't put secrets (API keys, webhook URLs, anti-cheat logic you want hidden) in package code. This, however, is by design. Every published public package's code is meant to be visible to all consumers, so the exposure of source code is expected and intentional.
+Forest has **no realm concept**, meaning there are no separate server/client dependency lists or install targets. There is one packages tree, and its location is your choice. So if you mount it under ReplicatedStorage, **every package's source is visible to clients**, including packages you only use on the server. Don't put secrets (API keys, webhook URLs, anti-cheat logic you want hidden) in package code. This is by design: every published public package's code is meant to be visible to all consumers, so the exposure of source is expected and intentional.
 </Callout>
 
 ### Server-only packages: the two-manifest pattern
 
-Sometimes the single tree isn't what you want: a [private package](/packages/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
+Sometimes the single tree isn't what you want. A [private package](/concepts/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
 
 Since every `forest.json` gets its own fully self-contained `Packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init` in two folders and install each package where it belongs:
 
@@ -114,14 +114,14 @@ Things to know about this pattern:
 
 - **Run CLI commands from the right folder.** `forest install`, `remove`, and the lockfile are per-manifest, so installs happen in `Server/` or `Shared/` depending on where the package belongs. Commit both lockfiles.
 - **The trees are fully independent.** A package needed in both realms is installed twice, once per tree, with separate state at runtime. For pure libraries this is harmless; each side only ever requires its own tree.
-- **This changes where code *lives*, not what it can do.** Server-mounted packages are hidden from clients, but any installed package still runs with your game's full permissions — visibility and trust are separate questions.
+- **This changes where code *lives*, not what it can do.** Server-mounted packages are hidden from clients, but any installed package still runs with your game's full permissions. Visibility and trust are separate questions.
 
 
 ## Package Dependencies
 
-When you install a package, Forest PM automatically installs any dependencies it requires.
-For example, if `@forest/pasta` depends on `@forest/flour`, Forest PM installs both packages when you run: <br /> `forest i @forest/pasta`
-After installation, your project’s file tree will look like this:
+When you install a package, Forest automatically installs any dependencies it requires.
+For example, if `@forest/pasta` depends on `@forest/flour`, Forest installs both when you run: <br /> `forest i @forest/pasta`
+After installation, your project's file tree looks like this:
 
 <FileTree>
   <FileTree.Folder name="my-project" defaultOpen>
@@ -149,11 +149,11 @@ After installation, your project’s file tree will look like this:
   </FileTree.Folder>
 </FileTree>
 
-In the example file tree, the root `Packages` folder contains the three packages we installed. Inside the `pasta` package, there’s another `Packages` folder with its dependency, `flour`.
+In the example file tree, the root `Packages` folder contains the three packages we installed. Inside the `pasta` package, there's another `Packages` folder with its dependency, `flour`.
 
-Since we didn’t install flour directly, it doesn’t appear in the root `Packages` folder. That means it isn’t available for you to require() in your project.
+Since we didn't install flour directly, it doesn't appear in the root `Packages` folder. That means it isn't available for you to require() in your project.
 
-This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. If you do want to use flour directly, you can install it yourself with: <br />
+This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. Forest generates small pointer modules (`return require(script.Parent...)`) so version-conflicted or transitive-only packages nested inside a dependent's own `Packages/` folder are always found at a predictable relative location. Every link is a **relative instance path**, which is why the whole tree can be mounted anywhere in the datamodel. If you do want to use flour directly, install it yourself with: <br />
 `forest i @forest/flour`
 
-For exactly how versions are chosen, how conflicts between shared dependencies resolve, and how the lockfile pins your tree, see [Dependencies & Versioning](/packages/dependencies).
+For exactly how versions are chosen, how conflicts between shared dependencies resolve, and how the lockfile pins your tree, see [Dependencies & Versioning](/concepts/dependencies).

@@ -1,0 +1,30 @@
+import { Cards } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# UEFN
+
+Forest supports **UEFN** (Unreal Editor for Fortnite) packages written in **Verse**. A UEFN package is a folder of Verse modules that consumers import with `using`. Forest installs it flat under your project's `Content/ForestPackages` folder.
+
+If you're new to packages, start with [Concepts](/concepts/intro) for the platform-neutral ideas (what a package is, publishing, versioning, private access). This section covers the UEFN-specific mechanics.
+
+<Callout type="info">
+Verse only compiles inside a UEFN project, so both authoring and consuming Forest packages happen in one. Your `forest.json` lives in the project's `Content/` folder, and `forest install` runs there.
+</Callout>
+
+## What's specific to UEFN
+
+- **Flat layout.** Every package installs to `Content/ForestPackages/<Scope>/<Name>`, direct and transitive alike. There is no nesting.
+- **Importing with `using`.** You import a package by its dotted module path, `using { ForestPackages.scope.name }`. The path is the same everywhere in your project, so no configuration travels with a package.
+- **One version per package.** Verse module paths carry no version, so a project resolves every package to a single version. An unsatisfiable version conflict is a hard error, not a side-by-side install.
+- **Generated module markers.** Forest writes small marker `.verse` files that make each installed package importable. They regenerate on every install and must not be hand-edited.
+- **No aliases.** Verse imports are already scope-namespaced. Name clashes are resolved with qualified access, not by renaming on install.
+- **Scope name mapping.** Forest scopes are kebab-case; Verse identifiers can't contain hyphens, so scope *folders* use a mapped form (`cool-studio` becomes `cool_studio`).
+- **Reopen to pick up new files.** UEFN discovers Verse files when a project opens, so after an install you reopen the project and Build Verse Code.
+
+## Pages
+
+<Cards num={2}>
+    <Cards.Card title="Installing & Importing" href="/platforms/uefn/installing" arrow />
+    <Cards.Card title="Authoring & Publishing" href="/platforms/uefn/authoring" arrow />
+    <Cards.Card title="Scopes & Collisions" href="/platforms/uefn/collisions" arrow />
+</Cards>
