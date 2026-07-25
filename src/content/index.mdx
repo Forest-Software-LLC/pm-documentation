@@ -6,6 +6,12 @@ Forest Package Manager (Forest PM) is a cloud-based package manager that makes s
 
 Built for creators and teams from day one, Forest PM lets you find and install packages without friction. More than a tool, it integrates smoothly into existing dev flows while giving creators a professional foundation to build on.
 
+## How Forest works
+
+Forest is a registry plus a command-line tool. You run `forest` in your project folder, and it installs packages as real files on disk next to a manifest and lockfile that you commit to source control.
+
+Forest is **not** a Roblox Studio plugin, and it does not run inside Studio or modify your place file. Getting the installed files into your game is handled by whatever sync setup you already use, commonly [Rojo](https://rojo.space) on Roblox. See [Platforms](/concepts/intro#forest-across-platforms) for how each platform lays those files out.
+
 ## Core features
 - **Cloud-based:** Access from anywhere, with no local repositories to manage.
 - **Versioning:** Semantic versioning keeps packages compatible across your project.
