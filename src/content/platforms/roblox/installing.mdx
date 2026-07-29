@@ -50,6 +50,8 @@ Using packages this way keeps every part of your project modular. You can update
 
 **On the filesystem**, Forest installs everything into one `Packages/` folder next to your `forest.json`. Forest does not touch your place file or decide datamodel locations.
 
+(If your `forest.json` has a `root` field, meaning you're authoring a package rather than a game, the `Packages/` folder lives next to the root module instead, e.g. `src/Packages/`. See [Package Anatomy](/platforms/roblox/anatomy#developing-with-dependencies).)
+
 **In the Roblox datamodel**, *you* choose where that folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file. `ReplicatedStorage.Packages` is the common choice:
 
 ```json
@@ -74,7 +76,7 @@ Forest has **no realm concept**, meaning there are no separate server/client dep
 
 Sometimes the single tree isn't what you want. A [private package](/concepts/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
 
-Since every `forest.json` gets its own fully self-contained `Packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init` in two folders and install each package where it belongs:
+Since every `forest.json` gets its own fully self-contained `Packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init --project` in two folders and install each package where it belongs:
 
 <FileTree>
   <FileTree.Folder name="my-game" defaultOpen>

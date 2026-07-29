@@ -13,7 +13,7 @@ If you're new to packages, start with [Concepts](/concepts/intro) for the platfo
 
 ## What's specific to Roblox
 
-- **Layout.** Packages install into a `Packages/` folder next to your `forest.json`, which *you* mount somewhere in the datamodel (commonly `ReplicatedStorage.Packages` via Rojo).
+- **Layout.** Packages install into a `Packages/` folder (next to your `forest.json` in a game project, or next to your root module when authoring a package), which *you* mount somewhere in the datamodel (commonly `ReplicatedStorage.Packages` via Rojo).
 - **Importing.** You `require()` a package by its instance path. All requires inside the installed tree are relative, so the tree works wherever you mount it.
 - **One entry point.** A package exposes a single root module whose return value is its entire public API.
 - **No realm concept.** There is one packages tree. Splitting server and client code is a project-structure choice (the two-manifest pattern), not a registry feature.

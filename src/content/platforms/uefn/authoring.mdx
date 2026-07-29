@@ -10,7 +10,7 @@ Verse only compiles inside a UEFN project, so you author a Forest package **in p
 Run `forest init` inside a `Content/ForestPackages/<Scope>/<Name>/` folder and Forest scaffolds a package there: a `forest.json`, a `README.md`, and a starter `.verse` file.
 
 <Callout type="info">
-`forest init` infers what to create from where you run it. Inside `ForestPackages/<Scope>/<Name>` it scaffolds a **package**; at `Content/` it initializes the **project** manifest. There is no flag to remember.
+`forest init` infers what to create from where you run it. Inside `ForestPackages/<Scope>/<Name>` it scaffolds a **package**; at `Content/` it initializes the **project** manifest. Pass `--project` to force the bare project manifest regardless of where you run it.
 </Callout>
 
 Scaffolding a package is **login-gated**: Forest asks you to sign in and pick a scope you can publish under (your username or a Studio you're an admin or owner of). The scope you pick becomes the folder your package lives in, so the folder always matches a scope you can actually publish to.

@@ -7,26 +7,40 @@ The Forest CLI provides commands to help you manage your packages.
 
 ### `forest init`
 
-Initializes a new package in the current directory. This creates a `forest.json` file with metadata such as name, version, and description.
+Starts development on a new package in the current directory.
+
+On Roblox, init asks for a package name and the path to your root module (default `src/init.luau`), creates a starter module there if the file doesn't exist yet, and writes a `forest.json` with the name, a starting version (`0.1.0`), the platform, and the `root` path. Dependencies you install will live in a `Packages/` folder next to your root module (`src/Packages/` in the default layout): the same place they sit when a consumer installs your package, so your requires work identically in development and after install.
+
+On UEFN, init infers what to scaffold from where you run it; see [Authoring & Publishing](/platforms/uefn/authoring).
 
 ```bash
 forest init
 
-> Platform : <select your platform>
+> Platform: <select your platform>
+> Package name: my-package
+> Path to the package's root file (created if missing): src/init.luau
 
-Created forest.json
+🌳 Initialized package "my-package"
 ```
 
-Pass `-p`/`--platform` to skip the interactive picker (handy for scripts and CI):
+Pass `-p`/`--platform` to skip the platform picker:
 
 ```bash
 forest init --platform roblox   # or: --platform uefn
+```
+
+Setting up a game or project that only *consumes* packages? Pass `--project` to write a bare manifest (platform and an empty dependency list) with a top-level `Packages/` folder, no prompts:
+
+```bash
+forest init --project
 ```
 
 ### `forest install <package-name>`
 Installs a package from Forest PM. Downloads the package and its dependencies into your project's packages directory.
 
 Options: `-v/--version` to install a specific version, `-a/--alias` to install under an alias. Run without a package name to install everything in your `forest.json`.
+
+Run in a folder with no `forest.json`, install offers to create the same bare manifest as `forest init --project`; pass `--init <platform>` to skip that prompt in scripts.
 
 Aliases: `forest i`, `forest grow`
 

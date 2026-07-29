@@ -18,26 +18,35 @@ Before you can create and upload packages, you'll need the following:
 
 A package is just a folder of code with a `forest.json` manifest at its root. Start with an empty directory named after your package.
 
-### Write your code
-
-Every package exposes a public API through an entry point. What that entry point looks like depends on the platform you target:
-
-- **Roblox**: one root module whose return value is the entire public API. See [Package Anatomy](/platforms/roblox/anatomy).
-- **UEFN**: a folder of Verse modules that consumers import with `using`. See [Authoring & Publishing](/platforms/uefn/authoring).
-
 ### Initialize with the Forest CLI
 
 ```bash
 forest init
 ```
 
-`forest init` asks which platform the package targets and writes a `forest.json` with the basics (name, version, platform, empty dependencies). Pass `-p`/`--platform` to skip the prompt in scripts and CI:
+`forest init` asks which platform the package targets, then scaffolds the package:
+
+- **Roblox**: prompts for a package name and the path to your root module (default `src/init.luau`, created as a starter module if it doesn't exist), and writes a `forest.json` with the name, version `0.1.0`, platform, and `root`.
+- **UEFN**: scaffolds a package or project manifest based on where you run it. See [Authoring & Publishing](/platforms/uefn/authoring).
+
+Pass `-p`/`--platform` to skip the platform picker:
 
 ```bash
 forest init --platform roblox   # or: --platform uefn
 ```
 
 You rarely edit `forest.json` by hand. See the complete [field reference](/concepts/manifest) for every field, its type, and an example manifest.
+
+<Callout type="info">
+`forest init` is for authoring a package. If you're setting up a game or project that only consumes packages, use `forest init --project` (or just run `forest install`, which offers the same bare manifest).
+</Callout>
+
+### Write your code
+
+Every package exposes a public API through an entry point. What that entry point looks like depends on the platform you target:
+
+- **Roblox**: one root module whose return value is the entire public API; init created a starter for you. See [Package Anatomy](/platforms/roblox/anatomy).
+- **UEFN**: a folder of Verse modules that consumers import with `using`. See [Authoring & Publishing](/platforms/uefn/authoring).
 
 ### Publish to Forest
 

@@ -29,13 +29,13 @@ import { Callout } from 'nextra/components'
 
 | Field | Type | Required | Set by | Description |
 |---|---|---|---|---|
-| `name` | string | Yes (to publish) | `forest publish` prompt | Package name. Lowercase letters, digits, and hyphens only. Combined with `author` it forms the full identifier `@author/name`. |
+| `name` | string | Yes (to publish) | `forest init` prompt (`forest publish` prompts if missing) | Package name. Lowercase letters, digits, and hyphens only. Combined with `author` it forms the full identifier `@author/name`. |
 | `author` | string | Yes (to publish) | `forest publish` prompt | The scope the package is published under: your username, or an organization you're an admin/owner of. |
-| `version` | string | Yes (to publish) | `forest publish` | [SemVer](https://semver.org) `MAJOR.MINOR.PATCH` (prerelease/build suffixes allowed, e.g. `1.2.0-rc.1`). Managed by the publish flow. See [Versioning your own package](/concepts/dependencies#versioning-your-own-package). First publish defaults to `0.1.0`. |
+| `version` | string | Yes (to publish) | `forest init` (seeds `0.1.0`), then `forest publish` | [SemVer](https://semver.org) `MAJOR.MINOR.PATCH` (prerelease/build suffixes allowed, e.g. `1.2.0-rc.1`). Managed by the publish flow. See [Versioning your own package](/concepts/dependencies#versioning-your-own-package). |
 | `description` | string | No | `forest publish` prompt | Short description shown in search and on the package page. |
 | `platform` | string | Yes | `forest init` | Target platform: `"roblox"` or `"uefn"`. Install and publish both require it, and it decides how a package is laid out and imported. |
 | `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. |
-| `root` | string | Roblox only, auto-detected | `forest publish` | Relative path to the package's entry-point module (e.g. `src/init.luau`). See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Not used on UEFN, where the whole package folder is published. |
+| `root` | string | Roblox only | `forest init` prompt (auto-detected by `forest publish` if missing) | Relative path to the package's entry-point module (e.g. `src/init.luau`), always with forward slashes. See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Also decides where dependencies install during development: into a `Packages/` folder next to the root module. Not used on UEFN, where the whole package folder is published. |
 | `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. |
 
 Unknown fields are ignored by the registry.

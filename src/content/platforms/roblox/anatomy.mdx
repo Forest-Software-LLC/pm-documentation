@@ -36,7 +36,9 @@ See [Recipe: Server & Client APIs](/platforms/roblox/server-client) for a full w
 
 ## The root module
 
-When you run `forest publish`, the CLI resolves your package's root module in this order:
+`forest init` asks for your root module's path when you scaffold the package (default `src/init.luau`, created as a starter if it doesn't exist) and records it as `root` in `forest.json`.
+
+For manifests without a `root` (packages created before init recorded it), `forest publish` resolves the root module in this order:
 
 1. The `root` field in `forest.json`, if set (a relative path like `src/init.luau`).
 2. An `init.luau` or `init.lua` at the top level of your package directory.
@@ -77,12 +79,32 @@ installs for a consumer as:
 
 Rules applied when the archive is built:
 
+- The `Packages/` install mount (next to your root module) and `forest-lock.json` are always excluded when the manifest declares dependencies: consumers regenerate both from your dependency list.
 - Files matched by `.gitignore` and `.forestignore` are excluded (`.forestignore` patterns win).
 - Dotfiles and dot-directories (`.git`, `.DS_Store`, and so on) are always excluded.
 - A `README.md` is **required for public packages** (shown on the package page).
 - A `LICENSE` file is required; the CLI detects its SPDX type and records it in `forest.json`. See [Publishing a Package](/concepts/publishing).
 - Packages are capped at **10 MB**.
 - Rojo project files (`default.project.json`) are not used by Forest. The `root` field, not a Rojo tree, defines the package.
+
+## Developing with dependencies
+
+Inside a package under development, `forest install` places dependencies in a `Packages/` folder next to your root module (`src/Packages/` in the default layout):
+
+<FileTree>
+  <FileTree.Folder name="my-package (your repo)" defaultOpen>
+    <FileTree.File name="forest.json" />
+    <FileTree.File name="forest-lock.json" />
+    <FileTree.Folder name="src" defaultOpen>
+      <FileTree.File name="init.luau" />
+      <FileTree.Folder name="Packages" defaultOpen>
+        <FileTree.Folder name="signal" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+That is exactly where dependencies sit when a consumer installs your package (inside the package's own folder), so requires like `require(script.Packages.signal)` behave identically in your workspace and in every consumer's tree. As noted above, the mount and `forest-lock.json` never ship in the archive.
 
 ## Sibling modules are reachable, not private
 
