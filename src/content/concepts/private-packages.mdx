@@ -32,6 +32,15 @@ For a package owned by a **Studio** (organization), access is granted to:
 
 Access applies to the whole package, every version, including the ability to fetch its info and tarball during `forest install`. A private package in your dependency tree means everyone who runs `forest install` on that project needs an account with access.
 
+## Plans and limits
+
+Private packages are included on every plan:
+
+- **Free** users and **free Studios** each include up to **10 private packages**.
+- **Pro** users and **Pro Studios** have **no limit**.
+
+The limit applies when *creating* a new private package: at 10, `forest publish` rejects a new private package (publish it as public instead, or upgrade to Pro). It never applies retroactively. Existing private packages always stay installable and keep accepting new versions, even if a Pro subscription lapses while you're over the limit.
+
 ## Choosing visibility
 
 Visibility is chosen **when the package is first published** (`forest publish` asks "What visibility should this package have?"). Every later version inherits it: the CLI reads the current visibility from the registry and reuses it, and visibility cannot currently be changed after creation. If you need to take a private package public (or vice versa), publish it under a new name.
