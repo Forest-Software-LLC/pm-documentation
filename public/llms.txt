@@ -53,3 +53,4 @@ Studios & tooling:
 - [CLI Install](https://docs.forest.dev/forest-cli/install): installing the forest CLI
 - [CLI Commands](https://docs.forest.dev/forest-cli/commands): init, install, remove, publish, login, update
 - [FAQ](https://docs.forest.dev/faq/commonly-asked-questions): dedupe, version conflicts, same-name packages
+- [Forest for AI Agents](https://docs.forest.dev/ai): registry REST API for programmatic package search, metadata, readmes, and source file access, plus the recommended agent workflow

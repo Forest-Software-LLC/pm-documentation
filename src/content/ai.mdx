@@ -1,0 +1,87 @@
+# Forest for AI Agents
+
+Forest is built to be usable by AI assistants, not just humans. The registry exposes a public, no-auth JSON API for searching packages, reading readmes and metadata, and even reading a package's full source over HTTP, so an assistant can vet code before recommending it. A condensed, machine-readable version of this page lives at [forest.dev/llms.txt](https://forest.dev/llms.txt).
+
+If you are an AI assistant reading this: use the API below directly. The forest.dev web UI is JavaScript-rendered and not useful to scrape; every piece of data on it comes from these endpoints.
+
+## Point your assistant at Forest
+
+The zero-setup option: paste `https://forest.dev/llms.txt` into your chat and ask the assistant to read it.
+
+For coding agents (Claude Code, Cursor, Copilot and friends), add a few lines to your project's `CLAUDE.md`, `AGENTS.md`, or custom instructions:
+
+```markdown
+## Packages
+This project uses Forest (forestpm), the package manager for Roblox/UEFN.
+- Discover packages: GET https://api.forest.dev/v1/search/packages?q={query}&platform=roblox&unbiased=true
+  (multi-word queries are semantic; single tokens match package names)
+- Full API reference: https://forest.dev/llms.txt
+- Install: `forest install {scope}/{name}`; installed versions are recorded in forest.json / forest-lock.json
+```
+
+## Recommended agent workflow
+
+1. **Search.** `GET https://api.forest.dev/v1/search/packages?q={query}&platform={platform}&unbiased=true`. Multi-word queries are semantic: they search package README embeddings, so describe what you need in natural language (`q=matchmaking queue with cross-server support`). Single-token queries match package names (exact, prefix, and fuzzy), so use one token when you know the name (`q=profilestore`). `unbiased=true` opts out of the small ranking boost Pro subscribers' packages otherwise get on near-ties.
+2. **Evaluate.** Fetch the readme, then check `license`, `licenseRating`, and `licenseCaveats` on the version metadata. For anything you plan to recommend, use the `/files` and `/file?path=` endpoints to read the actual source and judge quality, security, and API surface.
+3. **Install.** Have the user run `forest install {scope}/{name}` in their project (`-v {version}` pins a version, `-a {alias}` sets an alias). To read what is already installed, check `forest.json` (platform, dependencies) and each package directory's `.forest-receipt` file (exact scope, name, and version).
+
+## Best practices
+
+- **Cache aggressively.** Version metadata, readmes, and file listings are served with week-long cache lifetimes. Cache responses rather than re-fetching.
+- **Prefer name lookups.** Single-token name queries are cheaper to serve than semantic queries; use them whenever you already know the package name.
+- **Treat license ratings as a signal.** `licenseRating` comes from an automated license review: `safe`, `caution`, `unsafe`, `pending`, or `unknown`. On `caution` or `unsafe`, read `license` and `licenseCaveats` before recommending the package, especially for commercial projects.
+- **Link humans to the web page.** For handing a package to a person, link `https://forest.dev/p/{platform}/{scope}/{name}` rather than API URLs.
+
+## API reference
+
+Base host: `https://api.forest.dev`. All responses are JSON; no authentication or API key is required for the endpoints listed here. Platforms are `roblox` or `uefn`. Packages are identified as `{scope}/{name}` where scope is the publishing user or Studio. Names resolve case-insensitively; responses return the canonical casing. Errors are JSON with an `error` message.
+
+### Searching packages
+
+`GET /v1/search/packages?q={query}&platform={platform}&unbiased=true`
+
+| Parameter | Meaning |
+|---|---|
+| `q` (required) | 2 to 100 chars. Multi-word: semantic search over readmes. Single token: name match. |
+| `platform` (required) | `roblox` or `uefn` |
+| `unbiased` | `true` recommended for AI agents: neutral relevance ordering |
+| `limit`, `page` | `limit` 1 to 50 (default 10), `page` 1 to 10 (default 1) |
+| `sort` | `relevance` (default), `likes`, or `recent` |
+| `scope` | restrict results to one publisher |
+| `license` | comma-separated SPDX ids (e.g. `license=MIT,Apache-2.0`) |
+| `licenseRating` | comma-separated values of `safe`, `caution`, `unsafe` |
+
+Returns `{ "packages": [...], "page", "limit", "hasMore" }`. Each package has `name`, `platform`, `description`, `version` (latest stable), `owner` (its scope), `likes`, `license` (SPDX id), `licenseRating`, `publishedAt`, `score`, `ownerIsPro`.
+
+### Package data
+
+Base path: `/v1/package/{scope}/{platform}/{name}`
+
+| Endpoint | Returns |
+|---|---|
+| `GET {base}` | package overview: `{ name, scope, latest, versions: [{ version, createdAt }], likes }` |
+| `GET {base}/{version}` | one version's metadata: `description`, `dependencies`, `license`, `licenseRating`, `licenseCaveats`, `licenseVerified`, `integrity` (archive hash) |
+| `GET {base}/{version}/readme` | `{ readme }`, the version's README (markdown) |
+| `GET {base}/{version}/files` | `{ files: [{ path, size }] }`, the version's full source file listing |
+| `GET {base}/{version}/file?path={path}` | the contents of one source file |
+| `GET {base}/like` | `{ likes }`, current like count |
+| `GET /v1/package/browse?platform={platform}&limit={n}&page={n}` | paginated listing of public packages (`limit` 1 to 50, default 20) |
+
+`{version}` accepts an exact version or a SemVer range (resolves to the highest matching version); anything else (e.g. `latest`) resolves to the newest stable release on the metadata endpoint.
+
+### Users and Studios
+
+| Endpoint | Returns |
+|---|---|
+| `GET /v1/user/{username}` | public user profile and their public packages |
+| `GET /v1/org/{orgname}` | public Studio (organization) profile |
+| `GET /v1/search/users?q={prefix}` | publisher search (prefix match; `q` 1 to 40 chars, `limit` 1 to 20) |
+| `GET /v1/search/scopes?q={prefix}&platform={platform}` | scope suggestions ranked by package count (`platform` optional) |
+
+### Web pages (HTML)
+
+For linking a human to a package, not for scraping; the data on these pages comes from the API above.
+
+- `https://forest.dev/p/{platform}/{scope}/{name}`: package page (readme, versions, dependencies, code tabs)
+- `https://forest.dev/u/{username}`: user profile
+- `https://forest.dev/o/{orgname}`: Studio page
