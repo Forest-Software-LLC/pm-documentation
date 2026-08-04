@@ -1,0 +1,64 @@
+import { Callout } from 'nextra/components'
+
+# How Forest Compares to Wally
+
+[Wally](https://wally.run) is a community package manager for Roblox, inspired by Cargo, and it deserves real credit: it introduced a large part of the Roblox ecosystem to package management, and much of the open-source Luau library ecosystem was published there first. Forest builds on that foundation rather than against it; in fact, the entire open-source Wally catalog is [mirrored on Forest](/platforms/roblox/mirrored) and installable today.
+
+This page is for developers evaluating the two. The short version: Wally is a lean, self-hostable tool with GitHub-based publishing. Forest is a hosted, full-service registry: accounts and teams, private packages without running infrastructure, license enforcement, and an open-source, independently verifiable delivery pipeline, serving more than one platform from a single CLI.
+
+## At a glance
+
+| Area | Wally | Forest |
+|---|---|---|
+| Platforms | Roblox | Roblox and UEFN, one registry and one CLI |
+| Accounts | GitHub OAuth | Forest accounts; two-factor authentication on every account |
+| Private packages | Run your own registry server | Hosted; 10 free on every account and Studio, unlimited on Pro |
+| Teams | Owner lists managed via the CLI | [Studios](/studios/intro): ranks, roles, per-package permissions, audit logs |
+| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing) |
+| Types in Studio | Community tooling such as `wally-package-types` | Packages install as real ModuleScripts required by instance path; no extra tooling |
+| Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
+| Realms | Separate `server` and `shared` dependency lists | One tree; you choose where it mounts (see below) |
+
+## Everything on Wally is already installable here
+
+Forest [mirrors the open-source Wally catalog](/platforms/roblox/mirrored): unmodified source, automatically updated as authors release new versions upstream, with each author's scope reserved for them to claim. Evaluating Forest does not mean giving up `evaera/promise` or any other library you rely on:
+
+```bash
+forest i evaera/promise
+```
+
+If you publish on Wally, [your scope is being held for you](/platforms/roblox/mirrored#claiming-your-scope); claim it by verifying the same GitHub identity, and the packages become yours to manage on Forest.
+
+## Private packages without running servers
+
+Wally supports private code by letting you host your own registry, which works, but someone on your team now owns a server: deployment, uptime, authentication, and backups.
+
+On Forest, [private packages](/concepts/private-packages) are a hosted feature of the main registry. Mark a package private at publish time and it never appears in search, downloads require an authenticated account with access, and tarballs are served only through short-lived signed URLs. Every account and every Studio includes 10 private packages free; Pro removes the limit.
+
+## Teams are a first-class concept
+
+Wally manages package ownership as a list of GitHub users edited through CLI commands. That is workable for a solo maintainer, but teams tend to need more structure.
+
+Forest's [Studios](/studios/intro) are organizations with ranks (owner, admin, member), custom [roles and per-package permission grants](/studios/permissions), pending-invite management, and an audit log. Packages belong to the Studio rather than to whoever happened to publish them, so members can come and go without orphaning anything.
+
+## Licensing is enforced, not assumed
+
+On Forest, a license (an SPDX identifier or a `LICENSE` file) is required to publish, and every version carries a [license safety rating](/concepts/publishing) so consumers can see at a glance what they are agreeing to. Teams shipping commercial games care about this; a dependency with no stated license is a legal question mark, and Forest is designed so that question mark cannot enter the registry.
+
+## A pipeline you can verify yourself
+
+Everything that touches package bytes on Forest, from `forest publish` on the author's machine to `forest install` on yours, is [open source](/open-source). A tarball's SHA-256 is its storage key, its URL, and the `integrity` value in your lockfile, and the CLI recomputes that hash on every download and refuses to install on a mismatch. The publish gateway deploys only from its public repository through GitHub Actions, with signed build-provenance attestations binding each deployment to a commit. You do not have to take the registry's word for what it serves; you can check.
+
+## Realms: a deliberate difference
+
+Wally separates dependencies into `server` and `shared` realms. Forest [intentionally has no realm concept](/platforms/roblox/installing#where-packages-live): there is one `Packages/` tree, and you decide where it mounts in the datamodel. Projects that want a server-only tree use the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern), which makes the split explicit in your project structure instead of implicit in package metadata.
+
+This is a trade-off, not a strict win: Wally's realms encode intent in the manifest, while Forest keeps the package model simple and puts placement under your control. We think placement is a property of *your project*, not of the package, and mirrored server-realm Wally packages slot cleanly into the two-manifest pattern.
+
+## One CLI, more than one platform
+
+Wally is a Roblox tool. Forest serves [Roblox](/platforms/roblox/intro) and [UEFN](/platforms/uefn/intro) from the same registry, the same account, and the same `forest.json` mental model. If your studio ships on more than one platform, or might, your package workflow does not have to change per project.
+
+<Callout type="info">
+Curious to try it? Install the [Forest CLI](/forest-cli/install) and run `forest i` on any mirrored package; the manifest, lockfile, and install flow will feel familiar within minutes.
+</Callout>

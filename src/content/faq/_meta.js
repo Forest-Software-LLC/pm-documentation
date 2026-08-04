@@ -1,3 +1,5 @@
 module.exports = {
-    "commonly-asked-questions" : "Commonly Asked Questions"
+    "commonly-asked-questions" : "Commonly Asked Questions",
+    "wally-comparison" : "Wally Comparison",
+    "pesde-comparison" : "pesde Comparison"
 }
