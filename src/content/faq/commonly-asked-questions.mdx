@@ -1,13 +1,16 @@
-## Commonly Asked Questions
+# Commonly Asked Questions
+
 > What happens if two packages depend on the same package?
 
 Forest PM uses a technique called "dependency de-duplication" to ensure that if multiple packages depend on the same package, only one copy of that package is installed. This helps to reduce disk space usage and avoid version conflicts.
 
 > What if two packages depend on different versions of the same package?
 
-In cases where two packages depend on different versions of the same package, Forest PM will install both versions in separate folders within the `Packages` directory. 
+That depends on the platform (see [conflict resolution](/concepts/dependencies#conflict-resolution-dedupe-first) for the full rules):
 
-This allows each package to use the version it was designed to work with, preventing compatibility issues. However, this can lead to increased disk space usage, so it's generally recommended to use packages that depend on compatible versions of shared dependencies whenever possible.
+On **Roblox**, Forest installs both versions in separate folders within the `Packages` directory. Each package uses the version it was designed to work with, preventing compatibility issues, at the cost of some duplicate code. Prefer packages that depend on compatible versions of shared dependencies when you can.
+
+On **UEFN**, a project resolves every package to a single version (Verse module paths carry no version), so a genuinely incompatible conflict is a hard error naming both requesters. Align the ranges or drop one.
 
 > What happens if I install 2 packages with the same name?
 
@@ -15,7 +18,7 @@ If you attempt to install two packages with the same name but from different aut
 
 This means you can have `@user1/package` and `@user2/package` installed simultaneously without conflict, as they are considered distinct packages.
 
-Since both would default to the same folder name, install the second one under an alias:
+On **Roblox**, both would default to the same folder name, so install the second one under an alias (on **UEFN** no alias is needed: imports are already namespaced by scope, see [Scopes & Collisions](/platforms/uefn/collisions)):
 
 ```bash
 forest i @user1/package
@@ -40,6 +43,10 @@ No, and that's a common misunderstanding worth being precise about. Private cont
 > Are circular dependencies allowed?
 
 They aren't rejected at publish or install time, and installation handles them without issue, but because you can only depend on already-published versions, a cycle can only be formed retroactively across versions, and it's almost always a sign that two packages should be one. See [Dependencies & Versioning](/concepts/dependencies#circular-dependencies).
+
+> How do I update my dependencies to newer versions?
+
+Run `forest audit` to see which dependencies have newer versions (and any license considerations), then `forest audit --update` to bump them all to the latest and reinstall. Note that `forest update` is different: it updates the CLI itself. See [Updating dependencies](/concepts/dependencies#updating-dependencies).
 
 > What does the "Mirrored" badge on a package mean?
 

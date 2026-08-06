@@ -59,6 +59,20 @@ This uploads your package to the registry, making it available for others to ins
 The CLI asks a few questions: visibility (public or [private](/concepts/private-packages)), name, description, version, and license. Visibility is permanent. Every later version inherits what you choose here. Every account includes 10 private packages for free; Pro removes the limit (see [Private Packages](/concepts/private-packages#plans-and-limits)).
 </Steps>
 
+## License safety ratings
+
+Every published package needs a license: an [SPDX identifier](https://spdx.org/licenses/) or a `LICENSE` file the CLI can detect (see the [`license` field](/concepts/manifest#fields)). The registry then runs an automated license review on every version and assigns it a **safety rating**, shown on the package page and returned by the API:
+
+| Rating | Meaning |
+|---|---|
+| `safe` | Permissive license; use freely, minor obligations at most (e.g. MIT, Apache-2.0). |
+| `caution` | Usable, but carries obligations that bite in specific cases; read the version's license caveats. |
+| `unsafe` | Plausibly obligates open-sourcing the game that consumes it (e.g. strong copyleft). |
+| `pending` | Custom or unrecognized license text, awaiting review. |
+| `unknown` | The license could not be determined. |
+
+Ratings are an automated review, not legal advice. On `caution` or `unsafe`, read the actual license (and the caveats listed on the version) before shipping the package in a commercial project. [`forest audit`](/forest-cli/commands#forest-audit) reports the ratings across your whole dependency tree.
+
 ## Publishing a package with dependencies
 
 If your package relies on other packages, install those dependencies locally before publishing. For example, if your package relies on `@forest/utils`:

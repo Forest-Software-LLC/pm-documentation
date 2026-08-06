@@ -1,0 +1,356 @@
+/*
+  Forest brand layer for the docs site.
+  Tokens mirror forest-frontend/src/styles/globals.css (light = forest green,
+  dark = electric green on near-black). Nextra toggles `.dark` on <html>,
+  the same convention as the main site, so the variable swap works as-is.
+  Keep the two files in sync when the brand palette changes.
+*/
+/* Lexend (loaded via next/font in layout.jsx) as the site-wide sans font.
+   Nextra's theme reads --x-font-sans; this un-layered override beats its
+   @layer theme default. Terminals and code keep the mono stack. */
+:root {
+  --x-font-sans: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --fpm-surface: #ffffff;
+  --fpm-surface-tint: #f8f8f8;
+  --fpm-edge: #e5e7eb;
+  --fpm-ink: #222222;
+  --fpm-ink-muted: #474747;
+  --fpm-ink-faint: #999999;
+  --fpm-accent: #0c854b;        /* brand-bright: prompts, accents */
+  --fpm-brand-ink: #234b42;     /* brand green as text */
+  --fpm-brand-ink-strong: #26312f;
+  --fpm-chip-bg: #e5fff9;
+  --fpm-chip-ink: #234b42;
+  --fpm-chip-edge: rgba(35, 75, 66, 0.25);
+  --fpm-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.dark {
+  --fpm-surface: #131615;
+  --fpm-surface-tint: #1a1d1c;
+  --fpm-edge: rgba(255, 255, 255, 0.07);
+  --fpm-ink: #d8ddda;
+  --fpm-ink-muted: #a5aeaa;
+  --fpm-ink-faint: #7f8884;
+  --fpm-accent: #c6ff39;        /* electric green */
+  --fpm-brand-ink: #a8c8ba;     /* sage */
+  --fpm-brand-ink-strong: #eef4f0;
+  --fpm-chip-bg: rgba(198, 255, 57, 0.12);
+  --fpm-chip-ink: #c6ff39;
+  --fpm-chip-edge: rgba(198, 255, 57, 0.25);
+}
+
+/* ---------- Navbar logo ---------- */
+
+.fpm-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--fpm-brand-ink-strong);
+  font-weight: 700;
+}
+
+.fpm-logo-mark {
+  height: 1.65rem;
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* Theme swap for the brand mark (same pair as the main site's header) */
+.fpm-logo-dark {
+  display: none;
+}
+
+.dark .fpm-logo-light {
+  display: none;
+}
+
+.dark .fpm-logo-dark {
+  display: inline-block;
+}
+
+.fpm-logo-docs {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  background: var(--fpm-chip-bg);
+  color: var(--fpm-chip-ink);
+  border: 1px solid var(--fpm-chip-edge);
+}
+
+.fpm-nav-link {
+  font-size: 0.875rem;
+}
+
+.fpm-nav-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Footer ---------- */
+
+.fpm-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  width: 100%;
+  font-size: 0.875rem;
+  color: var(--fpm-ink-muted);
+}
+
+.fpm-footer-links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.fpm-footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Command card ---------- */
+
+.fpm-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+  padding: 0.65rem 1rem;
+  background: var(--fpm-surface-tint);
+  border: 1px solid var(--fpm-edge);
+  border-left: 3px solid var(--fpm-accent);
+  border-radius: 0.5rem;
+}
+
+.fpm-command-line {
+  font-family: var(--fpm-mono);
+  font-size: 0.9rem;
+  color: var(--fpm-ink);
+  overflow-wrap: anywhere;
+}
+
+.fpm-command-prompt {
+  color: var(--fpm-accent);
+  font-weight: 700;
+  margin-right: 0.35rem;
+  user-select: none;
+}
+
+.fpm-cmd-word {
+  font-weight: 600;
+}
+
+/* <required> and [optional] arguments */
+.fpm-cmd-arg {
+  color: var(--fpm-ink-muted);
+  font-weight: 400;
+}
+
+.fpm-cmd-opt {
+  color: var(--fpm-ink-faint);
+  font-weight: 400;
+}
+
+.fpm-command-aliases {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fpm-aliases-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fpm-ink-faint);
+}
+
+.fpm-chip {
+  font-family: var(--fpm-mono);
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  background: var(--fpm-chip-bg);
+  color: var(--fpm-chip-ink);
+  border: 1px solid var(--fpm-chip-edge);
+  white-space: nowrap;
+}
+
+/* ---------- Flags (options table) ---------- */
+
+.fpm-flags {
+  margin-top: 1rem;
+  border: 1px solid var(--fpm-edge);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.fpm-flags-title {
+  padding: 0.4rem 1rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fpm-ink-faint);
+  background: var(--fpm-surface-tint);
+  border-bottom: 1px solid var(--fpm-edge);
+}
+
+.fpm-flags-grid {
+  display: grid;
+  grid-template-columns: fit-content(18rem) 1fr;
+  margin: 0;
+}
+
+.fpm-flag {
+  display: contents;
+}
+
+.fpm-flag-term {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.45rem;
+  margin: 0;
+  padding: 0.6rem 1.25rem 0.6rem 1rem;
+}
+
+.fpm-flag + .fpm-flag .fpm-flag-term,
+.fpm-flag + .fpm-flag .fpm-flag-desc {
+  border-top: 1px solid var(--fpm-edge);
+}
+
+.fpm-flag-name {
+  font-family: var(--fpm-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fpm-brand-ink);
+  white-space: nowrap;
+}
+
+.fpm-flag-arg {
+  font-family: var(--fpm-mono);
+  font-size: 0.8rem;
+  color: var(--fpm-ink-faint);
+}
+
+.fpm-flag-desc {
+  margin: 0;
+  padding: 0.6rem 1rem 0.6rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--fpm-ink-muted);
+}
+
+.fpm-flag-desc code {
+  font-size: 0.8em;
+}
+
+@media (max-width: 640px) {
+  .fpm-flags-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fpm-flag-term {
+    padding-bottom: 0.15rem;
+  }
+
+  .fpm-flag-desc {
+    padding: 0 1rem 0.6rem;
+  }
+
+  .fpm-flag + .fpm-flag .fpm-flag-desc {
+    border-top: none;
+  }
+}
+
+/* ---------- Terminal (session transcripts) ----------
+   Always dark in both themes, matching the main site's rule of pinning
+   terminal UI to static colors. */
+
+.fpm-terminal {
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.6rem;
+  background: #1c211f;
+  overflow: hidden;
+}
+
+.fpm-terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  background: #242b28;
+}
+
+.fpm-terminal-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: #3d4843;
+}
+
+.fpm-terminal-title {
+  margin-left: 0.35rem;
+  font-family: var(--fpm-mono);
+  font-size: 0.72rem;
+  color: #7d938a;
+}
+
+.fpm-terminal-body {
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+  font-family: var(--fpm-mono);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #a5aeaa;
+  overflow-x: auto;
+}
+
+.fpm-t-line {
+  white-space: pre;
+}
+
+.fpm-t-marker {
+  font-weight: 700;
+}
+
+.fpm-t-cmd {
+  color: #eef4f0;
+  font-weight: 500;
+}
+
+.fpm-t-cmd .fpm-t-marker {
+  color: #c6ff39;
+}
+
+.fpm-t-prompt {
+  color: #d8ddda;
+}
+
+.fpm-t-prompt .fpm-t-marker {
+  color: #6fbf9a;
+  font-weight: 400;
+}
+
+.fpm-t-success {
+  color: #b2e92c;
+}
+
+.fpm-t-info {
+  color: #79c0ff;
+}
+
+.fpm-t-comment {
+  color: #7d938a;
+  font-style: italic;
+}

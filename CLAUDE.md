@@ -32,6 +32,14 @@ npm run build
 npm run start
 ```
 
+## Theming & custom components
+Forest brand tokens (light: forest green; dark: electric `#C6FF39` on near-black) live in [src/app/globals.css](src/app/globals.css) as `--fpm-*` variables, mirroring `forest-frontend/src/styles/globals.css`; keep the two in sync. Nextra's primary color + page background are set via the `<Head color backgroundColor>` props in [src/app/layout.jsx](src/app/layout.jsx).
+
+Custom MDX components in [src/components/index.jsx](src/components/index.jsx) are registered globally in [mdx-components.js](mdx-components.js), so content pages use them without imports (see `forest-cli/commands.mdx` for all three in use):
+- `<Command cmd="forest install [package-name]" aliases={['forest i']} />` — syntax card; `<angle>` tokens render as required args, `[square]` as optional.
+- `<Flags><Flag flag="-v, --version" arg="<version>">desc</Flag></Flags>` — options table.
+- `<Terminal title="...">{`$ cmd\n> prompt\n🌳 done`}</Terminal>` — session transcript window (template-literal child); lines are styled by leading marker: `$` command, `>`/`?` prompt, `#` comment, 🌳/✓ success, ℹ/⚠ notice. Use it for interactive transcripts; keep plain ```bash fences for copyable one-liners.
+
 ## Writing docs
 - Add a page: create `src/content/<section>/<page>.mdx` and register its title/position in that section's `_meta.js` (and the parent `_meta.js` for new sections).
 - This repo **describes** the CLI and package workflow. When `forest-cli` commands or `forest.json` behavior change, update `forest-cli/*.mdx` and the relevant `concepts/` or `platforms/*` pages to match. New platform behavior goes under `platforms/<platform>/`; keep `concepts/` platform-neutral.

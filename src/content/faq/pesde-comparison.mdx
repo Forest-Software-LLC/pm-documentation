@@ -14,7 +14,7 @@ Forest and pesde have different centers of gravity. pesde goes deep on Luau: one
 | Registry model | pesde registry, plus Wally and Git repositories as package sources | One hosted registry, with the open-source Wally catalog [mirrored in](/platforms/roblox/mirrored) |
 | Private code | Typically via Git repository dependencies | [Hosted private packages](/concepts/private-packages) with per-member access grants; 10 free on every account and Studio |
 | Teams | Publishing tied to individual accounts | [Studios](/studios/intro): ranks, roles, per-package permissions, audit logs |
-| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing) |
+| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
 | Manifest surface | Targets, engines, scripts, workspaces, overrides | One `forest.json` with a single `platform` field and a guided CLI |
 | Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
 
@@ -36,7 +36,7 @@ Forest's registry is a hosted product, not only an index:
 
 ## Licensing is enforced, not assumed
 
-Forest requires a license (an SPDX identifier or a `LICENSE` file) on every published package, and every version carries a [license safety rating](/concepts/publishing). For commercial teams, an unlicensed dependency is a legal question mark; Forest is designed so that question mark cannot enter the registry in the first place.
+Forest requires a license (an SPDX identifier or a `LICENSE` file) on every published package, and every version carries a [license safety rating](/concepts/publishing#license-safety-ratings). For commercial teams, an unlicensed dependency is a legal question mark; Forest is designed so that question mark cannot enter the registry in the first place.
 
 ## A pipeline you can verify yourself
 

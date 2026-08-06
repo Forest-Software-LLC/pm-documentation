@@ -37,6 +37,8 @@ import { Callout } from 'nextra/components'
 | `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. |
 | `root` | string | Roblox only | `forest init` prompt (auto-detected by `forest publish` if missing) | Relative path to the package's entry-point module (e.g. `src/init.luau`), always with forward slashes. See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Also decides where dependencies install during development: into a `Packages/` folder next to the root module. Not used on UEFN, where the whole package folder is published. |
 | `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. |
+| `overrides` | object | No | [`forest override`](/forest-cli/commands#forest-override) | Map of `scope/name` to a version range that a **transitive** dependency is forced onto during resolution. |
+| `excludes` | object | No | [`forest exclude`](/forest-cli/commands#forest-exclude) | Map of `scope/name` to a range of versions banned from resolution, for direct and transitive dependencies alike. |
 
 Unknown fields are ignored by the registry.
 

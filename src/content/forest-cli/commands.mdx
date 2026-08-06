@@ -1,11 +1,25 @@
 # Forest CLI Commands
 
-The Forest CLI provides commands to help you manage your packages.
+The Forest CLI provides commands to help you manage your packages. This page is the full reference; to get the CLI itself, see [Installing the Forest CLI](/forest-cli/install).
 
-## Commands
-
+| Command | What it does |
+|---|---|
+| [`forest init`](#forest-init) | Start a new package (or project) in the current directory |
+| [`forest install`](#forest-install) | Install a package, or everything in your `forest.json` |
+| [`forest remove`](#forest-remove) | Remove a package from your project |
+| [`forest audit`](#forest-audit) | Check dependencies for updates and license considerations |
+| [`forest tree`](#forest-tree) | Show the installed dependency tree |
+| [`forest publish`](#forest-publish) | Publish your package to the registry |
+| [`forest login`](#forest-login) | Log in to your Forest PM account |
+| [`forest logout`](#forest-logout) | Log out and clear stored credentials |
+| [`forest whoami`](#forest-whoami) | Show the currently logged-in user |
+| [`forest update`](#forest-update) | Update the CLI itself to the latest release |
+| [`forest override`](#forest-override) | Force a transitive dependency onto a version range |
+| [`forest exclude`](#forest-exclude) | Ban versions of a package from being installed |
 
 ### `forest init`
+
+<Command cmd="forest init" />
 
 Starts development on a new package in the current directory.
 
@@ -13,76 +27,142 @@ On Roblox, init asks for a package name and the path to your root module (defaul
 
 On UEFN, init infers what to scaffold from where you run it; see [Authoring & Publishing](/platforms/uefn/authoring).
 
-```bash
-forest init
-
+<Terminal title="forest init">
+{`$ forest init
 > Platform: <select your platform>
 > Package name: my-package
 > Path to the package's root file (created if missing): src/init.luau
 
-🌳 Initialized package "my-package"
-```
+🌳 Initialized package "my-package"`}
+</Terminal>
 
-Pass `-p`/`--platform` to skip the platform picker:
+<Flags>
+  <Flag flag="-p, --platform" arg="<platform>">Skip the platform picker: `--platform roblox` or `--platform uefn`.</Flag>
+  <Flag flag="--project">Set up a game or project that only *consumes* packages: writes a bare manifest (platform and an empty dependency list) with a top-level `Packages/` folder, no prompts.</Flag>
+</Flags>
 
-```bash
-forest init --platform roblox   # or: --platform uefn
-```
+### `forest install`
 
-Setting up a game or project that only *consumes* packages? Pass `--project` to write a bare manifest (platform and an empty dependency list) with a top-level `Packages/` folder, no prompts:
+<Command cmd="forest install [package-name]" aliases={['forest i', 'forest grow']} />
 
-```bash
-forest init --project
-```
-
-### `forest install <package-name>`
-Installs a package from Forest PM. Downloads the package and its dependencies into your project's packages directory.
-
-Options: `-v/--version` to install a specific version, `-a/--alias` to install under an alias. Run without a package name to install everything in your `forest.json`.
+Installs a package from Forest PM. Downloads the package and its dependencies into your project's packages directory. Run without a package name to install everything in your `forest.json`.
 
 Run in a folder with no `forest.json`, install offers to create the same bare manifest as `forest init --project`; pass `--init <platform>` to skip that prompt in scripts.
 
-Aliases: `forest i`, `forest grow`
+<Flags>
+  <Flag flag="-v, --version" arg="<version>">Install a specific version instead of the latest.</Flag>
+  <Flag flag="-a, --alias" arg="<alias>">Install the package under an alias.</Flag>
+  <Flag flag="-f, --force">Reinstall everything from scratch, ignoring installed state.</Flag>
+  <Flag flag="--init" arg="<platform>">Create the bare manifest without prompting when there is no `forest.json`, for use in scripts.</Flag>
+</Flags>
 
-### `forest remove <package-name>`
+### `forest remove`
+
+<Command cmd="forest remove <package-name>" aliases={['forest chop']} />
 
 Removes a package from your project and updates your `forest.json`.
 
-Alias: `forest chop <package-name>`
+### `forest audit`
+
+<Command cmd="forest audit [package-name]" aliases={['forest outdated']} />
+
+Checks your dependencies for available updates and license considerations. This is also [how you update dependencies](/concepts/dependencies#updating-dependencies): review the report, then re-run with `--update`.
+
+For each direct dependency, audit reports three versions:
+
+- **Current**: the version pinned in your lockfile.
+- **Wanted**: the highest version that satisfies the range declared in `forest.json`.
+- **Latest**: the newest published version, even if your range doesn't allow it.
+
+After the version table, audit prints a license report over your whole resolved dependency tree (direct and transitive), flagging packages whose [license safety rating](/concepts/publishing#license-safety-ratings) deserves a look before you ship. It also lists any [overrides and exclusions](#forest-override) declared in your manifest, warning about entries that no longer match anything.
+
+Pass a package name to audit just that dependency.
+
+<Flags>
+  <Flag flag="-u, --update">Bump every outdated dependency's range in `forest.json` to `^latest`, then re-resolve and reinstall. Aliases are preserved.</Flag>
+</Flags>
+
+### `forest tree`
+
+<Command cmd="forest tree [package-name]" aliases={['forest ls', 'forest list']} />
+
+Prints the installed dependency tree, so you can see exactly which versions are in your project and which package pulled in which transitive dependency. Pass a package (`scope/name`, an alias, or a bare name that's unambiguous) to show only its subtree.
 
 ### `forest publish`
+
+<Command cmd="forest publish" />
 
 Publishes your package to Forest PM. Uploads the package and its metadata to the Forest PM registry, making it available for others to install.
 
 ### `forest login`
+
+<Command cmd="forest login" />
+
 Logs in to your Forest PM account. Two ways to authenticate:
 
 - **Browser (recommended):** opens forest.dev in your browser; approve the request there and the CLI picks up your session automatically.
 - **Username/Password:** prompts in the terminal. All Forest accounts use two-factor authentication, so you'll be asked for a code from your authenticator app (or a backup code) after your credentials.
 
-```bash
-forest login
-
+<Terminal title="forest login">
+{`$ forest login
 ? How would you like to log in? Username/Password
 > Username: your-username
 > Password: ********
 ℹ️ Two-factor authentication required
 > Authenticator code (or backup code): 123456
-🌳 Logged in as your-username
-```
+🌳 Logged in as your-username`}
+</Terminal>
+
+### `forest logout`
+
+<Command cmd="forest logout" />
+
+Logs out of your Forest PM account and clears the credentials stored on this machine.
+
+### `forest whoami`
+
+<Command cmd="forest whoami" />
+
+Prints the account you're currently logged in as. Useful before publishing from a shared or CI machine.
 
 ### `forest update`
 
-Updates the Forest CLI to the latest release. It downloads the correct binary for your platform, verifies its SHA-256 checksum against the published release manifest, and replaces the running executable in place, no reinstall needed.
+<Command cmd="forest update" aliases={['forest upgrade']} />
 
-Pass `--check` to only report whether an update is available without installing it.
+Updates the Forest CLI itself to the latest release (to update your project's *dependencies*, see [`forest audit`](#forest-audit)). It downloads the correct binary for your platform, verifies its SHA-256 checksum against the published release manifest, and replaces the running executable in place, no reinstall needed.
 
-Alias: `forest upgrade`
+<Terminal title="forest update">
+{`$ forest update
 
-```bash
-forest update
+🌳 Updated forest v0.0.4 -> v0.0.5 🌲`}
+</Terminal>
 
-🌳 Updated forest v0.0.4 -> v0.0.5 🌲
-```
+<Flags>
+  <Flag flag="--check">Only report whether an update is available, without installing it.</Flag>
+</Flags>
 
 Forest also shows a one-line notice when a newer version is available. That check runs at most once a day and is skipped in CI and non-interactive shells (or set `FOREST_NO_UPDATE_CHECK=1` to disable it entirely).
+
+### `forest override`
+
+<Command cmd="forest override [package-name]" />
+
+Forces a **transitive** dependency (one you don't declare yourself) onto a version range of your choosing, recorded in the `overrides` map of your `forest.json`. Use it when a dependency of a dependency has a broken release and you need to hold it back until upstream catches up. Run with no package name to list the overrides currently declared.
+
+<Flags>
+  <Flag flag="-r, --range" arg="<range>">The range to force, skipping the interactive prompt. Fails if no published version satisfies it.</Flag>
+  <Flag flag="-y, --yes">Apply without the confirmation prompt.</Flag>
+  <Flag flag="--remove">Remove the override for this package.</Flag>
+</Flags>
+
+### `forest exclude`
+
+<Command cmd="forest exclude [package-name]" />
+
+Bans specific versions of a package from ever being installed, recorded in the `excludes` map of your `forest.json`. Unlike an override, an exclusion applies to direct and transitive dependencies alike: the banned versions are removed from the candidate set, and resolution fails loudly if a declared range has no non-excluded version left. Run with no package name to list the exclusions currently declared.
+
+<Flags>
+  <Flag flag="-r, --range" arg="<range>">The versions to ban (e.g. `=1.6.0`), skipping the interactive prompt.</Flag>
+  <Flag flag="-y, --yes">Apply without the confirmation prompt.</Flag>
+  <Flag flag="--remove">Remove the exclusion for this package.</Flag>
+</Flags>

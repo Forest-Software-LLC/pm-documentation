@@ -2,7 +2,7 @@ import { Callout } from 'nextra/components'
 
 # Dependencies & Versioning
 
-This page defines exactly how Forest records, resolves, and versions dependencies. These rules are the same on every platform; where a package physically lands on disk is platform-specific and covered under [Platforms](/platforms/roblox/installing).
+This page defines exactly how Forest records, resolves, and versions dependencies. These rules are the same on every platform; where a package physically lands on disk is platform-specific and covered per platform under [Roblox](/platforms/roblox/installing) and [UEFN](/platforms/uefn/installing).
 
 ## How dependencies are recorded
 
@@ -29,7 +29,17 @@ Dependency versions are **ranges, not exact pins**, following [SemVer](https://s
 
 Exact ranges (`=`) are how a set of related packages can be kept in lockstep, though if two packages must always move together, they usually want to be [one package with one root](/platforms/roblox/server-client) instead.
 
-Actual installed versions are pinned by `forest-lock.json`; ranges only matter when the lockfile is (re)generated.
+Actual installed versions are pinned by `forest-lock.json`; ranges only matter when the lockfile is (re)generated. To move pinned versions forward, see [Updating dependencies](#updating-dependencies) below.
+
+## Updating dependencies
+
+Installed versions never change behind your back: `forest install` reproduces the lockfile's pinned tree. Updating is an explicit step, and [`forest audit`](/forest-cli/commands#forest-audit) (alias `forest outdated`) is the tool for it:
+
+1. **See what's outdated.** `forest audit` compares, for every direct dependency, the version in your lockfile (*Current*), the highest version your declared range allows (*Wanted*), and the newest published version (*Latest*). It also reports license considerations across your resolved tree.
+2. **Update everything.** `forest audit --update` rewrites each outdated dependency's range in `forest.json` to `^latest`, then re-resolves and reinstalls. This crosses major-version boundaries, so read the report first: a major bump means the author declared a breaking change.
+3. **Update one package.** `forest audit <scope/name> --update` does the same for a single dependency. To move to a *specific* version instead of the latest, install it explicitly: `forest i <scope/name> -v <version>`.
+
+Two related tools for when an upstream release is broken: [`forest override`](/forest-cli/commands#forest-override) forces a transitive dependency onto a range you choose, and [`forest exclude`](/forest-cli/commands#forest-exclude) bans specific versions from resolution entirely.
 
 ## Conflict resolution: dedupe first
 

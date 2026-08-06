@@ -1,0 +1,77 @@
+import { Steps, Tabs, Callout } from 'nextra/components'
+
+# Quick Start
+
+This walkthrough takes you from nothing to requiring a Forest package in a Roblox project in about five minutes. It assumes you sync files into Studio with [Rojo](https://rojo.space) or a similar tool.
+
+<Callout type="info">
+Building for UEFN? The flow differs enough that it has its own page: see [Installing & Importing on UEFN](/platforms/uefn/installing).
+</Callout>
+
+<Steps>
+### Install the Forest CLI
+
+Run the command for your operating system in a terminal:
+
+<Tabs items={['Windows (PowerShell)', 'macOS / Linux']}>
+  <Tabs.Tab>
+    ```powershell
+    irm https://releases.forest.dev/install.ps1 | iex
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    curl -fsSL https://releases.forest.dev/install.sh | sh
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+Then open a **new** terminal and confirm it works with `forest --version`. Install options and supported platforms are covered in [Installing the Forest CLI](/forest-cli/install).
+
+### Install a package
+
+From your project's root folder (where your Rojo project file lives), install any package from the registry; its scope and name are shown on its [forest.dev](https://forest.dev) page. For example:
+
+```bash
+forest i evaera/promise
+```
+
+Since this is the first package, Forest offers to set the project up for you: accept and pick **Roblox**, and it writes a `forest.json` manifest before installing. The package (and any dependencies) lands in a top-level `Packages/` folder, recorded in your `forest.json` and `forest-lock.json`. Commit both files to source control.
+
+### Mount the Packages folder
+
+Forest installs files on disk; *you* decide where they appear in the datamodel. With Rojo, map the folder in your project file (`ReplicatedStorage.Packages` is the common choice):
+
+```json
+{
+  "name": "my-game",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Packages": { "$path": "Packages" }
+    }
+  }
+}
+```
+
+Where you mount it matters for what replicates to clients; see [Where packages live](/platforms/roblox/installing#where-packages-live).
+
+### Require it
+
+Each installed package is a folder you require by instance path, named after the package without its scope:
+
+```lua
+local Packages = game:GetService("ReplicatedStorage").Packages
+
+local Promise = require(Packages.promise)
+```
+
+That's it. You're using packages.
+</Steps>
+
+## Next steps
+
+- **New to packages?** [What is a Package?](/concepts/intro) covers the ideas behind all of this.
+- **Keep dependencies current:** [`forest audit`](/forest-cli/commands#forest-audit) shows updates and license considerations.
+- **Publish your own:** [Publishing a Package](/concepts/publishing) walks through `forest init` and `forest publish`.
+- **Full command reference:** [CLI Commands](/forest-cli/commands).

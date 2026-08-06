@@ -1,5 +1,6 @@
 module.exports = {
     "index" : "Introduction",
+    "quickstart" : "Quick Start",
     "concepts" : "Concepts",
     "platforms" : "Platforms",
     "forest-cli" : "Forest CLI",

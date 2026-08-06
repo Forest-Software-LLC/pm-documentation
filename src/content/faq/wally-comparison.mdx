@@ -14,7 +14,7 @@ This page is for developers evaluating the two. The short version: Wally is a le
 | Accounts | GitHub OAuth | Forest accounts; two-factor authentication on every account |
 | Private packages | Run your own registry server | Hosted; 10 free on every account and Studio, unlimited on Pro |
 | Teams | Owner lists managed via the CLI | [Studios](/studios/intro): ranks, roles, per-package permissions, audit logs |
-| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing) |
+| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
 | Types in Studio | Community tooling such as `wally-package-types` | Packages install as real ModuleScripts required by instance path; no extra tooling |
 | Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
 | Realms | Separate `server` and `shared` dependency lists | One tree; you choose where it mounts (see below) |
@@ -43,7 +43,7 @@ Forest's [Studios](/studios/intro) are organizations with ranks (owner, admin, m
 
 ## Licensing is enforced, not assumed
 
-On Forest, a license (an SPDX identifier or a `LICENSE` file) is required to publish, and every version carries a [license safety rating](/concepts/publishing) so consumers can see at a glance what they are agreeing to. Teams shipping commercial games care about this; a dependency with no stated license is a legal question mark, and Forest is designed so that question mark cannot enter the registry.
+On Forest, a license (an SPDX identifier or a `LICENSE` file) is required to publish, and every version carries a [license safety rating](/concepts/publishing#license-safety-ratings) so consumers can see at a glance what they are agreeing to. Teams shipping commercial games care about this; a dependency with no stated license is a legal question mark, and Forest is designed so that question mark cannot enter the registry.
 
 ## A pipeline you can verify yourself
 

@@ -6,17 +6,13 @@ import { Callout } from 'nextra/components'
 
 This page covers how Roblox packages are installed, required, and mounted in your project. For the platform-neutral rules (version ranges, the lockfile, private access), see [Concepts](/concepts/intro).
 
-### Prerequisites
+## Prerequisites
 
 Before you can install packages, you'll need the [Forest CLI](/forest-cli/install) installed.
 
 ## Installing packages
 
-For this metaphorical example, we'll be cooking (coding) spaghetti. To make spaghetti, we need to grab (install) 3 ingredients (packages): pasta, sauce, and meatballs.
-
-Say you found 3 packages that provide these ingredients: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`.
-
-We'll cover the install commands in detail later, but for now, use the following to install the packages:
+Suppose your project needs three packages: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`. Install each with `forest install` (alias `forest i`; every flag is covered in the [CLI reference](/forest-cli/commands#forest-install)):
 
 ```bash
 forest i @forest/pasta
@@ -44,7 +40,7 @@ The folder name you require is the package's name without its scope (`@forest/pa
 
 Whatever a package's root module returns is its entire public API. See [Package Anatomy](/platforms/roblox/anatomy).
 
-Using packages this way keeps every part of your project modular. You can update, replace, or share each "ingredient" with ease.
+Using packages this way keeps every part of your project modular. You can update, replace, or share each piece independently.
 
 ## Where packages live
 
