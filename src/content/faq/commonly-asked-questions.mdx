@@ -16,13 +16,13 @@ On **UEFN**, a project resolves every package to a single version (Verse module 
 
 If you attempt to install two packages with the same name but from different authors or sources, Forest PM will treat them as separate entities based on their full package identifiers (which typically include the author's namespace).
 
-This means you can have `@user1/package` and `@user2/package` installed simultaneously without conflict, as they are considered distinct packages.
+This means you can have `user1/package` and `user2/package` installed simultaneously without conflict, as they are considered distinct packages.
 
 On **Roblox**, both would default to the same folder name, so install the second one under an alias (on **UEFN** no alias is needed: imports are already namespaced by scope, see [Scopes & Collisions](/platforms/uefn/collisions)):
 
 ```bash
-forest i @user1/package
-forest i @user2/package -a package2
+forest i user1/package
+forest i user2/package -a package2
 ```
 
 Then require each by its folder name:

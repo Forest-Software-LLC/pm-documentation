@@ -147,7 +147,23 @@ Forest also shows a one-line notice when a newer version is available. That chec
 
 <Command cmd="forest override [package-name]" />
 
-Forces a **transitive** dependency (one you don't declare yourself) onto a version range of your choosing, recorded in the `overrides` map of your `forest.json`. Use it when a dependency of a dependency has a broken release and you need to hold it back until upstream catches up. Run with no package name to list the overrides currently declared.
+Forces every **transitive** occurrence of a package (one you don't declare yourself) onto a version range of your choosing, recorded in the `overrides` map of your `forest.json`. The forced range replaces whatever range each dependent declared, in either direction: pull a stuck dependency forward, or hold it back past a broken release until upstream catches up. Run with no package name to list the overrides currently declared.
+
+Direct dependencies are rejected: their range already lives in `dependencies`, so change it with `forest install <scope>/<name> -v <version>` instead. To ban specific versions of any dependency, direct or transitive, use [`forest exclude`](#forest-exclude).
+
+The interactive wizard validates your range against the package's published versions (skipping any that your `excludes` ban) and shows the exact version it resolves to before asking you to confirm. The project is then re-resolved and reinstalled immediately; if resolution fails, `forest.json` is rolled back untouched.
+
+<Terminal title="forest override">
+{`$ forest override forest/signal
+> New SemVer range for forest/signal (current: installed 2.4.0): ^2.5.0
+ℹ Override version will be v2.5.1 (currently 2.4.0).
+? Accept? Yes
+🌳 Override set: forest/signal -> ^2.5.0`}
+</Terminal>
+
+While an override is active, every install reports how many dependency edges it rewrote (run [`forest tree`](#forest-tree) to see the affected packages tagged in place), warns if the override matches nothing in the tree, and notes when it is no longer needed because dependencies already resolve inside it on their own.
+
+Overrides apply only to your own project: `forest publish` does not carry them to consumers.
 
 <Flags>
   <Flag flag="-r, --range" arg="<range>">The range to force, skipping the interactive prompt. Fails if no published version satisfies it.</Flag>
@@ -159,7 +175,23 @@ Forces a **transitive** dependency (one you don't declare yourself) onto a versi
 
 <Command cmd="forest exclude [package-name]" />
 
-Bans specific versions of a package from ever being installed, recorded in the `excludes` map of your `forest.json`. Unlike an override, an exclusion applies to direct and transitive dependencies alike: the banned versions are removed from the candidate set, and resolution fails loudly if a declared range has no non-excluded version left. Run with no package name to list the exclusions currently declared.
+Bans a range of a package's versions from ever being installed, recorded in the `excludes` map of your `forest.json`. Unlike an override, an exclusion applies to direct and transitive dependencies alike: the banned versions are removed from every candidate set, declared ranges are still honored across the versions that remain, and resolution fails loudly (naming the exclusion) if a declared range has no allowed version left. Run with no package name to list the exclusions currently declared.
+
+Before you confirm, the wizard shows exactly which published versions the ban covers, and warns if your range has no upper bound, since that also bans every future version, including the eventual fix. Prefer banning the known-bad set (for example `=1.6.0`). A range that bans nothing, or that bans every published version, is rejected. As with overrides, the change reinstalls immediately and rolls back `forest.json` if resolution fails.
+
+<Terminal title="forest exclude">
+{`$ forest exclude user1/sauce
+> Versions of user1/sauce to exclude (e.g. =1.6.0): =2.2.0
+ℹ Bans 1 published version: 2.2.0.
+ℹ Currently installed 2.2.0 will be replaced on reinstall.
+? Accept? Yes
+ℹ user1/sauce: 2.2.0 -> 2.1.4
+🌳 Exclusion set: user1/sauce -> =2.2.0`}
+</Terminal>
+
+Installs warn when an exclusion matches nothing in your tree, and let you know once it stops affecting resolution (every range now picks an allowed version on its own, typically because a fixed release shipped), so stale entries don't linger unnoticed.
+
+Exclusions apply only to your own project: `forest publish` does not carry them to consumers.
 
 <Flags>
   <Flag flag="-r, --range" arg="<range>">The versions to ban (e.g. `=1.6.0`), skipping the interactive prompt.</Flag>

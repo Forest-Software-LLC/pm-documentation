@@ -75,10 +75,10 @@ Ratings are an automated review, not legal advice. On `caution` or `unsafe`, rea
 
 ## Publishing a package with dependencies
 
-If your package relies on other packages, install those dependencies locally before publishing. For example, if your package relies on `@forest/utils`:
+If your package relies on other packages, install those dependencies locally before publishing. For example, if your package relies on `forest/utils`:
 
 ```bash
-forest i @forest/utils
+forest i forest/utils
 ```
 
 Installing writes the dependency into your `forest.json` (as a `^` version range), and `forest publish` uploads that dependency list as-is. The CLI does **not** scan your source for imports, so a dependency exists exactly when it's listed in `forest.json`. See [Dependencies & Versioning](/concepts/dependencies) for range syntax and resolution rules.

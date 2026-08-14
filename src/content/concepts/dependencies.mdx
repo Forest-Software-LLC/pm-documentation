@@ -8,7 +8,7 @@ This page defines exactly how Forest records, resolves, and versions dependencie
 
 Dependencies are read from your `forest.json`, nothing else. `forest publish` does **not** scan your source for imports:
 
-1. `forest i @scope/name` resolves the package, writes it into the `dependencies` object of `forest.json` (as `^<installed-version>`), and updates `forest-lock.json`.
+1. `forest i <scope>/<name>` resolves the package, writes it into the `dependencies` object of `forest.json` (as `^<installed-version>`), and updates `forest-lock.json`.
 2. `forest publish` uploads the `dependencies` object exactly as it appears in `forest.json`.
 
 So "automatic dependency detection" at publish time means: whatever you installed (and didn't remove) is a dependency. If you hand-edit `forest.json` to add or change an entry, that's honored too. Run `forest install` afterward to re-resolve.
@@ -45,7 +45,7 @@ Two related tools for when an upstream release is broken: [`forest override`](/f
 
 When the same package appears more than once in the dependency graph, Forest deduplicates wherever it can:
 
-- **Compatible ranges are deduplicated.** If every requirement on `@forest/signal` can be satisfied by one version, exactly one copy is installed and shared.
+- **Compatible ranges are deduplicated.** If every requirement on `forest/signal` can be satisfied by one version, exactly one copy is installed and shared.
 - **Incompatible ranges are where platforms differ.** If package A needs `^1.0.0` and package B needs `^2.0.0`, there is no single version that satisfies both. How that is handled depends on the platform:
 
   - **Roblox** installs both versions side by side, each nested where its dependent can reach it. Nothing fails, but you pay in duplicate code, and instances of "the same" class from the two copies won't be shared. See [Dependency layout on disk](/platforms/roblox/installing#package-dependencies).

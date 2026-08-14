@@ -12,12 +12,12 @@ Before you can install packages, you'll need the [Forest CLI](/forest-cli/instal
 
 ## Installing packages
 
-Suppose your project needs three packages: `@forest/pasta`, `@user1/sauce`, and `@user1/meatballs`. Install each with `forest install` (alias `forest i`; every flag is covered in the [CLI reference](/forest-cli/commands#forest-install)):
+Suppose your project needs three packages: `forest/pasta`, `user1/sauce`, and `user1/meatballs`. Install each with `forest install` (alias `forest i`; every flag is covered in the [CLI reference](/forest-cli/commands#forest-install)):
 
 ```bash
-forest i @forest/pasta
-forest i @user1/sauce
-forest i @user1/meatballs
+forest i forest/pasta
+forest i user1/sauce
+forest i user1/meatballs
 ```
 
 This downloads each package into your project's `Packages/` folder (next to `forest.json`) and records it in your manifest.
@@ -36,7 +36,7 @@ local Meatballs = require(Packages.meatballs)
 -- Do something with our now-imported ingredients
 ```
 
-The folder name you require is the package's name without its scope (`@forest/pasta` becomes `pasta`), or the alias you chose at install time (`forest i @user2/pasta -a pasta2` becomes `pasta2`).
+The folder name you require is the package's name without its scope (`forest/pasta` becomes `pasta`), or the alias you chose at install time (`forest i user2/pasta -a pasta2` becomes `pasta2`).
 
 Whatever a package's root module returns is its entire public API. See [Package Anatomy](/platforms/roblox/anatomy).
 
@@ -118,7 +118,7 @@ Things to know about this pattern:
 ## Package Dependencies
 
 When you install a package, Forest automatically installs any dependencies it requires.
-For example, if `@forest/pasta` depends on `@forest/flour`, Forest installs both when you run: <br /> `forest i @forest/pasta`
+For example, if `forest/pasta` depends on `forest/flour`, Forest installs both when you run: <br /> `forest i forest/pasta`
 After installation, your project's file tree looks like this:
 
 <FileTree>
@@ -152,6 +152,6 @@ In the example file tree, the root `Packages` folder contains the three packages
 Since we didn't install flour directly, it doesn't appear in the root `Packages` folder. That means it isn't available for you to require() in your project.
 
 This structure keeps dependencies isolated. Each package manages its own requirements without affecting the main project or other packages. Forest generates small pointer modules (`return require(script.Parent...)`) so version-conflicted or transitive-only packages nested inside a dependent's own `Packages/` folder are always found at a predictable relative location. Every link is a **relative instance path**, which is why the whole tree can be mounted anywhere in the datamodel. If you do want to use flour directly, install it yourself with: <br />
-`forest i @forest/flour`
+`forest i forest/flour`
 
 For exactly how versions are chosen, how conflicts between shared dependencies resolve, and how the lockfile pins your tree, see [Dependencies & Versioning](/concepts/dependencies).
