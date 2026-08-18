@@ -35,7 +35,8 @@ import { Callout } from 'nextra/components'
 | `description` | string | No | `forest publish` prompt | Short description shown in search and on the package page. |
 | `platform` | string | Yes | `forest init` | Target platform: `"roblox"` or `"uefn"`. Install and publish both require it, and it decides how a package is laid out and imported. |
 | `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. |
-| `root` | string | Roblox only | `forest init` prompt (auto-detected by `forest publish` if missing) | Relative path to the package's entry-point module (e.g. `src/init.luau`), always with forward slashes. See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Also decides where dependencies install during development: into a `Packages/` folder next to the root module. Not used on UEFN, where the whole package folder is published. |
+| `root` | string | Roblox only | `forest init` prompt (auto-detected by `forest publish` if missing) | Relative path to the package's entry-point module (e.g. `src/init.luau`), always with forward slashes. See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Also decides where dependencies install during development: into the dependency folder next to the root module (`Packages/` unless renamed via `packagesDir`). Not used on UEFN, where the whole package folder is published. |
+| `packagesDir` | string | No | `forest init --packages-dir` (absent without the flag) | Name of the folder dependencies install into; absent means the default `Packages`. Must start with a letter, then letters, digits, underscores, or hyphens, max 64 characters; Windows reserved device names (`CON`, `NUL`, `COM1`, ...) are rejected in any casing. Roblox only: a UEFN project has one shared `ForestPackages` mount whose name is part of every package's `using` imports, so it can't be renamed. See [Renaming the dependency folder](#renaming-the-dependency-folder). |
 | `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. |
 | `overrides` | object | No | [`forest override`](/forest-cli/commands#forest-override) | Map of `scope/name` to a version range that a **transitive** dependency is forced onto during resolution. Applies only to your project; not carried along when you publish. |
 | `excludes` | object | No | [`forest exclude`](/forest-cli/commands#forest-exclude) | Map of `scope/name` to a range of versions banned from resolution, for direct and transitive dependencies alike. Applies only to your project; not carried along when you publish. |
@@ -69,6 +70,22 @@ Aliases are a Roblox feature. UEFN does not support them: Verse imports are alre
 </Callout>
 
 For range syntax and how ranges resolve, see [Dependencies & Versioning](/concepts/dependencies).
+
+## Renaming the dependency folder
+
+On Roblox, dependencies install into a folder named `Packages` by default. Pass `--packages-dir <name>` to `forest init` to pick a different name, recorded as `packagesDir`:
+
+```json
+"packagesDir": "roblox_packages"
+```
+
+The name is per-package and travels with every published version: your own dependencies mount under it while you develop, and when a consumer installs your package the same folder name is recreated inside it, so requires like `require(script.roblox_packages.signal)` keep working in every consumer's tree. Packages that never set the field (including all [mirrored Wally packages](/platforms/roblox/mirrored)) keep the default `Packages`.
+
+A valid name starts with a letter, followed by letters, digits, underscores, or hyphens, up to 64 characters. Windows reserved device names (`CON`, `PRN`, `AUX`, `NUL`, `COM1` through `COM9`, `LPT1` through `LPT9`) are rejected regardless of case, so `con` and `lpt3` are rejected too. Hyphenated names are legal, but your own code has to bracket-index them (`script["my-packages"]`).
+
+<Callout type="warning">
+`packagesDir` is a Roblox field. A UEFN project has a single shared `ForestPackages` mount, and that name is written into every package's `using` imports, so a package authored against a renamed mount could never co-install with everything else. The registry rejects the field on UEFN publishes.
+</Callout>
 
 ## `forest-lock.json`
 

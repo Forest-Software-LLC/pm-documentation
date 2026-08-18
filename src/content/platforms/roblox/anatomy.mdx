@@ -106,6 +106,8 @@ Inside a package under development, `forest install` places dependencies in a `P
 
 That is exactly where dependencies sit when a consumer installs your package (inside the package's own folder), so requires like `require(script.Packages.signal)` behave identically in your workspace and in every consumer's tree. As noted above, the mount and `forest-lock.json` never ship in the archive.
 
+The folder is named `Packages` by default. `forest init --packages-dir <name>` picks a different name, recorded as [`packagesDir`](/concepts/manifest#renaming-the-dependency-folder) in `forest.json`; the name travels with each published version, so consumers recreate your package's dependency folder under the same name.
+
 ## Sibling modules are reachable, not private
 
 Everything inside the package folder ships to consumers. Modules that aren't re-exported by the root are *conventionally* internal, but they still exist as instances in the consumer's datamodel and their source is visible wherever the packages tree is mounted (see [Where packages live](/platforms/roblox/installing#where-packages-live)). Don't put secrets in a package, and don't rely on "not exported" as a security boundary.
