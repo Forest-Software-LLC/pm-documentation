@@ -12,6 +12,28 @@
   --x-font-sans: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Lexend's regular (400) cut renders heavy, close to bold, so body copy
+   defaults to the light (300) weight loaded in layout.jsx. Headings keep
+   their explicit weights; bold is re-pinned so it still stands out
+   (the UA's `bolder` would only resolve 300 -> 400). */
+body {
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+/* Keep the body letter-spacing bump out of monospace contexts. */
+code,
+kbd,
+pre,
+samp {
+  letter-spacing: normal;
+}
+
 :root {
   --fpm-surface: #ffffff;
   --fpm-surface-tint: #f8f8f8;
