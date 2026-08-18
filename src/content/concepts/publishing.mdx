@@ -26,7 +26,7 @@ forest init
 
 `forest init` asks which platform the package targets, then scaffolds the package:
 
-- **Roblox**: prompts for a package name and the path to your root module (default `src/init.luau`, created as a starter module if it doesn't exist), and writes a `forest.json` with the name, version `0.1.0`, platform, and `root`.
+- **Roblox**: prompts for a package name and the path to your root module (default `src/init.luau`, created as a starter module if it doesn't exist), then writes a `forest.json` with the name, version `0.1.0`, platform, and `root`. Pass `--packages-dir <name>` to rename the dependency folder from the default `Packages`; the name is written as [`packagesDir`](/concepts/manifest#renaming-the-dependency-folder).
 - **UEFN**: scaffolds a package or project manifest based on where you run it. See [Authoring & Publishing](/platforms/uefn/authoring).
 
 Pass `-p`/`--platform` to skip the platform picker:
