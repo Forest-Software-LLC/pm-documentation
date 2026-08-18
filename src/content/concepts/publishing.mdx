@@ -91,4 +91,6 @@ To publish an update, change your code and run `forest publish` again.
 
 The CLI asks what kind of change you made (bugfix, new feature, or breaking change) and increments the patch, minor, or major version accordingly, then uploads the new version.
 
+While you're iterating, you don't need to publish on every change to test inside a real project: on Roblox, [`forest link`](/forest-cli/commands#forest-link) points a project's dependency at your local package folder so edits show up live, and `forest unlink` restores the registry version when you're done.
+
 For how Forest handles version numbers, including the range syntax consumers use to depend on your package, see [Dependencies & Versioning](/concepts/dependencies) and the [SemVer](https://semver.org/) guidelines.

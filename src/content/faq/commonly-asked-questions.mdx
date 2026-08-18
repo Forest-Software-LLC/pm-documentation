@@ -46,7 +46,7 @@ They aren't rejected at publish or install time, and installation handles them w
 
 > How do I update my dependencies to newer versions?
 
-Run `forest audit` to see which dependencies have newer versions (and any license considerations), then `forest audit --update` to bump them all to the latest and reinstall. Note that `forest update` is different: it updates the CLI itself. See [Updating dependencies](/concepts/dependencies#updating-dependencies).
+Run `forest update` to move everything to the newest versions your declared ranges allow (the safe, routine refresh). To go further, `forest audit` shows which dependencies have newer versions beyond your ranges (and any license considerations), and `forest audit --update` bumps them all to the latest and reinstalls. The CLI updates itself with `forest upgrade`. See [Updating dependencies](/concepts/dependencies#updating-dependencies).
 
 > What does the "Mirrored" badge on a package mean?
 

@@ -7,13 +7,16 @@ The Forest CLI provides commands to help you manage your packages. This page is 
 | [`forest init`](#forest-init) | Start a new package (or project) in the current directory |
 | [`forest install`](#forest-install) | Install a package, or everything in your `forest.json` |
 | [`forest remove`](#forest-remove) | Remove a package from your project |
+| [`forest update`](#forest-update) | Update dependencies to the newest versions your ranges allow |
 | [`forest audit`](#forest-audit) | Check dependencies for updates and license considerations |
 | [`forest tree`](#forest-tree) | Show the installed dependency tree |
+| [`forest link`](#forest-link) | Point a dependency at a local folder while you work on it |
+| [`forest unlink`](#forest-unlink) | Remove a local link and restore the registry version |
 | [`forest publish`](#forest-publish) | Publish your package to the registry |
 | [`forest login`](#forest-login) | Log in to your Forest PM account |
 | [`forest logout`](#forest-logout) | Log out and clear stored credentials |
 | [`forest whoami`](#forest-whoami) | Show the currently logged-in user |
-| [`forest update`](#forest-update) | Update the CLI itself to the latest release |
+| [`forest upgrade`](#forest-upgrade) | Update the CLI itself to the latest release |
 | [`forest override`](#forest-override) | Force a transitive dependency onto a version range |
 | [`forest exclude`](#forest-exclude) | Ban versions of a package from being installed |
 
@@ -55,6 +58,7 @@ Run in a folder with no `forest.json`, install offers to create the same bare ma
   <Flag flag="-a, --alias" arg="<alias>">Install the package under an alias.</Flag>
   <Flag flag="-f, --force">Reinstall everything from scratch, ignoring installed state.</Flag>
   <Flag flag="--init" arg="<platform>">Create the bare manifest without prompting when there is no `forest.json`, for use in scripts.</Flag>
+  <Flag flag="--links" arg="<mode>">How to treat [local links](#forest-link): `apply`, `ignore` (install exactly what the lockfile says), or `forbid` (fail if any links are configured, for strict CI). The default is `ignore` on CI machines and `apply` everywhere else.</Flag>
 </Flags>
 
 ### `forest remove`
@@ -63,11 +67,26 @@ Run in a folder with no `forest.json`, install offers to create the same bare ma
 
 Removes a package from your project and updates your `forest.json`.
 
+### `forest update`
+
+<Command cmd="forest update" />
+
+Moves every dependency, direct and transitive, to the newest version its declared range allows. This is the safe, routine way to pick up fixes: `forest.json` is never touched, so a `^1.4.0` range can move to `1.6.2` but never to `2.0.0`. The project is re-resolved fresh and reinstalled, and the command prints exactly which packages moved.
+
+<Terminal title="forest update">
+{`$ forest update
+ℹ   forest/signal 2.4.0 -> 2.4.2
+ℹ   forest/sauce 1.1.0 -> 1.2.0
+🌳 Updated 2 packages within the declared ranges!`}
+</Terminal>
+
+To jump *past* your declared ranges (major versions), use [`forest audit --update`](#forest-audit) instead, and read its report first. To update the CLI itself, see [`forest upgrade`](#forest-upgrade), which was called `forest update` before v1.11.
+
 ### `forest audit`
 
 <Command cmd="forest audit [package-name]" aliases={['forest outdated']} />
 
-Checks your dependencies for available updates and license considerations. This is also [how you update dependencies](/concepts/dependencies#updating-dependencies): review the report, then re-run with `--update`.
+Checks your dependencies for available updates and license considerations. Where [`forest update`](#forest-update) stays inside your declared ranges, audit is how you review and cross them: read the report, then re-run with `--update`.
 
 For each direct dependency, audit reports three versions:
 
@@ -88,6 +107,49 @@ Pass a package name to audit just that dependency.
 <Command cmd="forest tree [package-name]" aliases={['forest ls', 'forest list']} />
 
 Prints the installed dependency tree, so you can see exactly which versions are in your project and which package pulled in which transitive dependency. Pass a package (`scope/name`, an alias, or a bare name that's unambiguous) to show only its subtree.
+
+### `forest link`
+
+<Command cmd="forest link [path]" />
+
+Points one of your dependencies at a local folder, so you can iterate on a package inside a real project without publishing on every change. Roblox only for now.
+
+The target folder is a normal package workspace with its own `forest.json`; Forest reads the package's identity from it, so you never type a name that could mismatch the path. The package must already be a dependency of your project (a link **overrides** an installed dependency, it doesn't add one), which also means it needs at least one published version. Publish a `0.1.0` once, then link and iterate freely.
+
+<Terminal title="forest link">
+{`$ forest link ../signal-dev
+ℹ Added .forest/ to .gitignore (link state is machine-local and must not be committed).
+⚠ 1 package linked locally:
+⚠ forest/signal -> ../signal-dev (registry pin: 2.4.0, linked: 2.5.0-dev)
+🌳 Linked forest/signal -> ../signal-dev`}
+</Terminal>
+
+While linked, the package's folder in your `Packages/` tree is a live view of the linked source (a directory junction on Windows, a symlink on macOS and Linux): edit a file there and Rojo, Studio, and luau-lsp see the change immediately, no reinstall needed. When a live link isn't possible (some cloud-synced folders, or a package whose root module isn't named `init.*`), Forest copies the folder instead and tells you so; in copy mode, re-run `forest install` after editing to refresh the copy.
+
+Links are **your machine's state, not your project's**. They live in a gitignored `.forest/links.json`, and neither `forest.json` nor `forest-lock.json` changes: a teammate who pulls your commits gets a completely normal registry install. So you can't forget a link is active, every install and `forest tree` prints a banner naming the linked packages, and `forest link` with no arguments lists them along with how the linked copy has drifted from the pinned registry version.
+
+A few things to know while a link is active:
+
+- The linked package's *own* dependencies come from its own folder (run `forest install` there), not from your project's tree.
+- CI ignores links by default, so a stray links file can never change what CI builds; see the `--links` flag on [`forest install`](#forest-install).
+- [`forest publish`](#forest-publish) refuses to publish your package while any of its dependencies is linked: the tree you tested isn't the tree consumers would get. Unlink and re-test first.
+- The linked view exposes the package's full working folder, including files that publishing would filter out. That's expected, not a bug.
+
+### `forest unlink`
+
+<Command cmd="forest unlink [package-name]" />
+
+Removes a local link (pass the package or the linked path) and restores the exact registry version your lockfile pins, re-verified from the local cache. Unlinking something that isn't linked is a no-op, not an error.
+
+<Terminal title="forest unlink">
+{`$ forest unlink forest/signal
+ℹ Unlinked forest/signal (was -> ../signal-dev)
+🌳 Restored 1 package from the registry.`}
+</Terminal>
+
+<Flags>
+  <Flag flag="--all">Remove every active link.</Flag>
+</Flags>
 
 ### `forest publish`
 
@@ -126,16 +188,16 @@ Logs out of your Forest PM account and clears the credentials stored on this mac
 
 Prints the account you're currently logged in as. Useful before publishing from a shared or CI machine.
 
-### `forest update`
+### `forest upgrade`
 
-<Command cmd="forest update" aliases={['forest upgrade']} />
+<Command cmd="forest upgrade" />
 
-Updates the Forest CLI itself to the latest release (to update your project's *dependencies*, see [`forest audit`](#forest-audit)). It downloads the correct binary for your platform, verifies its SHA-256 checksum against the published release manifest, and replaces the running executable in place, no reinstall needed.
+Updates the Forest CLI itself to the latest release (to update your project's *dependencies*, see [`forest update`](#forest-update)). It downloads the correct binary for your platform, verifies it against the signed release manifest, and replaces the running executable in place, no reinstall needed.
 
-<Terminal title="forest update">
-{`$ forest update
+<Terminal title="forest upgrade">
+{`$ forest upgrade
 
-🌳 Updated forest v0.0.4 -> v0.0.5 🌲`}
+🌳 Updated forest v1.11.0 -> v1.12.0 🌲`}
 </Terminal>
 
 <Flags>

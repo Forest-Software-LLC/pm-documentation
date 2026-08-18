@@ -33,11 +33,11 @@ Actual installed versions are pinned by `forest-lock.json`; ranges only matter w
 
 ## Updating dependencies
 
-Installed versions never change behind your back: `forest install` reproduces the lockfile's pinned tree. Updating is an explicit step, and [`forest audit`](/forest-cli/commands#forest-audit) (alias `forest outdated`) is the tool for it:
+Installed versions never change behind your back: `forest install` reproduces the lockfile's pinned tree. Updating is an explicit step, with two tools depending on how far you want to move:
 
-1. **See what's outdated.** `forest audit` compares, for every direct dependency, the version in your lockfile (*Current*), the highest version your declared range allows (*Wanted*), and the newest published version (*Latest*). It also reports license considerations across your resolved tree.
-2. **Update everything.** `forest audit --update` rewrites each outdated dependency's range in `forest.json` to `^latest`, then re-resolves and reinstalls. This crosses major-version boundaries, so read the report first: a major bump means the author declared a breaking change.
-3. **Update one package.** `forest audit <scope/name> --update` does the same for a single dependency. To move to a *specific* version instead of the latest, install it explicitly: `forest i <scope/name> -v <version>`.
+1. **Update within your ranges.** [`forest update`](/forest-cli/commands#forest-update) moves every dependency, direct and transitive, to the newest version its declared range allows, then prints what moved. `forest.json` is untouched, so a `^1.4.0` range can pick up `1.6.2` but never `2.0.0`. This is the safe, routine refresh.
+2. **See what's beyond your ranges.** [`forest audit`](/forest-cli/commands#forest-audit) (alias `forest outdated`) compares, for every direct dependency, the version in your lockfile (*Current*), the highest version your declared range allows (*Wanted*), and the newest published version (*Latest*). It also reports license considerations across your resolved tree.
+3. **Cross them deliberately.** `forest audit --update` rewrites each outdated dependency's range in `forest.json` to `^latest`, then re-resolves and reinstalls. This crosses major-version boundaries, so read the report first: a major bump means the author declared a breaking change. Pass a package name to do it for one dependency, or move to a *specific* version with `forest i <scope/name> -v <version>`.
 
 Two related tools for when an upstream release is broken: [`forest override`](/forest-cli/commands#forest-override) forces a transitive dependency onto a range you choose, and [`forest exclude`](/forest-cli/commands#forest-exclude) bans specific versions from resolution entirely.
 
