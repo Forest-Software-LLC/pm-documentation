@@ -47,10 +47,10 @@ Platforms > UEFN:
 - [Scopes & Collisions](https://docs.forest.dev/platforms/uefn/collisions): Verse overload collisions, keeping code out of root, qualified access
 
 Studios & tooling:
-- [Studios](https://docs.forest.dev/studios/intro): shared publishing scopes (organizations), creation, plans/limits
-- [Members & Ranks](https://docs.forest.dev/studios/members): member/admin/owner hierarchy, invites, removal rules
-- [Roles & Package Permissions](https://docs.forest.dev/studios/permissions): granting members/roles access to a Studio's private packages
+- [Studios](https://docs.forest.dev/features/studios): shared publishing scopes (organizations), creation, plans/limits
+- [Members & Ranks](https://docs.forest.dev/features/studios/members): member/admin/owner hierarchy, invites, removal rules
+- [Roles & Package Permissions](https://docs.forest.dev/features/studios/permissions): granting members/roles access to a Studio's private packages
 - [CLI Install](https://docs.forest.dev/forest-cli/install): installing the forest CLI
 - [CLI Commands](https://docs.forest.dev/forest-cli/commands): init, install, remove, publish, login, update
 - [FAQ](https://docs.forest.dev/faq/commonly-asked-questions): dedupe, version conflicts, same-name packages
-- [Forest for AI Agents](https://docs.forest.dev/ai): registry REST API for programmatic package search, metadata, readmes, and source file access, plus the recommended agent workflow
+- [Forest for AI Agents](https://docs.forest.dev/features/ai-agents): how to point an assistant at Forest; the full API reference is https://forest.dev/llms.txt and the live route list is https://api.forest.dev/ai

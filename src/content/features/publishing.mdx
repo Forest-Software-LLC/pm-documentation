@@ -1,0 +1,31 @@
+# Publishing Packages
+
+<PlatformBadges roblox uefn />
+
+Anyone with a Forest account can upload packages to the registry. Publishing is two commands: `forest init` scaffolds a package workspace, and `forest publish` uploads it.
+
+<Command cmd="forest publish" />
+
+The first publish asks for the package's visibility (public or [private](/features/private-packages)), description, and license; later publishes ask what kind of change you made (bugfix, new feature, or breaking change) and bump the [SemVer](https://semver.org/) version accordingly. You never edit version numbers by hand.
+
+<Terminal title="forest publish">
+{`$ forest publish
+? What kind of change is this? New feature
+ℹ Version will be 1.3.0 (currently 1.2.4)
+🌳 Published my-studio/sauce@1.3.0`}
+</Terminal>
+
+Dependencies your package declares in `forest.json` are uploaded with it, so consumers get them installed automatically. Every published version also gets an automated [license safety rating](/concepts/publishing#license-safety-ratings) shown on its package page.
+
+## Per-platform authoring
+
+The publish flow is the same everywhere; what's inside the package differs:
+
+- **Roblox**: one root module whose return value is the public API. See [Package Anatomy](/platforms/roblox/anatomy).
+- **UEFN**: a folder of Verse modules consumers import with `using`. See [Authoring & Publishing](/platforms/uefn/authoring).
+
+## Going deeper
+
+- [Publishing a Package](/concepts/publishing) for the full walkthrough, prerequisites, and license details.
+- [Studios](/features/studios) for publishing under a shared team scope instead of your username.
+- [Local Directory Linking](/features/local-linking) for iterating on a package inside a real project without publishing every change.

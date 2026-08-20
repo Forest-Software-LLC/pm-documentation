@@ -294,6 +294,106 @@ samp {
   }
 }
 
+/* ---------- Markdown tables ----------
+   GFM tables are rendered through the Table override in mdx-components.js,
+   styled to match the Flags card: rounded container, tinted uppercase
+   header, subtle zebra rows. */
+
+.fpm-table-wrap {
+  margin-top: 1.25rem;
+  border: 1px solid var(--fpm-edge);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.fpm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.fpm-table thead th {
+  padding: 0.5rem 1rem;
+  background: var(--fpm-surface-tint);
+  border-bottom: 1px solid var(--fpm-edge);
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fpm-ink-faint);
+}
+
+.fpm-table td {
+  padding: 0.6rem 1rem;
+  vertical-align: top;
+  color: var(--fpm-ink-muted);
+}
+
+.fpm-table td:first-child {
+  color: var(--fpm-ink);
+}
+
+.fpm-table tbody tr + tr td {
+  border-top: 1px solid var(--fpm-edge);
+}
+
+.fpm-table tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--fpm-surface-tint) 55%, transparent);
+}
+
+.fpm-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--fpm-accent) 6%, transparent);
+}
+
+.fpm-table code {
+  font-size: 0.8em;
+}
+
+/* ---------- Platform badges ----------
+   Compatibility pills shown under a feature page's title. Filled colors are
+   pinned in both themes, same rule as the terminal. */
+
+.fpm-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.fpm-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  text-decoration: none;
+}
+
+.fpm-platform-badge svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.fpm-platform-badge:hover {
+  filter: brightness(1.08);
+}
+
+.fpm-platform-roblox {
+  background: #2e9e63;
+}
+
+.fpm-platform-uefn {
+  background: #5865f2;
+}
+
 /* ---------- Terminal (session transcripts) ----------
    Always dark in both themes, matching the main site's rule of pinning
    terminal UI to static colors. */

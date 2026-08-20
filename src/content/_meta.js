@@ -1,11 +1,10 @@
 module.exports = {
     "index" : "Introduction",
     "quickstart" : "Quick Start",
-    "concepts" : "Concepts",
+    "features" : "Features",
+    "concepts" : { title: "Concepts", theme: { collapsed: true } },
     "platforms" : "Platforms",
     "forest-cli" : "Forest CLI",
-    "studios" : "Studios",
-    "open-source" : "Open Source",
-    "ai" : "Forest for AI Agents",
-    "faq" : "FAQ"
+    "faq" : { title: "FAQ", theme: { collapsed: true } },
+    "open-source" : "Open Source"
 }

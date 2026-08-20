@@ -2,15 +2,15 @@ import { Callout } from 'nextra/components'
 
 # Members & Ranks
 
-Every Studio member has exactly one **rank**. Ranks form a strict hierarchy and control Studio-wide abilities; for per-package access control, see [Roles & Package Permissions](/studios/permissions).
+Every Studio member has exactly one **rank**. Ranks form a strict hierarchy and control Studio-wide abilities; for per-package access control, see [Roles & Package Permissions](/features/studios/permissions).
 
 ## The three ranks
 
 | Ability | Member | Admin | Owner |
 |---|---|---|---|
 | See public packages & active members | ✓ | ✓ | ✓ |
-| Access private packages | via [grants](/studios/permissions) | ✓ (all) | ✓ (all) |
-| Publish new versions of existing packages | via `write` [grants](/studios/permissions) | ✓ | ✓ |
+| Access private packages | via [grants](/features/studios/permissions) | ✓ (all) | ✓ (all) |
+| Publish new versions of existing packages | via `write` [grants](/features/studios/permissions) | ✓ | ✓ |
 | Create new packages under the Studio | ✗ | ✓ | ✓ |
 | Invite members | ✗ | ✓ | ✓ |
 | See pending invites & member permissions | ✗ | ✓ | ✓ |
@@ -32,7 +32,7 @@ Admins and owners invite by Forest username (multiple at once). Each invitee:
 2. Joins as a **member** (rank can be raised by an owner afterwards) when they accept. Until then the invite is pending and only visible to admins/owners.
 3. Can decline, and members can leave a Studio at any time.
 
-Free Studios can't have more than 5 members, and Pro Studios support up to 25; invites beyond the limit are rejected. For a free Studio, [upgrading](/studios/intro#plans-and-limits) raises the cap.
+Free Studios can't have more than 5 members, and Pro Studios support up to 25; invites beyond the limit are rejected. For a free Studio, [upgrading](/features/studios#plans-and-limits) raises the cap.
 
 <Callout type="info">
 **A Studio always has at least one owner.** The last remaining owner cannot leave or remove themselves; promote another owner first.

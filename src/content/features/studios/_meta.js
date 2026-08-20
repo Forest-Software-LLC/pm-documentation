@@ -1,5 +1,5 @@
 module.exports = {
-    "intro" : "What is a Studio?",
+    "index" : "Overview",
     "members" : "Members & Ranks",
     "permissions" : "Roles & Package Permissions",
 }

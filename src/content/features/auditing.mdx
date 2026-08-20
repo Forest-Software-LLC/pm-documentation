@@ -1,0 +1,65 @@
+# Auditing & Updates
+
+<PlatformBadges roblox uefn />
+
+Forest separates "pick up fixes safely" from "review and cross version boundaries", so routine updates are one command and risky ones always come with a report first. The report goes beyond version numbers: one `forest audit` run covers available updates, license risk across your whole tree, and packages whose maintenance has stopped.
+
+## Routine updates: `forest update`
+
+<Command cmd="forest update" />
+
+Moves every dependency, direct and transitive, to the newest version its declared range allows. `forest.json` is never touched, so a `^1.4.0` range can move to `1.6.2` but never to `2.0.0`, and the command prints exactly which packages moved.
+
+## The audit report: `forest audit`
+
+<Command cmd="forest audit [package-name]" aliases={['forest outdated']} />
+
+Audit is the review step. For each direct dependency it reports three versions: **current** (pinned in your lockfile), **wanted** (the highest version your declared range allows), and **latest** (the newest published version, even outside your range). It also lists any [overrides and exclusions](/forest-cli/commands#forest-override) in your manifest and warns about stale entries.
+
+<Terminal title="forest audit">
+{`$ forest audit
+⚠ 2 package(s) have updates available:
+
+  Package        Current  Wanted  Latest
+  forest/signal    2.4.0   2.4.2   3.0.1
+  user1/sauce      1.1.0   1.2.0   1.2.0
+
+⚠ 1 package(s) have license considerations:
+
+  user1/sauce@1.1.0 · LGPL-3.0 · usable with conditions
+      • Modifications to the library itself must be shared under the same license.
+
+  Automated license review, not legal advice.
+
+⚠ 1 package(s) are no longer maintained:
+
+  old/rodux-fork · archived, no longer maintained
+      • Superseded by forest/state
+
+ℹ Run \`forest audit --update\` to bump forest.json to the latest versions, or \`forest update\` to stay within your declared ranges.`}
+</Terminal>
+
+Once you've read the report, `forest audit --update` bumps every outdated range in `forest.json` to `^latest` and reinstalls. That's the deliberate way to cross major versions.
+
+## License review
+
+The registry runs an automated license review on every published version and assigns it a [safety rating](/concepts/publishing#license-safety-ratings). Audit surfaces those ratings across your **whole resolved tree**, direct and transitive, at the exact versions your lockfile pins (with no lockfile it covers direct dependencies only, and says so). Every flagged package gets a detail block:
+
+- The package, version, and license, for example `user1/sauce@1.1.0 · LGPL-3.0`.
+- A plain-language severity: an `unsafe` rating reads "legal risk for closed-source games", a `caution` rating reads "usable with conditions".
+- That version's specific license caveats, bulleted, so you know exactly which obligation to go read.
+
+Ratings are an automated review, not legal advice, and the report says so.
+
+Pass a package name to audit just that dependency. A named package reports its license state even when it's clean (safe, review still pending, or unrated), and the name can be a **transitive** dependency, in which case audit checks its installed license.
+
+## Archived packages
+
+Owners can archive a package on the registry to signal that maintenance has stopped. Archiving never breaks anyone: archived packages always keep installing, and nothing is blocked or removed. Instead, installs print one consolidated warning ("2 packages are no longer maintained. Run `forest audit` to view."), and audit is the detail view: each archived package in your tree is listed with the reason the owner left, which often points at a successor package worth migrating to.
+
+## Going deeper
+
+- [`forest audit`](/forest-cli/commands#forest-audit) and [`forest update`](/forest-cli/commands#forest-update) references.
+- [`forest tree`](/forest-cli/commands#forest-tree) to see exactly which versions are installed and who pulled them in.
+- [License safety ratings](/concepts/publishing#license-safety-ratings) for what each rating means.
+- [Dependencies & Versioning](/concepts/dependencies) for how ranges and resolution work.

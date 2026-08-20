@@ -5,6 +5,88 @@
   src/app/globals.css under the .fpm-* classes.
 */
 
+/* Platform registry for <PlatformBadges>. Colors live in globals.css under
+   .fpm-platform-*; icons are inline so badges stay dependency-free. Icons are
+   generic glyphs, not platform logos (trademarks). */
+const PLATFORMS = {
+  roblox: {
+    label: 'Roblox',
+    href: '/platforms/roblox/intro',
+    className: 'fpm-platform-roblox',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+        <path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12" />
+      </svg>
+    ),
+  },
+  uefn: {
+    label: 'UEFN',
+    href: '/platforms/uefn/intro',
+    className: 'fpm-platform-uefn',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M13 0 2 14h7l-2 10 11-14h-7L13 0Z" />
+      </svg>
+    ),
+  },
+}
+
+/**
+ * Platform compatibility badges, shown under a page's title. Each badge
+ * links to that platform's intro page.
+ *
+ * <PlatformBadges roblox uefn />   // works on both
+ * <PlatformBadges roblox />        // Roblox only
+ */
+export function PlatformBadges({ roblox, uefn }) {
+  const keys = [roblox && 'roblox', uefn && 'uefn'].filter(Boolean)
+  return (
+    <div className="fpm-platforms">
+      {keys.map(key => {
+        const platform = PLATFORMS[key]
+        return (
+          <a
+            key={key}
+            href={platform.href}
+            className={`fpm-platform-badge ${platform.className}`}
+            title={`Available on ${platform.label}`}
+          >
+            {platform.icon}
+            <span>{platform.label}</span>
+          </a>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * Branded replacement for markdown tables. Registered over the default
+ * `table` element in mdx-components.js, so every GFM table in the docs picks
+ * it up automatically. The th/td/tr passthroughs below unhook Nextra's own
+ * table styling so .fpm-table css owns the look.
+ */
+export function Table(props) {
+  return (
+    <div className="fpm-table-wrap">
+      <table className="fpm-table" {...props} />
+    </div>
+  )
+}
+
+export const Th = props => <th {...props} />
+export const Td = props => <td {...props} />
+export const Tr = props => <tr {...props} />
+
 /* Splits a command string into styled tokens: plain words are the command
    itself, <angle> tokens are required arguments, [square] tokens are
    optional ones. */

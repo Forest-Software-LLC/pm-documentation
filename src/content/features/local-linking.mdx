@@ -1,0 +1,33 @@
+# Local Directory Linking
+
+<PlatformBadges roblox />
+
+Linking points one of your project's dependencies at a local folder, so you can iterate on a package inside a real game without publishing on every change. Roblox only for now.
+
+<Command cmd="forest link [path]" />
+
+The target is a normal package workspace with its own `forest.json`; Forest reads the package's identity from it. While linked, the package's folder in your `Packages/` tree is a live view of the linked source: edit a file there and Rojo, Studio, and luau-lsp see the change immediately, no reinstall needed.
+
+<Terminal title="forest link">
+{`$ forest link ../signal-dev
+⚠ 1 package linked locally:
+⚠ forest/signal -> ../signal-dev (registry pin: 2.4.0, linked: 2.5.0-dev)
+🌳 Linked forest/signal -> ../signal-dev`}
+</Terminal>
+
+## Links are your machine's state, not your project's
+
+Links live in a gitignored `.forest/links.json`; neither `forest.json` nor `forest-lock.json` changes. A teammate who pulls your commits gets a completely normal registry install, and CI ignores links by default, so a stray link can never change what CI builds. You also can't forget one is active: every install and `forest tree` prints a banner naming the linked packages.
+
+Safety rails while a link is active:
+
+- `forest publish` refuses to publish your package while any of its dependencies is linked, because the tree you tested isn't the tree consumers would get.
+- `forest link` with no arguments lists active links and how each linked copy has drifted from the pinned registry version.
+
+When you're done, `forest unlink` restores the exact registry version your lockfile pins:
+
+<Command cmd="forest unlink [package-name]" />
+
+## Going deeper
+
+- [`forest link`](/forest-cli/commands#forest-link) and [`forest unlink`](/forest-cli/commands#forest-unlink) references, including copy mode and the `--links` install flag for CI.

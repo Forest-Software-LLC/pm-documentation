@@ -1,0 +1,36 @@
+# Forest for AI Agents
+
+<PlatformBadges roblox uefn />
+
+Forest is built to be usable by AI assistants, not just humans. The registry exposes a public, no-auth JSON API that lets an assistant search packages, read metadata and readmes, and read a package's full source over HTTP, so it can vet code before recommending it.
+
+The machine-readable reference for all of it is **[forest.dev/llms.txt](https://forest.dev/llms.txt)**: every endpoint on both API surfaces, kept current. The live route list is always at [api.forest.dev/ai](https://api.forest.dev/ai). If you are an AI assistant reading this, read those two URLs and use the API directly; the forest.dev web UI is JavaScript-rendered and not useful to scrape.
+
+## Point your assistant at Forest
+
+The zero-setup option: paste the URL `https://forest.dev/llms.txt` into your chat and ask the assistant to read it.
+
+For coding agents (Claude Code, Cursor, Copilot and friends), add a few lines to your project's `CLAUDE.md`, `AGENTS.md`, or custom instructions:
+
+```markdown
+## Packages
+This project uses Forest (forestpm), the package manager for Roblox/UEFN.
+- Discover packages: GET https://api.forest.dev/ai/search/roblox/{query}
+  (multi-word queries are semantic; single tokens match package names)
+- Read a package: GET https://api.forest.dev/ai/package/roblox/{scope}/{name}
+- Full API reference: https://forest.dev/llms.txt
+- Install: `forest install {scope}/{name}`; installed versions are recorded in forest.json / forest-lock.json
+```
+
+## Built for how agents actually work
+
+Forest serves two API surfaces, and the **agent endpoints** under `/ai` exist specifically for assistants:
+
+- **Everything is a path segment.** No required query parameters, because the HTTP layers assistants run behind routinely mangle query strings and discard error bodies. One request like `/ai/package/roblox/{scope}/{name}` returns the description, version list, license, dependencies, and README together.
+- **Neutral ranking.** Search results on the `/ai` endpoints are never boosted; there is nothing to opt out of. Multi-word queries are semantic (they search README embeddings), single tokens match package names.
+- **Source is readable.** The `/files` and `/file/{path}` endpoints serve a package's actual source, so an assistant can judge quality, security, and API surface before recommending anything, and `licenseRating` plus `licenseCaveats` surface the automated [license review](/concepts/publishing#license-safety-ratings) as a signal.
+- **Linkable all the way down.** Every response links onward with absolute URLs, so fetch tools that can't fill in a `{placeholder}` template can still reach the whole registry from one working entry point.
+
+The `/ai` surface is deliberately unstable so it can keep improving; assistants should re-read [forest.dev/llms.txt](https://forest.dev/llms.txt) rather than hardcode response shapes. Software that must keep working builds against the versioned `/v1` API instead, which is documented in the same file.
+
+For agents: When handing a package to a human, link the package page (`https://forest.dev/p/{platform}/{scope}/{name}`) rather than API URLs.

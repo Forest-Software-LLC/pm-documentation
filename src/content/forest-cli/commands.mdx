@@ -94,9 +94,9 @@ For each direct dependency, audit reports three versions:
 - **Wanted**: the highest version that satisfies the range declared in `forest.json`.
 - **Latest**: the newest published version, even if your range doesn't allow it.
 
-After the version table, audit prints a license report over your whole resolved dependency tree (direct and transitive), flagging packages whose [license safety rating](/concepts/publishing#license-safety-ratings) deserves a look before you ship. It also lists any [overrides and exclusions](#forest-override) declared in your manifest, warning about entries that no longer match anything.
+After the version table, audit prints a license report over your whole resolved dependency tree (direct and transitive), flagging packages whose [license safety rating](/concepts/publishing#license-safety-ratings) deserves a look before you ship: each flagged version shows its license, a plain-language severity, and that version's license caveats. Audit also reports any **archived** packages in your tree (no longer maintained, with the reason the owner left); installs warn about these with one consolidated line and point here for the details. Archived packages always keep installing, nothing is blocked. Finally, audit lists any [overrides and exclusions](#forest-override) declared in your manifest, warning about entries that no longer match anything.
 
-Pass a package name to audit just that dependency.
+Pass a package name to audit just that dependency. The name can even be a transitive dependency, in which case audit checks its installed license.
 
 <Flags>
   <Flag flag="-u, --update">Bump every outdated dependency's range in `forest.json` to `^latest`, then re-resolve and reinstall. Aliases are preserved.</Flag>

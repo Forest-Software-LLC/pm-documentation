@@ -1,0 +1,30 @@
+# Private Packages
+
+<PlatformBadges roblox uefn />
+
+Every Forest package is **public** or **private**. Private packages are access control at the registry: they never appear in search or on public pages, and downloads require a logged-in account with access, served through short-lived signed URLs.
+
+This is the right tool when the audience you're excluding is other developers: a studio's internal framework shared across its games, pre-release libraries, or commissioned work you don't want redistributed.
+
+Visibility is chosen on first publish and every later version inherits it. Aside from that one prompt, private packages behave exactly like public ones: same install command, same version ranges, same lockfile and integrity checks.
+
+```bash
+forest i my-studio/internal-framework   # works if your account has access
+```
+
+## Sharing with a team
+
+A private package owned by a [Studio](/features/studios) is installable by exactly the members you grant access to, which is the main way teams share internal code. Owners and admins always have access; everyone else needs a [permission grant](/features/studios/permissions) on the package.
+
+## What private does not protect
+
+Private controls who can download your package from the registry. It says nothing about who can see the code at runtime: once a game ships with your package, that code travels with the game like any other code. See [the full page](/concepts/private-packages#what-private-does-not-protect) for the runtime caveats and the recommended server-only structure on Roblox.
+
+## Plans and limits
+
+Free users and free Studios each include up to 10 private packages; Pro removes the limit. The limit applies only when creating a new private package, never retroactively: existing private packages always stay installable.
+
+## Going deeper
+
+- [Private Packages](/concepts/private-packages) for access rules, signed URL delivery, and the public/private publish differences.
+- [Roles & Package Permissions](/features/studios/permissions) for how Studio grants work.

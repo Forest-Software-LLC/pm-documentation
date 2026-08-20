@@ -1,0 +1,33 @@
+# Installing Packages
+
+<PlatformBadges roblox uefn />
+
+Installing is the core of Forest: one command that downloads a package and everything it depends on into your project, at versions that are resolved together and locked for reproducibility.
+
+<Command cmd="forest install [package-name]" aliases={['forest i', 'forest grow']} />
+
+Installing a package records it in your `forest.json` manifest and pins the exact resolved versions in `forest-lock.json`, so a teammate (or CI) running `forest install` with no arguments gets the identical tree. Transitive dependencies come along automatically: a package always finds its own dependencies without any configuration from you.
+
+<Terminal title="forest install">
+{`$ forest i forest/signal
+🌳 Installed forest/signal@2.4.2 (+3 dependencies)`}
+</Terminal>
+
+Useful variations:
+
+- `forest install` with no name installs everything in `forest.json`, offering to create a bare manifest if the folder doesn't have one yet.
+- `-v <version>` installs a specific version instead of the latest.
+- `-a <alias>` installs the package under an alias, which is how you hold two major versions of the same package side by side.
+
+## Per-platform mechanics
+
+What "installed" looks like on disk, and how your code consumes a package, differs by platform:
+
+- **Roblox**: packages land in a `Packages/` folder you `require` through generated entry modules. You decide where that folder mounts in the DataModel, including the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern) for server-only code. See [Installing on Roblox](/platforms/roblox/installing).
+- **UEFN**: packages install as Verse files inside your project that you import with `using`. See [Installing on UEFN](/platforms/uefn/installing).
+
+## Going deeper
+
+- [Dependencies & Versioning](/concepts/dependencies) for range syntax and how resolution works.
+- [`forest install` reference](/forest-cli/commands#forest-install) for every flag.
+- [`forest remove`](/forest-cli/commands#forest-remove) and [`forest tree`](/forest-cli/commands#forest-tree) for managing what's installed.

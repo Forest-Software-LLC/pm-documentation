@@ -2,12 +2,14 @@ import { Callout } from 'nextra/components'
 
 # Studios
 
+<PlatformBadges roblox uefn />
+
 A **Studio** (organization) is a shared account that owns packages collectively, the right structure for a team, a game studio, or any group that publishes and maintains packages together. (The name refers to your team; it's unrelated to the Roblox Studio editor.) Studios live at `forest.dev/o/<studio-name>` and act as a publishing scope: packages are published as `studio-name/package` instead of under any one person's username.
 
 ## Why publish under a Studio?
 
 - **Ownership survives people.** Packages belong to the Studio, not to whoever happened to publish them. Members can come and go without orphaning anything.
-- **Team access control.** [Ranks](/studios/members), [roles, and per-package permissions](/studios/permissions) control who can see private packages and who can manage the Studio.
+- **Team access control.** [Ranks](/features/studios/members), [roles, and per-package permissions](/features/studios/permissions) control who can see private packages and who can manage the Studio.
 - **Private package sharing.** A [private package](/concepts/private-packages) owned by a Studio is installable by exactly the members you grant access to, the main way teams share internal code.
 
 ## Creating a Studio
@@ -18,14 +20,14 @@ Create one at [forest.dev](https://forest.dev) (Create → Studio). You become i
 
 When you run `forest publish`, the CLI asks who the author is and lists yourself plus every Studio where you're an **admin or owner**. Picking a Studio sets `author` in `forest.json` to the Studio's slug, and the package is created as `studio/name`, owned by the Studio.
 
-Publishing a **new** package under a Studio requires the **admin or owner rank**. Members can publish new versions of an **existing** package if they hold a `write` [permission grant](/studios/permissions) on it.
+Publishing a **new** package under a Studio requires the **admin or owner rank**. Members can publish new versions of an **existing** package if they hold a `write` [permission grant](/features/studios/permissions) on it.
 
 ## The Studio page
 
 The Studio page (`forest.dev/o/<studio-name>`) shows the Studio's profile (description, website, contact email), its members, and its packages:
 
 - **Everyone** sees public packages and active members.
-- **Members** additionally see the private packages they hold a [permission grant](/studios/permissions) for.
+- **Members** additionally see the private packages they hold a [permission grant](/features/studios/permissions) for.
 - **Admins and owners** see all private packages, pending invites, and the settings pages (details, members, roles, billing).
 
 ## Verified Studios

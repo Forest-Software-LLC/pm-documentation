@@ -13,12 +13,12 @@ Docs are grouped by **core vs platform**, mirroring the CLI's platform seam: pla
 ```
 src/content/
   index.mdx
+  features/      intro, installing, publishing, auditing, local-linking, private-packages, studios (+ studios/members, studios/permissions), mirrored-packages, ai-agents   (one overview page per feature, badged per platform, links into the deep docs)
   concepts/      intro, publishing, manifest, dependencies, private-packages   (platform-neutral)
   platforms/
     roblox/      intro, installing, anatomy, server-client, mirrored
     uefn/        intro, installing, authoring, collisions
   forest-cli/    install, commands
-  studios/       intro, members, permissions
   open-source.mdx
   faq/           commonly-asked-questions
 ```
@@ -39,6 +39,8 @@ Custom MDX components in [src/components/index.jsx](src/components/index.jsx) ar
 - `<Command cmd="forest install [package-name]" aliases={['forest i']} />` — syntax card; `<angle>` tokens render as required args, `[square]` as optional.
 - `<Flags><Flag flag="-v, --version" arg="<version>">desc</Flag></Flags>` — options table.
 - `<Terminal title="...">{`$ cmd\n> prompt\n🌳 done`}</Terminal>` — session transcript window (template-literal child); lines are styled by leading marker: `$` command, `>`/`?` prompt, `#` comment, 🌳/✓ success, ℹ/⚠ notice. Use it for interactive transcripts; keep plain ```bash fences for copyable one-liners.
+- `<PlatformBadges roblox uefn />` — platform compatibility pills, placed directly under the H1 of every `features/` page; pass only the platforms the feature supports (each badge links to that platform's intro). Badge icons are generic glyphs, never platform logos (trademarks).
+- Plain GFM tables are automatically restyled: mdx-components.js maps `table`/`th`/`td`/`tr` to the `Table` override in [src/components/index.jsx](src/components/index.jsx), styled by `.fpm-table` in globals.css (rounded container, uppercase header, zebra rows). Just write normal markdown tables.
 
 ## Writing docs
 - Add a page: create `src/content/<section>/<page>.mdx` and register its title/position in that section's `_meta.js` (and the parent `_meta.js` for new sections).

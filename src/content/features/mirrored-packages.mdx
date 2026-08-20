@@ -1,0 +1,28 @@
+# Mirrored Wally Packages
+
+<PlatformBadges roblox />
+
+Some packages on Forest carry a **Mirrored** badge: open-source packages imported from [Wally](https://wally.run), brought over so the Roblox ecosystem's existing libraries are installable from Forest on day one. Wally is a Roblox package manager, so mirrored packages are a Roblox-only concept.
+
+Install one like any other package:
+
+```bash
+forest i evaera/promise
+```
+
+Dependencies, version ranges, the lockfile, and integrity checks all behave exactly as they do for native Forest packages.
+
+## What "Mirrored" means
+
+- **The source is unmodified.** A mirrored version contains the exact files its author published to Wally.
+- **Only open-source packages are mirrored.** A version is imported only when it carries a recognized open-source license, and it gets the same [license safety rating](/concepts/publishing#license-safety-ratings) as any other package.
+- **The scope is reserved, not owned.** The author's scope name is held so nobody else can register it.
+- **The mirror stays current.** New Wally releases appear on Forest automatically, and packages removed upstream are removed here too.
+
+## Claiming your scope
+
+If you published these packages on Wally, the scope is being held for you. Verify the same GitHub identity that owned it on Wally and the packages become yours to manage like any other Forest packages, with future Wally releases still mirroring in.
+
+## Going deeper
+
+- [Mirrored Packages](/platforms/roblox/mirrored) for the link files inside mirrored archives, how Wally's server realm maps onto Forest, and the full claiming flow.

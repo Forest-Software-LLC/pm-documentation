@@ -13,7 +13,7 @@ Forest and pesde have different centers of gravity. pesde goes deep on Luau: one
 | Scope | Luau runtimes: Roblox, Lune, standalone Luau | Game platforms: Roblox (Luau) and UEFN (Verse) |
 | Registry model | pesde registry, plus Wally and Git repositories as package sources | One hosted registry, with the open-source Wally catalog [mirrored in](/platforms/roblox/mirrored) |
 | Private code | Typically via Git repository dependencies | [Hosted private packages](/concepts/private-packages) with per-member access grants; 10 free on every account and Studio |
-| Teams | Publishing tied to individual accounts | [Studios](/studios/intro): ranks, roles, per-package permissions, audit logs |
+| Teams | Publishing tied to individual accounts | [Studios](/features/studios): ranks, roles, per-package permissions, audit logs |
 | Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
 | Manifest surface | Targets, engines, scripts, workspaces, overrides | One `forest.json` with a single `platform` field and a guided CLI |
 | Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
@@ -31,7 +31,7 @@ Neither philosophy is wrong; they serve different rooms. If your team's question
 Forest's registry is a hosted product, not only an index:
 
 - **[Private packages](/concepts/private-packages)** are built in: mark a package private at publish time and it never appears in search, downloads require an authenticated account with access, and tarballs are served through short-lived signed URLs. No Git submodule wrangling or deploy keys to share internal code.
-- **[Studios](/studios/intro)** give teams collective ownership: packages belong to the organization, with ranks, custom roles, per-package permission grants, and an audit log. Members can come and go without orphaning a package.
+- **[Studios](/features/studios)** give teams collective ownership: packages belong to the organization, with ranks, custom roles, per-package permission grants, and an audit log. Members can come and go without orphaning a package.
 - **Accounts** are Forest-native with two-factor authentication on every account, managed on the web rather than through a third-party identity.
 
 ## Licensing is enforced, not assumed

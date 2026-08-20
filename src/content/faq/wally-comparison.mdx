@@ -13,7 +13,7 @@ This page is for developers evaluating the two. The short version: Wally is a le
 | Platforms | Roblox | Roblox and UEFN, one registry and one CLI |
 | Accounts | GitHub OAuth | Forest accounts; two-factor authentication on every account |
 | Private packages | Run your own registry server | Hosted; 10 free on every account and Studio, unlimited on Pro |
-| Teams | Owner lists managed via the CLI | [Studios](/studios/intro): ranks, roles, per-package permissions, audit logs |
+| Teams | Owner lists managed via the CLI | [Studios](/features/studios): ranks, roles, per-package permissions, audit logs |
 | Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
 | Types in Studio | Community tooling such as `wally-package-types` | Packages install as real ModuleScripts required by instance path; no extra tooling |
 | Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
@@ -39,7 +39,7 @@ On Forest, [private packages](/concepts/private-packages) are a hosted feature o
 
 Wally manages package ownership as a list of GitHub users edited through CLI commands. That is workable for a solo maintainer, but teams tend to need more structure.
 
-Forest's [Studios](/studios/intro) are organizations with ranks (owner, admin, member), custom [roles and per-package permission grants](/studios/permissions), pending-invite management, and an audit log. Packages belong to the Studio rather than to whoever happened to publish them, so members can come and go without orphaning anything.
+Forest's [Studios](/features/studios) are organizations with ranks (owner, admin, member), custom [roles and per-package permission grants](/features/studios/permissions), pending-invite management, and an audit log. Packages belong to the Studio rather than to whoever happened to publish them, so members can come and go without orphaning anything.
 
 ## Licensing is enforced, not assumed
 
