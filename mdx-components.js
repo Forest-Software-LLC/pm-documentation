@@ -1,5 +1,5 @@
 import { useMDXComponents as getThemeComponents } from 'nextra-theme-docs' // nextra-theme-blog or your custom theme
-import { Command, Flag, Flags, PlatformBadges, Table, Td, Terminal, Th, Tr } from './src/components'
+import { Command, Flag, Flags, PlatformBadges, Table, Td, Terminal, Th, Tile, TileGrid, Tr } from './src/components'
 
 // Get the default MDX components
 const themeComponents = getThemeComponents()
@@ -14,6 +14,8 @@ export function useMDXComponents(components) {
     Flags,
     PlatformBadges,
     Terminal,
+    Tile,
+    TileGrid,
     // Markdown table elements, restyled via .fpm-table in globals.css
     table: Table,
     th: Th,

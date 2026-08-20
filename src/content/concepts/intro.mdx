@@ -8,10 +8,17 @@ As an analogy, think of making spaghetti. You need several ingredients to make s
 Developing games without a package manager is like making spaghetti from scratch. You have to gather, or "re-invent", all the ingredients yourself, which can be time-consuming and error-prone.
 
 ### Modern Development Challenges Without Packages
-- **Re-inventing the wheel**: Without packages, developers often have to write code for common tasks that have already been solved by others. This leads to duplicated effort and wasted time.
-- **Maintenance headaches**: When code is duplicated across multiple projects, it becomes difficult to maintain and update. If a bug is found in one project, it may exist in others as well, leading to inconsistent behavior and increased maintenance overhead.
-- **Collaboration challenges**: In team environments, sharing code without a package manager can lead to versioning issues and conflicts. Different team members may have different versions of the same code, leading to compatibility problems.
-- **Lack of community contributions**: Without a package ecosystem, developers miss out on the benefits of open-source contributions and shared knowledge. This can lead to slower innovation and less robust solutions.
+
+<div className="fpm-compare">
+
+| | Without packages | With a package manager |
+|---|---|---|
+| **Common tasks** | Re-invent solved problems yourself, duplicating effort on every project. | Install a proven package and build on it. |
+| **Bug fixes** | A bug copied into five projects must be found and fixed five times. | Fix it once, publish a new version, and every project picks it up with one update. |
+| **Team code sharing** | Copied folders drift apart; teammates end up on different versions of the "same" code. | Everyone installs by name and version; the lockfile guarantees the whole team gets an identical tree. |
+| **Community** | Cut off from shared libraries and open-source contributions. | A whole registry of maintained, licensed, community-built packages. |
+
+</div>
 
 Using packages allows developers to leverage existing code, reduce duplication, and streamline collaboration.
 

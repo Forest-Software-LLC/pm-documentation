@@ -294,6 +294,115 @@ samp {
   }
 }
 
+/* ---------- Landing hero ----------
+   Wordmark banner + tagline on the introduction page. The light/dark image
+   swap reuses the .fpm-logo-light/-dark toggle classes. */
+
+.fpm-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  padding: 2.5rem 0 0.5rem;
+}
+
+.fpm-hero-mark {
+  width: min(24rem, 85%);
+  height: auto;
+  transform: translateX(1rem);
+}
+
+.fpm-hero-tagline {
+  margin-top: 1.75rem;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--fpm-ink-muted);
+}
+
+/* MDX wraps the text children of these containers in a <p>; keep it flush. */
+.fpm-hero-tagline p,
+.fpm-tile-desc p {
+  margin: 0;
+}
+
+/* ---------- Navigation tiles ----------
+   Big landing-page tiles with a faded icon bleeding out of the corner. */
+
+.fpm-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 640px) {
+  .fpm-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fpm-tile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  min-height: 9.5rem;
+  padding: 1.5rem 1.6rem;
+  background: var(--fpm-surface-tint);
+  border: 1px solid var(--fpm-edge);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.fpm-tile:hover {
+  border-color: var(--fpm-accent);
+  transform: translateY(-2px);
+}
+
+.fpm-tile-icon {
+  position: absolute;
+  top: -1.4rem;
+  right: -1.4rem;
+  width: 8.5rem;
+  height: 8.5rem;
+  color: var(--fpm-accent);
+  opacity: 0.09;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.fpm-tile:hover .fpm-tile-icon {
+  opacity: 0.18;
+}
+
+.fpm-tile-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fpm-ink);
+}
+
+.fpm-tile-arrow {
+  display: inline-block;
+  margin-left: 0.45rem;
+  color: var(--fpm-accent);
+  transition: transform 0.15s ease;
+}
+
+.fpm-tile:hover .fpm-tile-arrow {
+  transform: translateX(3px);
+}
+
+.fpm-tile-desc {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--fpm-ink-muted);
+}
+
 /* ---------- Markdown tables ----------
    GFM tables are rendered through the Table override in mdx-components.js,
    styled to match the Flags card: rounded container, tinted uppercase
@@ -349,6 +458,27 @@ samp {
 
 .fpm-table code {
   font-size: 0.8em;
+}
+
+/* Opt-in comparison tint: wrap a two-sided markdown table in
+   <div className="fpm-compare"> to shade column 2 red (the "without" side)
+   and column 3 green (the "with" side). Columns 2/3 trade the zebra striping
+   for their constant tint; column 1 keeps it. */
+
+.fpm-compare .fpm-table th:nth-child(2) {
+  background: color-mix(in srgb, #ef4444 12%, var(--fpm-surface-tint));
+}
+
+.fpm-compare .fpm-table th:nth-child(3) {
+  background: color-mix(in srgb, var(--fpm-accent) 12%, var(--fpm-surface-tint));
+}
+
+.fpm-compare .fpm-table td:nth-child(2) {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.fpm-compare .fpm-table td:nth-child(3) {
+  background: color-mix(in srgb, var(--fpm-accent) 6%, transparent);
 }
 
 /* ---------- Platform badges ----------

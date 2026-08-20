@@ -2,33 +2,33 @@ import { Callout } from 'nextra/components'
 
 # How Forest Compares to pesde
 
-[pesde](https://pesde.dev) is a package manager for the Luau language, supporting multiple runtimes (Roblox, Lune, and standalone Luau), with design cues from npm, pnpm, Wally, and Cargo. It is a capable, thoughtfully built tool, and if your work is centered on the Luau toolchain itself, it has features aimed squarely at that audience.
+[pesde](https://pesde.dev) is a package manager for the Luau language, supporting multiple runtimes (Roblox, Lune, and standalone Luau), with design cues from npm, pnpm, Wally, and Cargo. It goes deep on one toolchain. Forest is built for something else: teams shipping games. One registry and one CLI serve [Roblox](/platforms/roblox/intro) (Luau) and [UEFN](/platforms/uefn/intro) (Verse), with hosted private packages, team management, enforced licensing, and a verifiable delivery pipeline built in.
 
-Forest and pesde have different centers of gravity. pesde goes deep on Luau: one language, several runtimes. Forest goes broad across game platforms and deep on registry services: one registry and CLI serving [Roblox](/platforms/roblox/intro) (Luau) and [UEFN](/platforms/uefn/intro) (Verse), with hosted private packages, team management, license enforcement, and a verifiable delivery pipeline built in. This page lays out where each choice shows up in practice.
+If you maintain Luau libraries that also run under Lune, pesde's multi-target manifest earns its complexity. If you ship games and share code across a team, the comparison below is the one that matters, and it is where Forest pulls away.
 
 ## At a glance
+
+<div className="fpm-compare">
 
 | Area | pesde | Forest |
 |---|---|---|
 | Scope | Luau runtimes: Roblox, Lune, standalone Luau | Game platforms: Roblox (Luau) and UEFN (Verse) |
-| Registry model | pesde registry, plus Wally and Git repositories as package sources | One hosted registry, with the open-source Wally catalog [mirrored in](/platforms/roblox/mirrored) |
-| Private code | Typically via Git repository dependencies | [Hosted private packages](/concepts/private-packages) with per-member access grants; 10 free on every account and Studio |
+| Registry model | pesde registry, plus Wally and Git repositories as separate source types | One hosted registry; the open-source Wally catalog is [mirrored in](/platforms/roblox/mirrored) as normal packages |
+| Private code | Typically Git repository dependencies, with the key management that implies | [Hosted private packages](/concepts/private-packages) with per-member access grants; 10 free on every account and Studio |
 | Teams | Publishing tied to individual accounts | [Studios](/features/studios): ranks, roles, per-package permissions, audit logs |
-| Licensing | Optional metadata | License required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
-| Manifest surface | Targets, engines, scripts, workspaces, overrides | One `forest.json` with a single `platform` field and a guided CLI |
-| Supply-chain trust | Lockfile | Client-verified SHA-256 for every tarball, an [open-source pipeline](/open-source), and signed build provenance |
+| Licensing | Optional metadata | Required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
+| Manifest surface | Targets, engines, scripts, workspaces, overrides to configure | One `platform` field and a guided CLI |
+| Supply-chain trust | Lockfile | Client-verified SHA-256 on every download, an [open-source pipeline](/open-source), signed build provenance |
 
-## Different problems, deliberately
+</div>
 
-pesde's multi-target model is genuinely useful if you maintain libraries that run under Lune as well as inside Roblox, and its manifest reflects that: targets, engine declarations, scripts, and workspace tooling give library authors a lot of control.
+## Built for shipping games
 
-Forest optimizes for a different user: teams shipping games. Each Forest package targets exactly one platform, the CLI walks you through `init` and `publish` with prompts instead of configuration, and versioning is guided (the CLI asks whether a change is a bugfix, feature, or breaking change and bumps SemVer accordingly). The goal is that a developer who has never used a package manager can publish correctly on the first try, and that what they publish is correct by construction: license present, dependencies exactly as recorded in the manifest, integrity hash pinned in every consumer's lockfile.
-
-Neither philosophy is wrong; they serve different rooms. If your team's question is "how do we share and control code across our games and our people," the rest of this page is the comparison that matters.
+pesde's manifest exposes targets, engine declarations, scripts, and workspace tooling: real power for toolchain authors, paid for in configuration that every user carries. Forest optimizes for the team shipping a game. Each package targets exactly one platform, the CLI walks you through `init` and `publish` with prompts instead of configuration, and versioning is guided: the CLI asks whether a change is a bugfix, feature, or breaking change and bumps SemVer accordingly. A developer who has never touched a package manager publishes correctly on the first try, and what they publish is correct by construction: license present, dependencies exactly as recorded, integrity hash pinned in every consumer's lockfile.
 
 ## A registry with services behind it
 
-Forest's registry is a hosted product, not only an index:
+This is where the gap is widest. Forest's registry is a hosted product, not only an index:
 
 - **[Private packages](/concepts/private-packages)** are built in: mark a package private at publish time and it never appears in search, downloads require an authenticated account with access, and tarballs are served through short-lived signed URLs. No Git submodule wrangling or deploy keys to share internal code.
 - **[Studios](/features/studios)** give teams collective ownership: packages belong to the organization, with ranks, custom roles, per-package permission grants, and an audit log. Members can come and go without orphaning a package.
@@ -36,20 +36,20 @@ Forest's registry is a hosted product, not only an index:
 
 ## Licensing is enforced, not assumed
 
-Forest requires a license (an SPDX identifier or a `LICENSE` file) on every published package, and every version carries a [license safety rating](/concepts/publishing#license-safety-ratings). For commercial teams, an unlicensed dependency is a legal question mark; Forest is designed so that question mark cannot enter the registry in the first place.
+On pesde, a license is optional metadata; for a commercial team, an unlicensed dependency is a legal question mark. Forest requires a license (an SPDX identifier or a `LICENSE` file) on every published package, and every version carries a [license safety rating](/concepts/publishing#license-safety-ratings), so that question mark cannot enter the registry in the first place.
 
 ## A pipeline you can verify yourself
 
 Every component that touches package bytes on Forest is [open source](/open-source): the CLI, the publish/download gateway, and the CDN worker. A tarball's SHA-256 is its storage key, its URL, and the `integrity` value in your lockfile; the CLI recomputes it on every download and refuses to install on a mismatch. The gateway deploys only from its public repository through GitHub Actions with signed build-provenance attestations. Trust in the registry is checkable, not assumed.
 
-## The existing ecosystem, either way
+## The existing ecosystem, first-class
 
-Both tools took the Wally ecosystem seriously. pesde can consume Wally packages as a dependency source; Forest [mirrors the open-source Wally catalog](/platforms/roblox/mirrored) directly into its registry, unmodified and automatically updated, with authors' scopes reserved for them to claim. On Forest a mirrored package is a normal package: same search, same lockfile, same integrity verification, and no separate source type in your manifest.
+pesde consumes Wally packages through a separate dependency source type in your manifest. Forest [mirrors the open-source Wally catalog](/platforms/roblox/mirrored) directly into its registry, unmodified and automatically updated, with authors' scopes reserved for them to claim. On Forest a mirrored package is simply a package: same search, same lockfile, same integrity verification, nothing special to declare.
 
 ## Types and tooling
 
-pesde generates link modules so Luau types flow through `require` without extra tools, and that is a real quality-of-life win over older workflows. Forest reaches the same outcome by a different route: packages install as real ModuleScripts required by instance path, with [relative link modules generated](/platforms/roblox/installing#package-dependencies) only where nesting requires them, so types and requires resolve natively with no additional tooling on either side.
+Forest packages install as real ModuleScripts required by instance path, so Luau types and requires resolve natively in Studio and luau-lsp, with [relative link modules generated](/platforms/roblox/installing#package-dependencies) only where nesting requires them. pesde reaches types through its own generated link-module layer. Both beat the old workflows; Forest just gets there with less machinery between your code and the package.
 
 <Callout type="info">
-The fastest way to compare is to try both on a real project. Forest's [CLI installs in one command](/forest-cli/install), and `forest i` on any package, mirrored or native, will show you the full manifest, lockfile, and layout in a few minutes.
+The fastest way to compare is a real project. Forest's [CLI installs in one command](/forest-cli/install), and `forest i` on any package, mirrored or native, shows you the full manifest, lockfile, and layout in minutes.
 </Callout>
