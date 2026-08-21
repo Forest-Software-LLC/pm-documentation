@@ -13,7 +13,7 @@ Docs are grouped by **core vs platform**, mirroring the CLI's platform seam: pla
 ```
 src/content/
   index.mdx
-  features/      intro, installing, publishing, auditing, local-linking, private-packages, studios (+ studios/members, studios/permissions), mirrored-packages, ai-agents   (one overview page per feature, badged per platform, links into the deep docs)
+  features/      intro, installing, publishing, auditing, local-linking, private-packages, models, studios (+ studios/members, studios/permissions), mirrored-packages, ai-agents   (one overview page per feature, badged per platform, links into the deep docs)
   concepts/      intro, publishing, manifest, dependencies, private-packages   (platform-neutral)
   platforms/
     roblox/      intro, installing, anatomy, server-client, mirrored

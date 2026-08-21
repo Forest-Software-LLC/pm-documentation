@@ -39,6 +39,7 @@ Platforms > Roblox:
 - [Package Anatomy](https://docs.forest.dev/platforms/roblox/anatomy): entry-point rule, root module resolution, what gets published
 - [Recipe: Server & Client APIs](https://docs.forest.dev/platforms/roblox/server-client): the recommended shape for split-surface libraries
 - [Mirrored Packages](https://docs.forest.dev/platforms/roblox/mirrored): Wally-imported packages, badge meaning, link stubs, scope claiming
+- [Models in Packages](https://docs.forest.dev/features/models): shipping .rbxm model files with Roblox packages; publish rules (code-free, single root, binary only, code-first), file name becomes the instance name, Code tab instance tree
 
 Platforms > UEFN:
 - [UEFN Overview](https://docs.forest.dev/platforms/uefn/intro): what's specific to UEFN

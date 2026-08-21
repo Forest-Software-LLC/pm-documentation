@@ -1,0 +1,54 @@
+# Models in Packages
+
+<PlatformBadges roblox />
+
+Roblox packages can ship **model files** (`.rbxm`) alongside their code: UI templates, rigs, VFX assets, prebuilt instance trees of any kind. Forest is code first, so models are complements to your scripts, not a product on their own. A package that is only models will be rejected at publish; ship the code that makes them useful.
+
+Every model file is scanned when you publish. Forest parses the binary format and rejects anything that could smuggle executable code, so installing a package with models is as safe as installing plain source.
+
+## The rules
+
+A model file passes publish validation when:
+
+- **It contains no scripts.** No `Script`, `LocalScript`, or `ModuleScript` instances anywhere in the tree. All code in a Forest package lives in `.lua`/`.luau` files where anyone can read it on the Code tab. A model hiding a script, the classic free-model backdoor, is rejected with the offending class names listed.
+- **It has exactly one root instance.** Save one model per file. Selecting several things and using Save Selection produces a multi-root file, which has no predictable shape when installed.
+- **It is binary `.rbxm`.** The XML variant (`.rbxmx`) is not accepted; re-save as binary, which is Studio's default.
+- **The package ships real code too.** A bare one-line loader next to a model does not pass the code-first check.
+
+## Naming: the file is the instance
+
+On install, a model becomes an instance **named after its file**, and the name stored inside the file is ignored. `HealthBar.rbxm` is `HealthBar` in the tree no matter what the model was called in Studio. Name your files what your code expects.
+
+One file per model, and folders become Folders:
+
+```
+src/
+  init.luau            -- the module itself
+  Models/
+    Rock.rbxm          -- script.Models.Rock
+    Tree.rbxm          -- script.Models.Tree
+  UI/
+    HealthBar.rbxm     -- script.UI.HealthBar
+```
+
+Your code reaches shipped models by those paths, and consumers get the identical tree after `forest install` plus their normal Rojo sync. Nothing about installing changes; models ride the same tarball as your source.
+
+## Seeing inside a model
+
+The package page's **Code tab** renders every model file as its instance tree: class icons, instance names, full hierarchy. Consumers can inspect exactly what a model contains before installing, without downloading anything.
+
+## Authoring workflow
+
+Models are binary, so the edit loop runs through Studio:
+
+1. Edit the model in Studio.
+2. Pull it back to disk with `rojo syncback` (Rojo 7.7+), or right click and Save to File over the existing `.rbxm`.
+3. Publish the new version.
+
+Keep the file name stable across edits; renaming the file renames the instance for every consumer.
+
+## Going deeper
+
+- [Publishing Packages](/features/publishing) for the publish flow these checks run in.
+- [Package Anatomy](/platforms/roblox/anatomy) for how installed files map into the Roblox tree.
+- [Mirrored Wally Packages](/features/mirrored-packages): mirrored packages may include model files their upstream authors shipped; the same script scan gates new mirror imports.
