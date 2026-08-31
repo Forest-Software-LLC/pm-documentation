@@ -206,6 +206,8 @@ Updates the Forest CLI itself to the latest release (to update your project's *d
 
 Forest also shows a one-line notice when a newer version is available. That check runs at most once a day and is skipped in CI and non-interactive shells (or set `FOREST_NO_UPDATE_CHECK=1` to disable it entirely).
 
+If the CLI was [installed with Rokit](/forest-cli/install#install-with-rokit), Rokit owns the binary: `forest upgrade` refuses to run and points you to `rokit update forest` instead. The update notice still appears, throttled to once every 14 days since Rokit projects often pin an older version on purpose.
+
 ### `forest override`
 
 <Command cmd="forest override [package-name]" />

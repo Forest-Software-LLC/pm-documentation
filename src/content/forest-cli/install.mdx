@@ -80,6 +80,21 @@ From then on the CLI keeps itself current: [`forest upgrade`](/forest-cli/comman
 | macOS | Apple Silicon & Intel |
 | Linux | x64 |
 
+## Install with Rokit
+
+Forest is also available through [Rokit](https://github.com/rojo-rbx/rokit), the Roblox toolchain manager. This lets each project pin its own CLI version:
+
+```bash
+rokit add Forest-Software-LLC/forest-cli forest
+```
+
+The trailing `forest` names the command. Without it, Rokit installs the tool as `forest-cli`. To pin per project, declare it in `rokit.toml`:
+
+```toml
+[tools]
+forest = "Forest-Software-LLC/forest-cli@1.13.0"
+```
+
 <Callout type="info">
-  Forest PM is not distributed via package managers or toolchain managers at this time.
+  Under Rokit, versioning belongs to Rokit: `forest upgrade` refuses to run and updates come from `rokit update forest`. Rokit downloads release archives from GitHub rather than through the signed release manifest.
 </Callout>
