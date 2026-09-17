@@ -1,0 +1,13 @@
+# Redirects for the Cloudflare Worker that serves out/ (Next's redirects()
+# does not apply to a static export). Exact rules first, splats last.
+#
+# Legal docs moved to the main site (forest-frontend, /legal/*); the Studios
+# section and the AI agents page moved under Features.
+/ai /features/ai-agents 301
+/studios /features/studios 301
+/studios/intro /features/studios 301
+/legal/terms https://forest.dev/legal/tos 301
+/legal/privacy-policy https://forest.dev/legal/privacy 301
+/legal/dmca https://forest.dev/legal/dmca 301
+/studios/* /features/studios/:splat 301
+/legal/* https://forest.dev/legal 301
