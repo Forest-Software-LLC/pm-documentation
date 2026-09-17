@@ -1,6 +1,6 @@
 # pm-documentation
 
-The documentation site for **forestpm** (a Roblox package manager). Built with **Nextra 4** on Next.js 15 / React 19.
+The documentation site for **forestpm** (a Roblox package manager). Built with **Nextra 4** on Next.js 15 / React 19, exported to static HTML and served by a Cloudflare Worker at **docs.forest.dev** (see Hosting).
 
 > Part of the forestpm ecosystem. Full map in `../forest-backend/CLAUDE.md`.
 
@@ -23,14 +23,18 @@ src/content/
   faq/           commonly-asked-questions
 ```
 
-Legal docs (terms, privacy, DMCA) live on the main site (forest-frontend, `/legal/*`); old `/legal/*` URLs here 308-redirect there via `redirects()` in [next.config.mjs](next.config.mjs).
+Legal docs (terms, privacy, DMCA) live on the main site (forest-frontend, `/legal/*`); old `/legal/*` URLs here 301-redirect there via [public/_redirects](public/_redirects) (Next's `redirects()` does not apply to a static export).
 
 ## Commands
 ```bash
-npm run dev     # next --turbopack -p 3003   (http://localhost:3003)
-npm run build
-npm run start
+npm run dev      # next --turbopack -p 3003   (http://localhost:3003)
+npm run build    # static export into out/, then the pagefind index into out/_pagefind
+npm run preview  # build, then serve out/ through wrangler dev (checks redirects + 404 page)
+npm run deploy   # build, then wrangler deploy (the forest-docs Worker)
 ```
+
+## Hosting
+The site is a static export (`output: 'export'` in [next.config.mjs](next.config.mjs)): `npm run build` writes plain HTML into `out/` and the pagefind postbuild drops the search index into `out/_pagefind` (not `public/_pagefind`: Next copies `public/` into `out/` before postbuild runs). An assets-only Cloudflare Worker, `forest-docs` in [wrangler.jsonc](wrangler.jsonc) on the same account as forest-api, serves `out/` at **docs.forest.dev**; there is no server code, KV or R2, and nothing needs env vars or secrets. `out/404.html` is the not-found page and `auto-trailing-slash` maps `/quickstart` to `quickstart.html`. Redirects live in [public/_redirects](public/_redirects) (exact rules before splats, all 301) and cache headers in [public/_headers](public/_headers) (`_next/static/*` immutable; everything else is `max-age=0, must-revalidate` by default). Run `npm run preview` before deploying a redirect or 404 change; it serves the export through wrangler exactly as production does. Deploys run through Workers Builds on every push to `main` (build `npm run build`, deploy `npx wrangler deploy`, Node pinned to 22 by `.node-version`); `npm run deploy` from a laptop still works. `docs.forestpm.dev` is a zone redirect rule to this site.
 
 ## Theming & custom components
 Forest brand tokens (light: forest green; dark: electric `#C6FF39` on near-black) live in [src/app/globals.css](src/app/globals.css) as `--fpm-*` variables, mirroring `forest-frontend/src/styles/globals.css`; keep the two in sync. Nextra's primary color + page background are set via the `<Head color backgroundColor>` props in [src/app/layout.jsx](src/app/layout.jsx).

@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Assets-only Worker: no script, Cloudflare serves the static export in
+  // out/ directly. Same account as forest-api and forest-frontend.
+  "name": "forest-docs",
+  "account_id": "fb4ad69e72093c6820bfc31408779200",
+  "compatibility_date": "2026-09-16",
+  "routes": [
+    { "pattern": "docs.forest.dev", "zone_name": "forest.dev", "custom_domain": true }
+  ],
+  "workers_dev": false,
+  "assets": {
+    "directory": "./out",
+    // out/404.html is Next's not-found page.
+    "not_found_handling": "404-page",
+    // /features/intro serves features/intro.html; a trailing slash redirects
+    // to the bare path, matching Next's own trailingSlash: false.
+    "html_handling": "auto-trailing-slash"
+  }
+}

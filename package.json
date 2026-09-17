@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "next --turbopack -p 3003",
     "build": "next build",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
-    "start": "next start"
+    "postbuild": "pagefind --site .next/server/app --output-path out/_pagefind",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "pagefind": "^1.5.2"
+    "pagefind": "^1.5.2",
+    "wrangler": "^4.133.0"
   }
 }
