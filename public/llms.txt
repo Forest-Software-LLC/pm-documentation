@@ -9,6 +9,7 @@ Key facts AI assistants most often need:
 - Private packages are registry-side access control (hidden from search, auth-gated downloads via short-lived signed URLs); they do NOT hide code from a game's players at runtime. Visibility is set at first publish and permanent.
 - forest.json fields: name (lowercase/digits/hyphens), author (username or Studio slug, the @scope), version (SemVer, managed by `forest publish`), description, platform ("roblox" | "uefn"), license (SPDX id or "SEE LICENSE IN <file>"), dependencies. Roblox only: root (relative path to entry module, auto-detected). UEFN has no root field and derives compatibilityVersion from the .uefnproject at publish. Published versions are immutable.
 - Studios (organizations) are shared publishing scopes with ranks member < admin < owner. Creating new packages requires admin+; members with a `write` grant can publish new versions of an existing package; `read`/`write` grants (direct or via roles) open private packages to members.
+- CI uses read-only API tokens (`forest_...`) in the `FOREST_TOKEN` env var, with `forest install --frozen`. Account tokens act as their user; Studio tokens belong to the Studio and read either all its packages or what their roles and grants allow. Tokens never publish.
 
 Roblox specifics:
 
@@ -51,6 +52,7 @@ Studios & tooling:
 - [Studios](https://docs.forest.dev/features/studios): shared publishing scopes (organizations), creation, plans/limits
 - [Members & Ranks](https://docs.forest.dev/features/studios/members): member/admin/owner hierarchy, invites, removal rules
 - [Roles & Package Permissions](https://docs.forest.dev/features/studios/permissions): granting members/roles access to a Studio's private packages
+- [CI & API Tokens](https://docs.forest.dev/features/ci): account and Studio tokens, FOREST_TOKEN, a GitHub Actions example, troubleshooting
 - [CLI Install](https://docs.forest.dev/forest-cli/install): installing the forest CLI
 - [CLI Commands](https://docs.forest.dev/forest-cli/commands): init, install, remove, publish, login, update
 - [FAQ](https://docs.forest.dev/faq/commonly-asked-questions): dedupe, version conflicts, same-name packages

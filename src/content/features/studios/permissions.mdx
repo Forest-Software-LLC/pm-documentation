@@ -16,6 +16,8 @@ Only for **[private packages](/concepts/private-packages) owned by the Studio**.
 
 A member's effective access is the **union** of their direct grants and the grants of every role they're in. Members can hold any number of roles. Roles and permissions are managed by admins and owners from the Studio's settings.
 
+**Studio API tokens** use the same system: a token set to **Selected packages** reads what its roles and direct grants allow, like a member. Token grants are always `read`. See [CI & API Tokens](/features/ci).
+
 ## What a grant does
 
 Holding a permission (direct or via a role) on a private package lets the member:

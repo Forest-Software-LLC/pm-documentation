@@ -2,7 +2,7 @@
 
 <PlatformBadges roblox uefn />
 
-Every Forest package is **public** or **private**. Private packages are access control at the registry: they never appear in search or on public pages, and downloads require a logged-in account with access, served through short-lived signed URLs.
+Every Forest package is **public** or **private**. Private packages are access control at the registry: they never appear in search or on public pages, and downloads require a logged-in account (or an [API token](/features/ci)) with access, served through short-lived signed URLs.
 
 This is the right tool when the audience you're excluding is other developers: a studio's internal framework shared across its games, pre-release libraries, or commissioned work you don't want redistributed.
 
@@ -15,6 +15,8 @@ forest i my-studio/internal-framework   # works if your account has access
 ## Sharing with a team
 
 A private package owned by a [Studio](/features/studios) is installable by exactly the members you grant access to, which is the main way teams share internal code. Owners and admins always have access; everyone else needs a [permission grant](/features/studios/permissions) on the package.
+
+CI pipelines install private packages with a [Studio token](/features/ci), which keeps working as members come and go.
 
 ## What private does not protect
 

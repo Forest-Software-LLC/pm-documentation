@@ -1,0 +1,82 @@
+import { Callout } from 'nextra/components'
+
+# CI & API Tokens
+
+<PlatformBadges roblox uefn />
+
+A CI pipeline can't run `forest login`: login is interactive and requires two-factor authentication. **API tokens** are the credential for machines. Set one as `FOREST_TOKEN` and `forest install` downloads private packages without anyone logging in. Public packages never need a token.
+
+Tokens are **read only**. They install packages; they never publish, and they can't change account or Studio settings.
+
+## Two kinds of token
+
+| | Account token | Studio token |
+|---|---|---|
+| Created in | Your account settings | The Studio's settings, by admins and owners |
+| Reads | Everything you can read, including your Studios' private packages | The Studio's packages it has access to |
+| When people leave | Stops seeing a Studio's packages when you leave that Studio | Keeps working; it belongs to the Studio |
+
+For a team's pipelines, use a **Studio token**.
+
+## Creating a token
+
+1. Open your account settings (**API tokens** section) or the Studio's settings (**Tokens** tab).
+2. Choose **New token**, give it a name you'll recognize later (for example `GitHub Actions`), and pick an expiry: 30 days, 90 days, 1 year, or never.
+3. Copy the token. It is shown **once**; Forest stores only a hash of it. Tokens start with `forest_`.
+
+Each account and each Studio can hold up to 25 active tokens.
+
+### Studio token access
+
+A Studio token uses the same [permission system](/features/studios/permissions) as a member:
+
+- **All packages** reads every package the Studio owns, including ones created later.
+- **Selected packages** reads only what its roles and package grants allow. Add it to roles, grant it packages directly, or both.
+
+Admins and owners create, edit, and revoke Studio tokens, and every change is recorded in the Studio's audit log.
+
+## Using a token in CI
+
+Store the token as a secret in your CI provider and expose it to `forest` as the `FOREST_TOKEN` environment variable. A GitHub Actions job:
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+
+  - name: Install Forest
+    run: |
+      curl -fsSL https://releases.forest.dev/install.sh | sh
+      echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+  - uses: actions/cache@v4
+    with:
+      path: ~/.forest/cache
+      key: forest-${{ hashFiles('**/forest-lock.json') }}
+
+  - name: Install packages
+    run: forest install --frozen
+    env:
+      FOREST_TOKEN: ${{ secrets.FOREST_TOKEN }}
+```
+
+- `--frozen` installs exactly what `forest-lock.json` pins and fails if the lockfile is missing or no longer matches `forest.json`, instead of updating it. Commit your lockfile.
+- The cache step keeps downloaded archives between runs. Cached archives are verified against the lockfile's hashes, and cached private packages skip the registry entirely.
+- `FOREST_TOKEN` takes priority over a stored login and is never written to disk. `forest whoami` shows which token is in use.
+
+<Callout type="info">
+Tokens can't publish. `forest publish` refuses to run while `FOREST_TOKEN` is set.
+</Callout>
+
+## Troubleshooting
+
+| Message | What to do |
+|---|---|
+| `FOREST_TOKEN was rejected: API token expired` | Create a new token and update the CI secret. |
+| `FOREST_TOKEN was rejected: API token not recognized` | The token was revoked or the secret holds the wrong value. Create a new token. |
+| `This project has private dependencies (...)` | No token or login was found. Set `FOREST_TOKEN`. |
+| `HTTP 404 Not Found` for a private package | The token works but can't read that package. Give the Studio token access to it (or use **All packages**). |
+| `--frozen: forest-lock.json is missing or out of date` | Run `forest install` locally and commit `forest-lock.json`. |
+
+## Revoking a token
+
+Revoke it from the same settings page. It stops working immediately: the next request that uses it is refused.

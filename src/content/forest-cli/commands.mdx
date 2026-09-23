@@ -59,7 +59,10 @@ Run in a folder with no `forest.json`, install offers to create the same bare ma
   <Flag flag="-f, --force">Reinstall everything from scratch, ignoring installed state.</Flag>
   <Flag flag="--init" arg="<platform>">Create the bare manifest without prompting when there is no `forest.json`, for use in scripts.</Flag>
   <Flag flag="--links" arg="<mode>">How to treat [local links](#forest-link): `apply`, `ignore` (install exactly what the lockfile says), or `forbid` (fail if any links are configured, for strict CI). The default is `ignore` on CI machines and `apply` everywhere else.</Flag>
+  <Flag flag="--frozen">Install exactly what `forest-lock.json` pins. Fails instead of updating the lockfile when it is missing or no longer matches `forest.json`. For CI; see [CI & API Tokens](/features/ci).</Flag>
 </Flags>
+
+Private packages need a login or an API token in the `FOREST_TOKEN` environment variable; see [CI & API Tokens](/features/ci).
 
 ### `forest remove`
 
@@ -157,6 +160,8 @@ Removes a local link (pass the package or the linked path) and restores the exac
 
 Publishes your package to Forest PM. Uploads the package and its metadata to the Forest PM registry, making it available for others to install.
 
+Publishing needs your login: API tokens are read only, so `forest publish` refuses to run while `FOREST_TOKEN` is set.
+
 ### `forest login`
 
 <Command cmd="forest login" />
@@ -186,7 +191,7 @@ Logs out of your Forest PM account and clears the credentials stored on this mac
 
 <Command cmd="forest whoami" />
 
-Prints the account you're currently logged in as. Useful before publishing from a shared or CI machine.
+Prints the account you're currently logged in as. When `FOREST_TOKEN` is set it describes that [API token](/features/ci) instead: its name, owner, access, and expiry.
 
 ### `forest upgrade`
 
