@@ -1,129 +1,141 @@
-import { Callout } from 'nextra/components'
+import { Steps, Tabs, Callout } from 'nextra/components'
 
 # AI Agents & MCP
 
 <PlatformBadges roblox uefn />
 
-Forest is built to be usable by AI assistants, not just humans. There are two ways in:
+Connect your AI agent to Forest and it checks for a well-used package before writing code from scratch, reads its source and license, installs it, and publishes your own modules when you ask. Setup adds two things together: the **Forest MCP server**, which gives your agent the tools, and the **Forest skill**, which tells it when to use them.
 
-- **The MCP server** at `https://api.forest.dev/mcp`, for assistants that support MCP. Typed tools, your private packages, and publishing. Use it when you can.
-- **The HTTP API**, a public, no-auth JSON API for [assistants that can only fetch URLs](#assistants-without-mcp).
+<Steps>
+### Add Forest to your agent
 
-For agents: if your client supports MCP, use the MCP server; otherwise use the HTTP API. When handing a package to a human, link the package page (`https://forest.dev/p/{platform}/{scope}/{name}`) rather than API URLs.
+Pick your agent:
 
-## Connect with MCP
+<Tabs items={['Claude Code', 'Claude app', 'Cursor', 'VS Code', 'Codex', 'Other agents']} storageKey="forest-agent">
+  <Tabs.Tab>
+    In Claude Code, run:
 
-Forest runs a remote [MCP](https://modelcontextprotocol.io) server over Streamable HTTP. There is nothing to install:
+    ```
+    /plugin install forest --marketplace Forest-Software-LLC/forest-agent-skills
+    ```
+
+    The Forest plugin brings the skill and the MCP server together. On Claude Code older than 2.1.275, run these in your terminal instead:
+
+    ```bash
+    claude plugin marketplace add Forest-Software-LLC/forest-agent-skills
+    claude plugin install forest@forest-agent-skills
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    In claude.ai or Claude Desktop:
+
+    1. Open **Customize > Plugins**, choose **Add > Add marketplace**, and enter `Forest-Software-LLC/forest-agent-skills`.
+    2. Add the **forest** plugin.
+    3. Open the plugin's **Connectors** tab and connect **Forest**.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    1. **[Add the Forest MCP server to Cursor](https://cursor.com/install-mcp?name=forest&config=eyJ1cmwiOiJodHRwczovL2FwaS5mb3Jlc3QuZGV2L21jcCJ9)** and confirm in Cursor.
+    2. Add the Forest skill from a terminal:
+
+       ```bash
+       npx skills add Forest-Software-LLC/forest-agent-skills -g -a cursor -y
+       ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    1. **[Add the Forest MCP server to VS Code](https://vscode.dev/redirect/mcp/install?name=forest&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.forest.dev%2Fmcp%22%7D)** and confirm in VS Code.
+    2. Add the Forest skill for GitHub Copilot from a terminal:
+
+       ```bash
+       npx skills add Forest-Software-LLC/forest-agent-skills -g -a github-copilot -y
+       ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Run in your terminal:
+
+    ```bash
+    codex plugin marketplace add Forest-Software-LLC/forest-agent-skills
+    codex plugin add forest@forest-agent-skills
+    ```
+
+    The Forest plugin brings the skill and the MCP server together.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    For GitHub Copilot CLI, Gemini CLI, Windsurf, OpenCode, and other agents, run in your terminal:
+
+    ```bash
+    npx skills add Forest-Software-LLC/forest-agent-skills -g
+    npx add-mcp https://api.forest.dev/mcp -g
+    ```
+
+    Each asks which of your agents to set up. The first adds the Forest skill, the second connects the MCP server. You can also add `https://api.forest.dev/mcp` in your agent's settings as a remote MCP server (Streamable HTTP).
+  </Tabs.Tab>
+</Tabs>
+
+### Sign in
+
+Public packages work signed out, so you can skip this until you need your private packages or want to publish.
+
+<Tabs items={['Claude Code', 'Claude app', 'Cursor', 'VS Code', 'Codex', 'Other agents']} storageKey="forest-agent">
+  <Tabs.Tab>
+    Run `/mcp`, pick **forest**, and choose **Authenticate**.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Claude shows a **Connect** button in the chat the first time your agent needs your account.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Cursor asks you to sign in to Forest the first time your agent needs your account. Follow its prompt.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    VS Code opens a browser to sign in the first time your agent needs your account.
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Run in your terminal:
+
+    ```bash
+    codex mcp login forest
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Your agent starts the sign-in the first time it needs your account, usually by opening a browser. Some have a command for it instead, like `/mcp auth forest` in Gemini CLI.
+  </Tabs.Tab>
+</Tabs>
+
+A forest.dev page shows which app is asking, the account it will act as, and the permissions it wants. Approve, and you're connected. Your agent still asks you before every publish.
+
+### Try it
+
+Ask your agent something like:
 
 ```
-https://api.forest.dev/mcp
+Find a promise library for my Roblox game on Forest.
 ```
 
-It works signed out for public packages. Signing in with your Forest account adds your private packages and publishing.
+It searches Forest, reads the best matches, and asks before installing anything.
+</Steps>
 
-### Claude
+## What your agent can do
 
-In claude.ai, Claude Desktop, or the Claude mobile app, open **Customize > Connectors**, choose **Add custom connector**, and paste `https://api.forest.dev/mcp`. Anthropic's guide walks through it: [Add a custom connector](https://claude.com/docs/connectors/custom/add-unlisted). Or add the [Forest plugin](#teach-your-agent-when-to-use-forest), which brings the connector and the Forest skill together.
+- **Find packages:** search and browse the registry, including mirrored Wally packages.
+- **Vet them:** read a package's README, files, and source, its versions and dependencies, and its license rating with caveats.
+- **Install them:** it gives you the `forest install` command, or runs it for you if your agent can use a terminal.
+- **Work with your account:** list your packages and your Studios' packages, private ones included.
+- **Publish:** send a package's files to Forest for you, after you approve. Text files only, up to 200 files and 1 MB, at most 10 publishes an hour; packages with `.rbxm` models are published with the [forest CLI](/features/publishing).
 
-### Claude Code
-
-```bash
-claude mcp add --transport http forest https://api.forest.dev/mcp
-```
-
-Then run `/mcp` inside Claude Code to sign in, or wait: Claude Code prompts you the first time a tool needs your account. The [Forest plugin](#teach-your-agent-when-to-use-forest) sets up the same server and adds the Forest skill.
-
-### Cursor
-
-Add the server to `.cursor/mcp.json` in your project, or to `~/.cursor/mcp.json` to use it everywhere:
-
-```json
-{
-  "mcpServers": {
-    "forest": {
-      "url": "https://api.forest.dev/mcp"
-    }
-  }
-}
-```
-
-### VS Code
-
-For agent mode, add the server to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "forest": {
-      "type": "http",
-      "url": "https://api.forest.dev/mcp"
-    }
-  }
-}
-```
-
-### Other clients
-
-Any client that supports remote MCP servers over Streamable HTTP with OAuth works the same way: give it the URL.
-
-## Signing in
-
-You don't sign in up front. The first time the assistant uses a tool that needs your account, the client starts an OAuth sign-in: Claude shows a **Connect** button in the chat, and other clients open a browser or ask you to authenticate.
-
-The browser lands on a forest.dev page that shows which app is asking, the account it will act as, and the permissions it wants, with **Approve** and **Deny** buttons. Apps that run on your own computer get an extra warning: approve only if you just started signing in from that app.
-
-| Permission | When it's asked for |
-|---|---|
-| Read your packages, including private ones you can access | Always |
-| Publish packages as you, and to Studios where your role allows it | Only when the assistant first tries to publish. Your client asks you to approve the extra permission. |
-
-### Connected apps
-
-Your profile settings on forest.dev have a **Connected apps** section listing every app you've signed in with, its permissions, when it was connected, and when it was last used. **Disconnect** cuts an app off immediately.
-
-## MCP tools
-
-| Tool | What it does | Needs sign-in |
-|---|---|---|
-| `search_packages` | Searches public packages. Multi-word queries match what packages do; single words match names. Never shows private packages. | No |
-| `browse_packages` | Lists public packages by likes, recent, or downloads. | No |
-| `get_package` | Versions, license with caveats, dependencies, integrity hash, downloads, the `forest install` command, and the README. | For private packages |
-| `list_package_files` | Lists a package's files. | For private packages |
-| `read_package_file` | Reads a package's source. Binaries and files over 1 MB come back without content. | For private packages |
-| `find_publishers` | Finds users and Studios by name prefix. | No |
-| `find_scopes` | Finds scopes by prefix, including unclaimed mirrored Wally scopes. | No |
-| `whoami` | Your account, how you signed in, your permissions, and your Studios with your rank in each. | Yes |
-| `list_my_packages` | Packages you own or can read through your Studios, private included. Filters by name, platform, and visibility. | Yes |
-| `publish_package` | Publishes a package from files the assistant sends. See [below](#publishing-from-an-assistant). | Yes, with the publish permission |
-
-Tool calls are rate limited, with room for hundreds of calls a minute.
-
-## Publishing from an assistant
-
-The assistant sends the package's files as text plus the manifest fields: name, version, platform, license, and optionally a description, dependencies, and the Roblox root (which defaults to the only `init.luau` or `init.lua`). Forest packs them and runs the same checks as `forest publish`: file rules (such as no `.server` or `.client` runtime scripts), permissions, free plan limits, and Studio rules.
-
-- A new package must be told whether it's public or private. An existing package keeps its visibility, and published versions are permanent.
-- Public packages need a README of at least 30 characters (pass one, or include a `README.md` file) and a top-level `LICENSE`, `LICENSE.txt`, or `LICENSE.md` file.
-- Text files only, up to 200 files and 1 MB in total. Packages with `.rbxm` models must be published with the [forest CLI](/features/publishing).
-- At most 10 publishes an hour through MCP.
-
-Your client asks you to confirm each publish. Approve only what you asked for.
+Every app you've signed in with is listed under **Connected apps** in your forest.dev profile settings, where **Disconnect** cuts it off immediately.
 
 <Callout type="warning">
-Package READMEs and source are written by their authors. Assistants treat that text as data, not instructions, and should never publish because some package text told them to.
+Package READMEs and source are written by their authors. Your agent treats that text as data, not instructions, and never publishes because some package text told it to.
 </Callout>
 
-## Headless agents and API tokens
+## In CI and scripts
 
-Agents that run without a person present (CI, scripts) can skip OAuth and send a Forest [API token](/features/ci) instead, as `Authorization: Bearer forest_...`. API tokens are read only: they give private reads but can't publish.
-
-In Claude Code:
+Agents that run without a person present can skip sign-in and send a Forest [API token](/features/ci) instead. API tokens are read only: they reach private packages but can't publish. In Claude Code:
 
 ```bash
 claude mcp add --transport http forest https://api.forest.dev/mcp --header "Authorization: Bearer $FOREST_TOKEN"
 ```
 
-Your shell fills in `$FOREST_TOKEN` when the command runs, so Claude Code saves the token itself. Keep the default scope, which stores it outside your repository; `--scope project` would write it into `.mcp.json`. For a project config you commit, reference the variable instead, and Claude Code reads it when it connects:
+Your shell fills in `$FOREST_TOKEN`, and Claude Code stores the token outside your repository. For a project `.mcp.json` you commit, reference the variable instead so the token never lands in the file:
 
 ```json
 {
@@ -137,64 +149,6 @@ Your shell fills in `$FOREST_TOKEN` when the command runs, so Claude Code saves 
 }
 ```
 
-Keep the token itself in an environment variable or your CI provider's secrets. Never commit it.
+## Agents without MCP
 
-## Teach your agent when to use Forest
-
-The MCP server gives an assistant the tools. The **Forest skill** tells it when to use them. With it, the assistant checks Forest for a well-used package before writing general-purpose code such as a signal, promise, networking, or data store module, shows you what it found, and asks before installing anything. When you've written a self-contained module other projects could reuse, it suggests publishing it, and publishes only when you say so.
-
-The skill is open source at [Forest-Software-LLC/forest-agent-skills](https://github.com/Forest-Software-LLC/forest-agent-skills) and uses the open [Agent Skills](https://agentskills.io) format, so it works beyond Claude.
-
-**Claude Code:** install the Forest plugin, which bundles the skill and the MCP server:
-
-```
-/plugin marketplace add Forest-Software-LLC/forest-agent-skills
-/plugin install forest@forest-agent-skills
-```
-
-**Claude on the web, desktop, and Cowork:** open **Customize > Plugins**, choose **Add > Add marketplace**, and enter `Forest-Software-LLC/forest-agent-skills`. Add the **forest** plugin, then connect the Forest server from its **Connectors** tab.
-
-**Cursor, Codex, GitHub Copilot, Gemini CLI, and other agents that support skills:**
-
-```bash
-npx skills add Forest-Software-LLC/forest-agent-skills
-```
-
-Then connect the MCP server as shown [above](#connect-with-mcp). For an agent without skills support, the [instructions snippet](#point-your-assistant-at-forest) below carries the same two rules.
-
-## Assistants without MCP
-
-The registry also exposes a public, no-auth JSON API, so an assistant that can only fetch URLs can still search packages, read metadata and readmes, and read a package's full source to vet code before recommending it.
-
-The machine-readable reference is **[forest.dev/llms.txt](https://forest.dev/llms.txt)**: every endpoint on both API surfaces, kept current. The live route list is always at [api.forest.dev/ai](https://api.forest.dev/ai). An assistant should read those two URLs and use the API directly; the forest.dev web UI is JavaScript-rendered and not useful to scrape.
-
-### Point your assistant at Forest
-
-The zero-setup option: paste the URL `https://forest.dev/llms.txt` into your chat and ask the assistant to read it.
-
-For a coding agent that isn't connected to the MCP server, add a few lines to your project's `CLAUDE.md`, `AGENTS.md`, or custom instructions:
-
-```markdown
-## Packages
-This project uses Forest (forestpm), the package manager for Roblox/UEFN.
-- Discover packages: GET https://api.forest.dev/ai/search/roblox/{query}
-  (multi-word queries are semantic; single tokens match package names)
-- Read a package: GET https://api.forest.dev/ai/package/roblox/{scope}/{name}
-- Full API reference: https://forest.dev/llms.txt
-- Install: `forest install {scope}/{name}`; installed versions are recorded in forest.json / forest-lock.json
-- Before writing a general-purpose module (signals, networking, data stores, UI, utilities),
-  search Forest and offer a well-used package if one fits
-- If you write a self-contained module other projects could reuse, suggest publishing it
-  with `forest publish`, but never publish without asking
-```
-
-### Built for how agents actually work
-
-Forest serves two API surfaces, and the **agent endpoints** under `/ai` exist specifically for assistants:
-
-- **Everything is a path segment.** No required query parameters, because the HTTP layers assistants run behind routinely mangle query strings and discard error bodies. One request like `/ai/package/roblox/{scope}/{name}` returns the description, version list, license, dependencies, and README together.
-- **Neutral ranking.** Search results on the `/ai` endpoints are never boosted; there is nothing to opt out of. Multi-word queries are semantic (they search README embeddings), single tokens match package names.
-- **Source is readable.** The `/files` and `/file/{path}` endpoints serve a package's actual source, so an assistant can judge quality, security, and API surface before recommending anything, and `licenseRating` plus `licenseCaveats` surface the automated [license review](/concepts/publishing#license-safety-ratings) as a signal.
-- **Linkable all the way down.** Every response links onward with absolute URLs, so fetch tools that can't fill in a `{placeholder}` template can still reach the whole registry from one working entry point.
-
-The `/ai` surface is deliberately unstable so it can keep improving; assistants should re-read [forest.dev/llms.txt](https://forest.dev/llms.txt) rather than hardcode response shapes. Software that must keep working builds against the versioned `/v1` API instead, which is documented in the same file.
+An assistant that can only fetch URLs can use Forest's public HTTP API instead. Paste `https://forest.dev/llms.txt` into the chat and ask it to read it: that file documents every endpoint.
