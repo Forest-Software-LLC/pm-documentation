@@ -23,7 +23,7 @@ It works signed out for public packages. Signing in with your Forest account add
 
 ### Claude
 
-In claude.ai, Claude Desktop, or the Claude mobile app, open **Customize > Connectors**, choose **Add custom connector**, and paste `https://api.forest.dev/mcp`. Anthropic's guide walks through it: [Add a custom connector](https://claude.com/docs/connectors/custom/add-unlisted).
+In claude.ai, Claude Desktop, or the Claude mobile app, open **Customize > Connectors**, choose **Add custom connector**, and paste `https://api.forest.dev/mcp`. Anthropic's guide walks through it: [Add a custom connector](https://claude.com/docs/connectors/custom/add-unlisted). Or add the [Forest plugin](#teach-your-agent-when-to-use-forest), which brings the connector and the Forest skill together.
 
 ### Claude Code
 
@@ -31,7 +31,7 @@ In claude.ai, Claude Desktop, or the Claude mobile app, open **Customize > Conne
 claude mcp add --transport http forest https://api.forest.dev/mcp
 ```
 
-Then run `/mcp` inside Claude Code to sign in, or wait: Claude Code prompts you the first time a tool needs your account.
+Then run `/mcp` inside Claude Code to sign in, or wait: Claude Code prompts you the first time a tool needs your account. The [Forest plugin](#teach-your-agent-when-to-use-forest) sets up the same server and adds the Forest skill.
 
 ### Cursor
 
@@ -138,6 +138,29 @@ Your shell fills in `$FOREST_TOKEN` when the command runs, so Claude Code saves 
 ```
 
 Keep the token itself in an environment variable or your CI provider's secrets. Never commit it.
+
+## Teach your agent when to use Forest
+
+The MCP server gives an assistant the tools. The **Forest skill** tells it when to use them. With it, the assistant checks Forest for a well-used package before writing general-purpose code such as a signal, promise, networking, or data store module, shows you what it found, and asks before installing anything. When you've written a self-contained module other projects could reuse, it suggests publishing it, and publishes only when you say so.
+
+The skill is open source at [Forest-Software-LLC/forest-agent-skills](https://github.com/Forest-Software-LLC/forest-agent-skills) and uses the open [Agent Skills](https://agentskills.io) format, so it works beyond Claude.
+
+**Claude Code:** install the Forest plugin, which bundles the skill and the MCP server:
+
+```
+/plugin marketplace add Forest-Software-LLC/forest-agent-skills
+/plugin install forest@forest-agent-skills
+```
+
+**Claude on the web, desktop, and Cowork:** open **Customize > Plugins**, choose **Add > Add marketplace**, and enter `Forest-Software-LLC/forest-agent-skills`. Add the **forest** plugin, then connect the Forest server from its **Connectors** tab.
+
+**Cursor, Codex, GitHub Copilot, Gemini CLI, and other agents that support skills:**
+
+```bash
+npx skills add Forest-Software-LLC/forest-agent-skills
+```
+
+Then connect the MCP server as shown [above](#connect-with-mcp). For an agent without skills support, the [instructions snippet](#point-your-assistant-at-forest) below carries the same two rules.
 
 ## Assistants without MCP
 
