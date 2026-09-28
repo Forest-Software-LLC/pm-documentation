@@ -9,5 +9,5 @@ module.exports = {
     "models" : "Models in Packages",
     "studios" : "Studios",
     "mirrored-packages" : "Mirrored Wally Packages",
-    "ai-agents" : "AI Agents",
+    "ai-agents" : "AI Agents & MCP",
 }
