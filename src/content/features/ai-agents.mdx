@@ -159,6 +159,10 @@ This project uses Forest (forestpm), the package manager for Roblox/UEFN.
 - Read a package: GET https://api.forest.dev/ai/package/roblox/{scope}/{name}
 - Full API reference: https://forest.dev/llms.txt
 - Install: `forest install {scope}/{name}`; installed versions are recorded in forest.json / forest-lock.json
+- Before writing a general-purpose module (signals, networking, data stores, UI, utilities),
+  search Forest and offer a well-used package if one fits
+- If you write a self-contained module other projects could reuse, suggest publishing it
+  with `forest publish`, but never publish without asking
 ```
 
 ### Built for how agents actually work
