@@ -56,12 +56,14 @@ forest publish
 
 This uploads your package to the registry, making it available for others to install. If it's your first time publishing, you'll be prompted to log in.
 
-The CLI asks a few questions: visibility (public or [private](/concepts/private-packages)), name, description, version, and license. Visibility is permanent. Every later version inherits what you choose here. Every account includes 10 private packages for free; Pro removes the limit (see [Private Packages](/concepts/private-packages#plans-and-limits)).
+The CLI asks a few questions: visibility (public or [private](/concepts/private-packages)), name, description, version, and license, skipping anything `forest.json` already settles (set [`visibility`](/concepts/manifest#fields) there to skip that question). Visibility is permanent. Every later version inherits what you choose here. Every account includes 10 private packages for free; Pro removes the limit (see [Private Packages](/concepts/private-packages#plans-and-limits)).
+
+To publish with no questions at all, for example from a release script, fill in every field in `forest.json` and run [`forest publish --yes`](/forest-cli/commands#publishing-without-prompts). It needs your `forest login` on that machine; API tokens can't publish.
 </Steps>
 
 ## License safety ratings
 
-Every published package needs a license: an [SPDX identifier](https://spdx.org/licenses/) or a `LICENSE` file the CLI can detect (see the [`license` field](/concepts/manifest#fields)). The registry then runs an automated license review on every version and assigns it a **safety rating**, shown on the package page and returned by the API:
+Every published package declares a license: an [SPDX identifier](https://spdx.org/licenses/) or a `LICENSE` file the CLI can detect (see the [`license` field](/concepts/manifest#fields)). Public packages need the license file. A private package can skip it; with no file and no `license` field, it's published as `UNLICENSED`. The registry then runs an automated license review on every version and assigns it a **safety rating**, shown on the package page and returned by the API:
 
 | Rating | Meaning |
 |---|---|
@@ -89,7 +91,7 @@ When someone installs your package, Forest automatically installs its dependenci
 
 To publish an update, change your code and run `forest publish` again.
 
-The CLI asks what kind of change you made (bugfix, new feature, or breaking change) and increments the patch, minor, or major version accordingly, then uploads the new version.
+The CLI asks what kind of change you made (bugfix, new feature, or breaking change) and increments the patch, minor, or major version accordingly, then uploads the new version. If you already set a version in `forest.json` that isn't published yet, it offers that version instead.
 
 While you're iterating, you don't need to publish on every change to test inside a real project: on Roblox, [`forest link`](/forest-cli/commands#forest-link) points a project's dependency at your local package folder so edits show up live, and `forest unlink` restores the registry version when you're done.
 

@@ -7,7 +7,7 @@ One of the most common shapes for a Roblox library is "a server half and a clien
 
 ## One package, one root
 
-Recall [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule): a package has exactly one root module, and whatever it returns is the whole public API. Forest also has **no realm concept**, so there are no separate server-only/client-only install targets ([details](/platforms/roblox/installing#where-packages-live)). Both facts point at the same design:
+Recall [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule): a package has exactly one root module, and whatever it returns is the whole public API. Packages also **don't declare a realm**: where a package's code lives is up to the project that installs it ([details](/platforms/roblox/installing#where-packages-live)), so you can't mark half of your package server-only. Both facts point at the same design:
 
 **Ship one package whose root exposes both surfaces, with shared code as an internal sibling.**
 
@@ -73,7 +73,7 @@ You can, but you inherit three problems for zero benefit:
 
 1. **Lockstep versioning is manual.** Dependencies are [ranges by default](/concepts/dependencies#version-ranges), so nothing forces a consumer's server half and client half to be the same version unless both you and they pin with `=`.
 2. **Shared code needs a third package** (`mylibrary-shared`), and now a bugfix in shared code is a three-package release train.
-3. **It buys no isolation on its own.** Splitting the package doesn't keep server code off clients unless the *consumer* also installs the halves into separate realm-mounted trees (the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern)), and a consumer who does that can just as easily mount a single-package library server-side.
+3. **It buys no isolation on its own.** Splitting the package doesn't keep server code off clients unless the *consumer* also installs the server half into a server-only [mount](/platforms/roblox/mounts). Placement is the consumer's decision either way; your package can't make it for them.
 
 The single-package shape gives you atomic versioning, private shared internals, and one install command for your users.
 

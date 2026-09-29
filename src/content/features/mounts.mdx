@@ -1,0 +1,22 @@
+# Mounts
+
+<PlatformBadges roblox />
+
+Mounts give a Roblox project more than one dependency folder, each with its own dependency list, all in one `forest.json` and one lockfile. The common uses are server-only packages that shouldn't replicate to clients, and test frameworks that shouldn't ship in your game.
+
+<Command cmd="forest mount create <path>" />
+
+```bash
+forest mount create ServerPackages
+forest i my-studio/anticheat --mount ServerPackages
+```
+
+Map the new folder wherever it belongs in the datamodel (for example `ServerScriptService.ServerPackages` through Rojo) and require from it like any other package. Each mount resolves and installs on its own, overrides and exclusions apply to all of them, and only the default mount (the top-level `dependencies`) is published.
+
+Coming from Wally: `forest init` turns a `wally.toml`'s `[server-dependencies]` and `[dev-dependencies]` into `ServerPackages` and `DevPackages` mounts, the same folders Wally used.
+
+## Going deeper
+
+- [Mounts](/platforms/roblox/mounts) for the `forest.json` field, the rules mounts follow, and the `--mount` flag on every command.
+- [`forest mount`](/forest-cli/commands#forest-mount) reference for creating, renaming, and removing mounts.
+- [Moving a project from Wally](/platforms/roblox/mirrored#moving-a-project-from-wally) for the `wally.toml` import.

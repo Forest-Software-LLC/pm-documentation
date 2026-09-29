@@ -12,6 +12,8 @@ Visibility is chosen on first publish and every later version inherits it. Aside
 forest i my-studio/internal-framework   # works if your account has access
 ```
 
+If a project's tree includes a private package your account can't read, `forest install` skips it, installs everything else, lists what it skipped and why, and exits with status 1. See [Installing without access](/concepts/private-packages#installing-without-access).
+
 ## Sharing with a team
 
 A private package owned by a [Studio](/features/studios) is installable by exactly the members you grant access to, which is the main way teams share internal code. Owners and admins always have access; everyone else needs a [permission grant](/features/studios/permissions) on the package.

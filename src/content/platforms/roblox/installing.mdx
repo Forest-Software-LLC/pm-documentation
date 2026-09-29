@@ -44,11 +44,11 @@ Using packages this way keeps every part of your project modular. You can update
 
 ## Where packages live
 
-**On the filesystem**, Forest installs everything into one `Packages/` folder next to your `forest.json`. Forest does not touch your place file or decide datamodel locations.
+**On the filesystem**, Forest installs into a `Packages/` folder next to your `forest.json`, the project's default [mount](/platforms/roblox/mounts). A project can add more mounts for server-only or dev-only packages. Forest does not touch your place file or decide datamodel locations.
 
 (If your `forest.json` has a `root` field, meaning you're authoring a package rather than a game, the `Packages/` folder lives next to the root module instead, e.g. `src/Packages/`. See [Package Anatomy](/platforms/roblox/anatomy#developing-with-dependencies).)
 
-**In the Roblox datamodel**, *you* choose where that folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file. `ReplicatedStorage.Packages` is the common choice:
+**In the Roblox datamodel**, *you* choose where each folder is mounted. If you use [Rojo](https://rojo.space), map it in your project file. `ReplicatedStorage.Packages` is the common choice:
 
 ```json
 {
@@ -65,55 +65,54 @@ Using packages this way keeps every part of your project modular. You can update
 All requires *inside* the installed tree are relative (`script.Parent`-style), so the `Packages` folder works wherever you mount it: ReplicatedStorage, ServerScriptService, or anywhere else.
 
 <Callout type="warning">
-Forest has **no realm concept**, meaning there are no separate server/client dependency lists or install targets. There is one packages tree, and its location is your choice. So if you mount it under ReplicatedStorage, **every package's source is visible to clients**, including packages you only use on the server. Don't put secrets (API keys, webhook URLs, anti-cheat logic you want hidden) in package code. This is by design: every published public package's code is meant to be visible to all consumers, so the exposure of source is expected and intentional.
+Packages don't declare a realm: where a package's code lives is your project's choice. Everything in a folder mounted under ReplicatedStorage replicates to clients, so **every package's source there is visible to clients**, including packages you only use on the server. Keep those in a [server-only mount](#server-only-and-dev-only-packages), and don't put secrets (API keys, webhook URLs, anti-cheat logic you want hidden) in package code either way. This is by design: every published public package's code is meant to be visible to all consumers, so the exposure of source is expected and intentional.
 </Callout>
 
-### Server-only packages: the two-manifest pattern
+### Server-only and dev-only packages
 
-Sometimes the single tree isn't what you want. A [private package](/concepts/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
+Sometimes one folder isn't what you want. A [private package](/concepts/private-packages) full of server logic, or an anti-cheat library, shouldn't replicate to clients just because everything else lives in ReplicatedStorage.
 
-Since every `forest.json` gets its own fully self-contained `Packages/` tree, the supported way to split realms today is **one manifest per realm**. Run `forest init --project` in two folders and install each package where it belongs:
+Give those packages their own [mount](/platforms/roblox/mounts): a second dependency folder, declared in the same `forest.json` and pinned in the same `forest-lock.json`.
 
-<FileTree>
-  <FileTree.Folder name="my-game" defaultOpen>
-    <FileTree.Folder name="Server" defaultOpen>
-      <FileTree.File name="forest.json" />
-      <FileTree.File name="forest-lock.json" />
-      <FileTree.Folder name="Packages" />
-    </FileTree.Folder>
-    <FileTree.Folder name="Shared" defaultOpen>
-      <FileTree.File name="forest.json" />
-      <FileTree.File name="forest-lock.json" />
-      <FileTree.Folder name="Packages" />
-    </FileTree.Folder>
-  </FileTree.Folder>
-</FileTree>
+```bash
+forest mount create ServerPackages
+forest i my-studio/anticheat --mount ServerPackages
+```
 
-Then mount each tree on its own side of the datamodel:
+Then map each folder on its own side of the datamodel:
 
 ```json
 {
   "name": "my-game",
   "tree": {
     "$className": "DataModel",
-    "ServerScriptService": {
-      "Packages": { "$path": "Server/Packages" }
-    },
     "ReplicatedStorage": {
-      "Packages": { "$path": "Shared/Packages" }
+      "Packages": { "$path": "Packages" }
+    },
+    "ServerScriptService": {
+      "ServerPackages": { "$path": "ServerPackages" }
     }
   }
 }
 ```
 
-Packages under `ServerScriptService` (or `ServerStorage`) never replicate, so their source is not visible to clients. Server code requires from `ServerScriptService.Packages`, shared/client code from `ReplicatedStorage.Packages`.
+Packages under `ServerScriptService` (or `ServerStorage`) never replicate, so their source is not visible to clients. Server code requires from `ServerScriptService.ServerPackages`, shared and client code from `ReplicatedStorage.Packages`. A `DevPackages` mount does the same job for test frameworks you don't want in your game.
 
-Things to know about this pattern:
+Things to know about mounts:
 
-- **Run CLI commands from the right folder.** `forest install`, `remove`, and the lockfile are per-manifest, so installs happen in `Server/` or `Shared/` depending on where the package belongs. Commit both lockfiles.
-- **The trees are fully independent.** A package needed in both realms is installed twice, once per tree, with separate state at runtime. For pure libraries this is harmless; each side only ever requires its own tree.
+- **Each mount is independent.** Every mount resolves and installs on its own, so a package needed in both is installed twice, with separate state at runtime. For pure libraries this is harmless; each side only ever requires its own folder.
 - **This changes where code *lives*, not what it can do.** Server-mounted packages are hidden from clients, but any installed package still runs with your game's full permissions. Visibility and trust are separate questions.
+- **One `forest.json` per realm still works.** Projects that split realms into separate folders, each with its own manifest, keep working; mounts do the same job from one manifest and one lockfile.
 
+See [Mounts](/platforms/roblox/mounts) for the `forest.json` field, the `--mount` flag on each command, and the rules mounts follow.
+
+### Forest owns its dependency folders
+
+Everything at the top level of a dependency folder belongs to Forest. On every install, anything there that isn't one of that folder's declared packages is removed, files and `_`-prefixed folders included, and Forest reports in one line anything it removed that it didn't install. Only entries whose names start with `.` (such as `.gitkeep`) are left alone. Keep your own modules somewhere else.
+
+That's how Forest takes over a folder Wally used to fill: the first install removes Wally's `_Index` folder and its link modules and puts Forest's packages in their place.
+
+To keep a wrong path from deleting your code, Forest won't take over a folder it has never installed into while that folder holds files neither Forest nor Wally put there: install stops with an error naming them, and [`forest mount create`](/forest-cli/commands#forest-mount-create) refuses the same folders. Move the files out, or fix the path in `forest.json`.
 
 ## Package Dependencies
 

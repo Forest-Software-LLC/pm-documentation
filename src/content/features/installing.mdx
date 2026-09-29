@@ -18,12 +18,15 @@ Useful variations:
 - `forest install` with no name installs everything in `forest.json`, offering to create a bare manifest if the folder doesn't have one yet.
 - `-v <version>` installs a specific version instead of the latest.
 - `-a <alias>` installs the package under an alias, which is how you hold two major versions of the same package side by side.
+- `-m <mount>` installs into one of your project's [mounts](/features/mounts) instead of the default dependency folder (Roblox).
+
+If your tree includes a [private package](/features/private-packages) your account can't read, install skips it, installs everything else, lists what it skipped, and exits with status 1.
 
 ## Per-platform mechanics
 
 What "installed" looks like on disk, and how your code consumes a package, differs by platform:
 
-- **Roblox**: packages land in a `Packages/` folder you `require` through generated entry modules. You decide where that folder mounts in the DataModel, including the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern) for server-only code. See [Installing on Roblox](/platforms/roblox/installing).
+- **Roblox**: packages land in a `Packages/` folder you `require` through generated entry modules. You decide where that folder mounts in the DataModel, and can add more folders ([mounts](/platforms/roblox/mounts)) for server-only or dev-only packages. See [Installing on Roblox](/platforms/roblox/installing).
 - **UEFN**: packages install as Verse files inside your project that you import with `using`. See [Installing on UEFN](/platforms/uefn/installing).
 
 ## Going deeper

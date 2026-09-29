@@ -4,6 +4,7 @@ module.exports = {
     "publishing" : "Publishing Packages",
     "auditing" : "Auditing & Updates",
     "local-linking" : "Local Directory Linking",
+    "mounts" : "Mounts",
     "private-packages" : "Private Packages",
     "ci" : "CI & API Tokens",
     "models" : "Models in Packages",

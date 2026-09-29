@@ -1,0 +1,126 @@
+import { Callout } from 'nextra/components'
+
+# Mounts
+
+A **mount** is a folder Forest installs dependencies into. Every Roblox project has one, the **default mount**: the `Packages/` folder that `forest install` fills. Extra mounts give one project more dependency folders, each with its own dependency list, so packages can live where they belong in your game:
+
+- **Server-only packages** (anti-cheat, server frameworks, a [private package](/concepts/private-packages) full of server logic) in a folder you map under `ServerScriptService` or `ServerStorage`, so their source never replicates to clients.
+- **Dev-only packages** (test frameworks) in a folder your game never ships.
+
+Coming from Wally, this is what `[server-dependencies]` and `[dev-dependencies]` did, and `forest init` [converts a `wally.toml`](/platforms/roblox/mirrored#moving-a-project-from-wally) into mounts for you.
+
+<Callout type="warning">
+Mounts need Forest CLI 1.15.0 or later on every machine that installs the project. When an older CLI rewrites `forest-lock.json`, it drops the extra mounts' sections, so upgrade the whole team together.
+</Callout>
+
+## Adding a server-only mount
+
+Create the mount, then install into it with `--mount`:
+
+<Terminal title="forest mount create">
+{`$ forest mount create ServerPackages
+🌳 Created mount ServerPackages.
+ℹ Add packages to it with \`forest install <scope/name> --mount ServerPackages\`.
+ℹ Map it in your Rojo project, e.g. "ServerPackages": { "$path": "ServerPackages" }
+$ forest i my-studio/anticheat --mount ServerPackages
+🌳 Package my-studio/anticheat added to ServerPackages!`}
+</Terminal>
+
+Forest never touches your place file, so map the new folder in your Rojo project next to the default one:
+
+```json
+{
+  "name": "my-game",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Packages": { "$path": "Packages" }
+    },
+    "ServerScriptService": {
+      "ServerPackages": { "$path": "ServerPackages" }
+    }
+  }
+}
+```
+
+Server code requires from that folder by instance path, like any other package:
+
+```lua
+local ServerPackages = game:GetService("ServerScriptService").ServerPackages
+
+local AntiCheat = require(ServerPackages.anticheat)
+```
+
+Packages under `ServerScriptService` or `ServerStorage` never replicate, so their source is not visible to clients. Requires inside every mount are relative, so each folder works wherever you map it.
+
+A `DevPackages` mount works the same way for test frameworks: map it only in the Rojo project you test with (a separate `test.project.json`, for example), and it never ends up in your game.
+
+## Mounts in `forest.json`
+
+Extra mounts live under `mounts`, keyed by the folder's path relative to `forest.json`. Each entry takes a `dependencies` object with the same syntax as the top-level one, aliases included. The top-level `dependencies` is the default mount.
+
+```json
+{
+  "platform": "roblox",
+  "dependencies": {
+    "evaera/promise": "^4.0.0"
+  },
+  "mounts": {
+    "ServerPackages": {
+      "dependencies": {
+        "my-studio/anticheat": "^1.2.0"
+      }
+    },
+    "DevPackages": {
+      "dependencies": {
+        "roblox/testez": "^0.4.1"
+      }
+    }
+  }
+}
+```
+
+`forest mount create` and `forest install --mount` write this field for you, and hand edits work too: the next `forest install` installs whatever the field declares. An entry with no `dependencies` is an empty mount.
+
+The default mount is `Packages/` next to `forest.json` in a game project. When you're authoring a package (`forest.json` has a `root`), it sits next to the root module instead, for example `src/Packages/`, and [`packagesDir`](/concepts/manifest#renaming-the-dependency-folder) renames it. Extra mount paths are always relative to `forest.json`.
+
+## How mounts behave
+
+- **Each mount resolves and installs on its own.** Mounts never share packages: a package declared in two mounts is installed in both, each copy with its own state at runtime, and the two can resolve to different versions (for example `^1.0.0` in one mount and `^2.0.0` in another). For pure libraries this is harmless, since each side only requires from its own folder.
+- **One lockfile.** `forest-lock.json` pins every mount, one section each. Changing one mount's dependencies re-resolves that mount; the others keep their pins.
+- **Overrides and exclusions are project-wide.** Every mount resolves under the [`overrides`](/forest-cli/commands#forest-override) and [`excludes`](/forest-cli/commands#forest-exclude) in `forest.json`.
+- **Mounts can't overlap.** Two mounts can't share a folder or sit inside each other, and an extra mount can't contain the package's root file. Forest [owns everything at a mount's top level](/platforms/roblox/installing#forest-owns-its-dependency-folders), so installing the outer mount would delete the inner one. A `forest.json` that breaks these rules makes every command stop with an error naming the mounts involved.
+- **Folder names.** A mount path must stay inside the project: relative to `forest.json`, with no `..`. Its last folder is the name your code requires by, and follows the same rule as `packagesDir`: a letter first, then letters, digits, underscores, or hyphens, at most 64 characters. Mounts in different places can share a name (`src/client/Packages` and `src/server/Packages`).
+- **Roblox only.** A UEFN project has a single shared `ForestPackages` mount, and a UEFN `forest.json` that declares `mounts` is rejected.
+
+## Choosing a mount on the command line
+
+Without a flag, commands cover the whole project: `forest install <package>` adds to the default mount, `forest install` installs every mount, `forest remove` removes the package from the one mount that declares it, and `forest tree`, `forest audit`, and `forest update` report each mount separately. Pass `-m`/`--mount` to work on one:
+
+| Command | With `--mount` |
+|---|---|
+| `forest install <package>` | Adds the package to that mount. |
+| `forest install` | Installs only that mount. |
+| `forest remove <package>` | Removes it from that mount. Required when several mounts declare the package. |
+| `forest update` | Updates only that mount. |
+| `forest audit` | Audits only that mount. `forest audit --update <package>` requires it when several mounts declare the package. |
+| `forest tree` | Shows only that mount. |
+| `forest link` | Links the dependency in that mount. Required when several mounts declare the package. |
+| `forest unlink` | Only unlinks in that mount. |
+
+The flag takes a mount's path, or enough of the end of it to be unique, compared case-insensitively: `--mount server/Packages` finds `src/server/Packages`. Matching goes by whole folder names, an exact path always wins, and Forest never guesses: a reference that fits several mounts is an error that lists them.
+
+## Managing mounts
+
+- `forest mount` lists the project's mounts, the default one first, with how many dependencies each declares.
+- `forest mount create <path>` adds a mount and installs it. The folder can be new, empty, or one that Forest or Wally installed packages into; a folder holding anything else is refused, because installing would delete it.
+- `forest mount rename <mount> <new-path>` moves the folder in one step and updates `forest.json` and `forest-lock.json`, with no reinstall. The default mount stays next to your root file, so only its name can change (which writes `packagesDir`).
+- `forest mount remove <mount>` deletes the mount's folder, its entry in `forest.json`, and its lockfile section, after asking. The default mount can't be removed.
+
+Remember to update the `$path` entries in your Rojo project after a rename or remove. Every flag is in the [`forest mount` reference](/forest-cli/commands#forest-mount).
+
+## Publishing
+
+Only the default mount is published. Extra mounts serve your project alone: `forest publish` warns that they aren't published, and every mount folder and `forest-lock.json` are left out of the archive. Consumers of your package install its default mount's dependencies and nothing else, which makes a `DevPackages` mount the place for a package author's test dependencies.
+
+`forest publish` refuses to run while a dependency of the default mount is [locally linked](/forest-cli/commands#forest-link). Links in other mounts don't block it.

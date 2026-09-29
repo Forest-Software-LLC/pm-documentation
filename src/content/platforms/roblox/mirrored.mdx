@@ -31,7 +31,27 @@ Dependencies, version ranges, the lockfile, and integrity checks all behave exac
 
 ## Server-realm packages from Wally
 
-Wally had a "realm" concept (separate server and shared dependency lists); Forest deliberately does not. There is one `Packages` tree and *you* decide where it mounts. If a mirrored package was server-realm on Wally (anti-cheat, server frameworks), install it from a server-side manifest using the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern) so it never replicates to clients.
+Wally tracked realms: a package declared itself `shared` or `server`, and a project listed server packages under `[server-dependencies]`, which Wally installed into a separate `ServerPackages` folder. Forest packages carry no realm, but a project gets the same separation from a [mount](/platforms/roblox/mounts). If a mirrored package was server-realm on Wally (anti-cheat, server frameworks), install it into a server-only mount so it never replicates to clients:
+
+```bash
+forest mount create ServerPackages
+forest i <scope>/<name> --mount ServerPackages
+```
+
+## Moving a project from Wally
+
+Run `forest init --project` in a folder with a `wally.toml` (or just `forest install`, which offers to create the manifest), and Forest offers to import it:
+
+- `[dependencies]` become the top-level `dependencies`, installed into `Packages/`.
+- `[server-dependencies]` and `[dev-dependencies]`, when present, become `ServerPackages` and `DevPackages` [mounts](/platforms/roblox/mounts). Those are Wally's own folder names, so your existing Rojo mappings keep working.
+- Version requirements carry over. A bare Wally version already meant a compatible range, so `1.2.3` is written as `^1.2.3`.
+- Wally aliases that differ from the package's name become Forest aliases, so your code keeps requiring packages by the same names (`Packages.Promise`). Aliases starting with `_` or `.` are dropped, since Forest doesn't allow them.
+- The `license` from `[package]`, if set, is copied into `forest.json`.
+- `wally.lock` is deleted: `forest-lock.json` replaces it. `wally.toml` stays where it is, but Forest never reads it again, so delete it when you're ready.
+
+Dependencies resolve as is, because Wally's open-source packages are mirrored here under the same `scope/name`; one that isn't mirrored (for example, one without an open-source license) fails to resolve until you replace it. Entries init can't parse are skipped with a warning. The next `forest install` fills those folders and [takes them over](/platforms/roblox/installing#forest-owns-its-dependency-folders): Wally's `_Index` folders and link modules are removed, and the removal is reported in one line.
+
+The import is a prompt, so without an interactive terminal (a script or CI) you get a plain manifest instead. `forest init` for package authoring offers the same import; there the default mount sits next to your root module, as usual for a package.
 
 ## Claiming your scope
 

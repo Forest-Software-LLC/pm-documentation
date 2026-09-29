@@ -34,12 +34,14 @@ import { Callout } from 'nextra/components'
 | `version` | string | Yes (to publish) | `forest init` (seeds `0.1.0`), then `forest publish` | [SemVer](https://semver.org) `MAJOR.MINOR.PATCH` (prerelease/build suffixes allowed, e.g. `1.2.0-rc.1`). Managed by the publish flow. See [Versioning your own package](/concepts/dependencies#versioning-your-own-package). |
 | `description` | string | No | `forest publish` prompt | Short description shown in search and on the package page. |
 | `platform` | string | Yes | `forest init` | Target platform: `"roblox"` or `"uefn"`. Install and publish both require it, and it decides how a package is laid out and imported. |
-| `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. |
+| `license` | string | Yes (to publish) | `forest publish` (detected from your `LICENSE` file) | An [SPDX identifier](https://spdx.org/licenses/) (e.g. `MIT`, `Apache-2.0`) or `"SEE LICENSE IN <file>"` for a custom license. The registry verifies the declared license against the packaged license text. A private package published with no license file and no `license` gets `UNLICENSED`. |
 | `root` | string | Roblox only | `forest init` prompt (auto-detected by `forest publish` if missing) | Relative path to the package's entry-point module (e.g. `src/init.luau`), always with forward slashes. See [the entry point rule](/platforms/roblox/anatomy#the-entry-point-rule). Also decides where dependencies install during development: into the dependency folder next to the root module (`Packages/` unless renamed via `packagesDir`). Not used on UEFN, where the whole package folder is published. |
-| `packagesDir` | string | No | `forest init --packages-dir` (absent without the flag) | Name of the folder dependencies install into; absent means the default `Packages`. Must start with a letter, then letters, digits, underscores, or hyphens, max 64 characters; Windows reserved device names (`CON`, `NUL`, `COM1`, ...) are rejected in any casing. Roblox only: a UEFN project has one shared `ForestPackages` mount whose name is part of every package's `using` imports, so it can't be renamed. See [Renaming the dependency folder](#renaming-the-dependency-folder). |
-| `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. |
+| `packagesDir` | string | No | `forest init --packages-dir` or `forest mount rename` (absent otherwise) | Name of the folder dependencies install into; absent means the default `Packages`. Must start with a letter, then letters, digits, underscores, or hyphens, max 64 characters; Windows reserved device names (`CON`, `NUL`, `COM1`, ...) are rejected in any casing. Roblox only: a UEFN project has one shared `ForestPackages` mount whose name is part of every package's `using` imports, so it can't be renamed. See [Renaming the dependency folder](#renaming-the-dependency-folder). |
+| `dependencies` | object | No (defaults to `{}`) | `forest install` / `forest remove` | Map of full package identifiers to version specs. See below. On Roblox these install into the default dependency folder. |
+| `mounts` | object | No | `forest mount create`, `forest install --mount` | Roblox only: extra dependency folders, keyed by path relative to `forest.json`, each holding its own `dependencies` map. Each resolves and installs on its own, and none are published. See [Mounts](/platforms/roblox/mounts). |
 | `overrides` | object | No | [`forest override`](/forest-cli/commands#forest-override) | Map of `scope/name` to a version range that a **transitive** dependency is forced onto during resolution. Applies only to your project; not carried along when you publish. |
 | `excludes` | object | No | [`forest exclude`](/forest-cli/commands#forest-exclude) | Map of `scope/name` to a range of versions banned from resolution, for direct and transitive dependencies alike. Applies only to your project; not carried along when you publish. |
+| `visibility` | string | No | You | `"public"` or `"private"`, read only by `forest publish`. Settles a new package's visibility without the prompt, and a new package needs it for [`forest publish --yes`](/forest-cli/commands#publishing-without-prompts). For an existing package it must match the published visibility, since a publish never changes it. |
 
 Unknown fields are ignored by the registry.
 
@@ -73,7 +75,7 @@ For range syntax and how ranges resolve, see [Dependencies & Versioning](/concep
 
 ## Renaming the dependency folder
 
-On Roblox, dependencies install into a folder named `Packages` by default. Pass `--packages-dir <name>` to `forest init` to pick a different name, recorded as `packagesDir`:
+On Roblox, dependencies install into a folder named `Packages` by default. Pass `--packages-dir <name>` to `forest init` to pick a different name, recorded as `packagesDir` (to rename it later, use [`forest mount rename`](/forest-cli/commands#forest-mount-rename), which moves the folder and writes the field):
 
 ```json
 "packagesDir": "roblox_packages"
@@ -89,6 +91,6 @@ A valid name starts with a letter, followed by letters, digits, underscores, or 
 
 ## `forest-lock.json`
 
-Alongside the manifest, the CLI maintains `forest-lock.json`: the exact resolved version **and SHA-256 integrity hash** of every package in your dependency tree (direct and transitive). Tarballs are content-addressed by that hash, so the lockfile both pins and verifies every install. The lockfile also records the `overrides` and `excludes` it was solved under, so editing either map (even by hand) triggers a re-resolve on the next install.
+Alongside the manifest, the CLI maintains `forest-lock.json`: the exact resolved version **and SHA-256 integrity hash** of every package in your dependency tree (direct and transitive). Tarballs are content-addressed by that hash, so the lockfile both pins and verifies every install. The lockfile also records the `overrides` and `excludes` it was solved under, so editing either map (even by hand) triggers a re-resolve on the next install. A project with [mounts](/platforms/roblox/mounts) gets one section per mount in the same file.
 
 <Callout type="info">Commit `forest-lock.json` to source control. With a lockfile, `forest install` reproduces the identical tree on every machine; without one, ranges are re-resolved and may pick newer versions.</Callout>
