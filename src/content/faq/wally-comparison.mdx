@@ -19,7 +19,7 @@ The short version: Wally is a lean tool with GitHub-based publishing, and anythi
 | Licensing | Optional metadata | Required to publish, with a per-version [license safety rating](/concepts/publishing#license-safety-ratings) |
 | Types in Studio | Community tooling such as `wally-package-types` | Native: real ModuleScripts required by instance path, no extra tooling |
 | Supply-chain trust | Lockfile | Client-verified SHA-256 on every download, an [open-source pipeline](/open-source), signed build provenance |
-| Realms | Placement encoded in package metadata | One tree, placement under your control (see below) |
+| Realms | Placement encoded in package metadata | Placement under your control, with [mounts](/platforms/roblox/mounts) for server-only and dev-only folders (see below) |
 
 </div>
 
@@ -32,6 +32,8 @@ forest i evaera/promise
 ```
 
 If you publish on Wally, [your scope is being held for you](/platforms/roblox/mirrored#claiming-your-scope); claim it by verifying the same GitHub identity, and the packages become yours to manage on Forest, with future Wally releases still mirroring in.
+
+Moving a whole project takes one command: run `forest init --project` next to your `wally.toml` and Forest imports it, server and dev dependencies included, into the same folders Wally used. See [Moving a project from Wally](/platforms/roblox/mirrored#moving-a-project-from-wally).
 
 ## Private packages without running servers
 
@@ -51,7 +53,7 @@ Everything that touches package bytes on Forest, from `forest publish` on the au
 
 ## Realms: placement belongs to your project
 
-Wally encodes placement intent in package metadata through `server` and `shared` realms, a decision the package author makes for you. Forest [deliberately has none of that](/platforms/roblox/installing#where-packages-live): there is one `Packages/` tree, and *you* decide where it mounts in the datamodel, because placement is a property of your project, not of somebody else's package. Projects that want a server-only tree use the [two-manifest pattern](/platforms/roblox/installing#server-only-packages-the-two-manifest-pattern), which makes the split explicit and visible in your project structure, and mirrored server-realm Wally packages slot cleanly into it.
+Wally encodes placement intent in package metadata through `server` and `shared` realms, a decision the package author makes for you. Forest packages [carry no realm](/platforms/roblox/installing#where-packages-live), because placement is a property of your project, not of somebody else's package. A project declares the dependency folders it needs as [mounts](/platforms/roblox/mounts), for example a `ServerPackages` folder next to the default `Packages`, and *you* decide where each one lives in the datamodel. The split is explicit in your `forest.json`, and mirrored server-realm Wally packages slot cleanly into a server-only mount.
 
 ## One CLI, more than one platform
 

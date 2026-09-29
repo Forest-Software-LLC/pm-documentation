@@ -6,7 +6,9 @@ Anyone with a Forest account can upload packages to the registry. Publishing is 
 
 <Command cmd="forest publish" />
 
-The first publish asks for the package's visibility (public or [private](/features/private-packages)), description, and license; later publishes ask what kind of change you made (bugfix, new feature, or breaking change) and bump the [SemVer](https://semver.org/) version accordingly. You never edit version numbers by hand.
+The first publish asks for the package's visibility (public or [private](/features/private-packages)), description, and license; later publishes ask what kind of change you made (bugfix, new feature, or breaking change) and bump the [SemVer](https://semver.org/) version accordingly. You never have to edit version numbers by hand (set an unpublished one in `forest.json` and publish offers it as is).
+
+For scripted releases, `forest publish --yes` publishes with no prompts, reading every field from `forest.json`; a new package also needs `visibility` there. See [Publishing without prompts](/forest-cli/commands#publishing-without-prompts).
 
 <Terminal title="forest publish">
 {`$ forest publish

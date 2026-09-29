@@ -62,9 +62,10 @@ steps:
 - `--frozen` installs exactly what `forest-lock.json` pins and fails if the lockfile is missing or no longer matches `forest.json`, instead of updating it. Commit your lockfile.
 - The cache step keeps downloaded archives between runs. Cached archives are verified against the lockfile's hashes, and cached private packages skip the registry entirely.
 - `FOREST_TOKEN` takes priority over a stored login and is never written to disk. `forest whoami` shows which token is in use.
+- If the token can't read a private package in the tree, install skips it, installs the rest, lists what it skipped, and exits with status 1, so the job fails instead of passing on a partial tree.
 
 <Callout type="info">
-Tokens can't publish. `forest publish` refuses to run while `FOREST_TOKEN` is set.
+Tokens can't publish. `forest publish` refuses to run while `FOREST_TOKEN` is set. [`forest publish --yes`](/forest-cli/commands#publishing-without-prompts) (implied when `CI` is set) publishes without prompts, but it still needs a login stored by `forest login` on that machine.
 </Callout>
 
 ## Troubleshooting
@@ -73,8 +74,8 @@ Tokens can't publish. `forest publish` refuses to run while `FOREST_TOKEN` is se
 |---|---|
 | `FOREST_TOKEN was rejected: API token expired` | Create a new token and update the CI secret. |
 | `FOREST_TOKEN was rejected: API token not recognized` | The token was revoked or the secret holds the wrong value. Create a new token. |
-| `This project has private dependencies (...)` | No token or login was found. Set `FOREST_TOKEN`. |
-| `HTTP 404 Not Found` for a private package | The token works but can't read that package. Give the Studio token access to it (or use **All packages**). |
+| `N private package(s) failed to install`, then `You're not logged in` | No token or login was found. Set `FOREST_TOKEN`. |
+| `N private package(s) failed to install`, then `Make sure you're authorized to the scope`; or `HTTP 404 Not Found` for a private package | The token works but can't read that package. Give the Studio token access to it (or use **All packages**). |
 | `--frozen: forest-lock.json is missing or out of date` | Run `forest install` locally and commit `forest-lock.json`. |
 
 ## Revoking a token
