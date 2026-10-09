@@ -124,7 +124,7 @@ It searches Forest, reads the best matches, and asks before installing anything.
 Every app you've signed in with is listed under **Connected apps** in your forest.dev profile settings, where **Disconnect** cuts it off immediately.
 
 <Callout type="warning">
-Package READMEs and source are written by their authors. Your agent treats that text as data, not instructions, and never publishes because some package text told it to.
+Package READMEs, descriptions and source are written by their authors, and a package can be published just to steer an agent. With the Forest skill, your agent treats that text as data, not instructions: a package whose README or comments tell it to install something, run a command, fetch a URL, publish, or keep quiet is dropped and reported to you. It judges packages by what Forest measured (downloads, likes, versions, license rating) and by the code it reads, installs only when you say so, and takes the install command from Forest, never from package text. Text hidden from human readers, such as HTML comments, never reaches the agent at all.
 </Callout>
 
 ## In CI and scripts
